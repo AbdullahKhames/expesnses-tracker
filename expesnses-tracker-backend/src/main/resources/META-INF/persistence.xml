@@ -12,6 +12,7 @@
 
         <!-- Managed entity classes -->
         <class>name.expenses.features.expesnse.models.Expense</class>
+        <class>name.expenses.features.user.models.User</class>
 
         <!-- Hibernate properties -->
         <properties>
