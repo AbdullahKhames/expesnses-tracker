@@ -15,6 +15,8 @@ public class ExpenseRespDto {
     private String name;
     private double amount;
     private String refNo;
+    private String details;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

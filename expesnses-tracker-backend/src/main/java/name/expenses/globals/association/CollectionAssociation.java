@@ -1,7 +1,7 @@
-package name.expenses.utils.category_association_manager;
+package name.expenses.globals.association;
 
 public enum CollectionAssociation {
     SUB_CATEGORY,
     EXPENSE,
-
+    POCKET;
 }

@@ -1,31 +1,36 @@
-package name.expenses.features.expesnse.models;
+package name.expenses.features.account.models;
 
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 import name.expenses.features.base.models.BaseModel;
+import name.expenses.features.pocket.models.Pocket;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString(callSuper=true)
+@ToString
 @Entity
-public class Expense extends BaseModel {
+@AllArgsConstructor
+@NoArgsConstructor
+public class Account extends BaseModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private String details;
-    private double amount;
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(referencedColumnName = "id", name = "account_id")
+    private Set<Pocket> pockets = new HashSet<>();
     @PreUpdate
     protected void onUpdate() {
         this.setUpdatedAt(LocalDateTime.now());
     }
+
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;
@@ -33,8 +38,8 @@ public class Expense extends BaseModel {
         Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
         Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
-        Expense expense = (Expense) o;
-        return getId() != null && Objects.equals(getId(), expense.getId());
+        Account account = (Account) o;
+        return getId() != null && Objects.equals(getId(), account.getId());
     }
 
     @Override

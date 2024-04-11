@@ -19,6 +19,8 @@ import java.util.Set;
 public class CategoryUpdateDto {
     @NotNull
     private String name;
+    private String details;
+
     private String refNo;
     @Builder.Default
     @Valid

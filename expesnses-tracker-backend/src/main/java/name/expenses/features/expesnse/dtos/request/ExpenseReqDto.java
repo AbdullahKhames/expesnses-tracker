@@ -17,6 +17,8 @@ import lombok.NoArgsConstructor;
 public class ExpenseReqDto {
     @NotNull
     private String name;
+    private String details;
+
     @NotNull
     @Min(value = 1, message = "amount cannot be less than 1")
     private Double amount;

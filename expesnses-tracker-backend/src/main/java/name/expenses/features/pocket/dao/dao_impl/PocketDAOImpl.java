@@ -1,4 +1,4 @@
-package name.expenses.features.sub_category.dao.dao_impl;
+package name.expenses.features.pocket.dao.dao_impl;
 
 import jakarta.ejb.Stateless;
 import jakarta.persistence.*;
@@ -6,11 +6,10 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Root;
-
 import name.expenses.error.exception.GeneralFailureException;
-import name.expenses.features.category.models.Category;
-import name.expenses.features.sub_category.dao.SubCategoryDAO;
-import name.expenses.features.sub_category.models.SubCategory;
+import name.expenses.features.account.models.Account;
+import name.expenses.features.pocket.dao.PocketDAO;
+import name.expenses.features.pocket.models.Pocket;
 import name.expenses.globals.Page;
 import name.expenses.globals.SortDirection;
 import name.expenses.utils.FieldValidator;
@@ -21,16 +20,16 @@ import java.util.Map;
 import java.util.Optional;
 
 @Stateless
-public class SubCategoryDAOImpl implements SubCategoryDAO {
+public class PocketDAOImpl implements PocketDAO {
 
     @PersistenceContext(unitName = "expenses-unit")
     private EntityManager entityManager;
 
     @Override
-    public SubCategory create(SubCategory subCategory) {
+    public Pocket create(Pocket pocket) {
         try{
-            entityManager.persist(subCategory);
-            return subCategory;
+            entityManager.persist(pocket);
+            return pocket;
         }catch (Exception ex){
             throw new GeneralFailureException(GeneralFailureException.ERROR_PERSISTING,
                     Map.of("original error message", ex.getMessage(),
@@ -39,11 +38,11 @@ public class SubCategoryDAOImpl implements SubCategoryDAO {
     }
 
     @Override
-    public Optional<SubCategory> get(String refNo) {
+    public Optional<Pocket> get(String refNo) {
         try {
-            TypedQuery<SubCategory> subCategoryTypedQuery = entityManager.createQuery("SELECT e from SubCategory e WHERE e.refNo = :refNo", SubCategory.class);
-            subCategoryTypedQuery.setParameter("refNo", refNo);
-            return Optional.ofNullable(subCategoryTypedQuery.getSingleResult());
+            TypedQuery<Pocket> pocketTypedQuery = entityManager.createQuery("SELECT e from Pocket e WHERE e.refNo = :refNo", Pocket.class);
+            pocketTypedQuery.setParameter("refNo", refNo);
+            return Optional.ofNullable(pocketTypedQuery.getSingleResult());
         }catch (NoResultException ex){
             return Optional.empty();
         }catch (NonUniqueResultException ex){
@@ -57,15 +56,15 @@ public class SubCategoryDAOImpl implements SubCategoryDAO {
     }
 
     @Override
-    public Page<SubCategory> findAll(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
+    public Page<Pocket> findAll(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<SubCategory> query = cb.createQuery(SubCategory.class);
-        Root<SubCategory> root = query.from(SubCategory.class);
+        CriteriaQuery<Pocket> query = cb.createQuery(Pocket.class);
+        Root<Pocket> root = query.from(Pocket.class);
 
         query.select(root);
 
         Path<Object> sortByPath;
-        if (FieldValidator.hasField(sortBy, SubCategory.class)) {
+        if (FieldValidator.hasField(sortBy, Pocket.class)) {
             sortByPath = root.get(sortBy);
         }else {
             sortByPath = root.get("id");
@@ -77,14 +76,14 @@ public class SubCategoryDAOImpl implements SubCategoryDAO {
             query.orderBy(cb.desc(sortByPath));
         }
         try {
-            TypedQuery<SubCategory> typedQuery = entityManager.createQuery(query);
+            TypedQuery<Pocket> typedQuery = entityManager.createQuery(query);
             typedQuery.setFirstResult((int) ((pageNumber - 1) * pageSize));
             typedQuery.setMaxResults(Math.toIntExact(pageSize));
-            List<SubCategory> subCategorys = typedQuery.getResultList();
+            List<Pocket> pockets = typedQuery.getResultList();
             CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
-            countQuery.select(cb.count(countQuery.from(SubCategory.class)));
+            countQuery.select(cb.count(countQuery.from(Pocket.class)));
             Long totalElements = entityManager.createQuery(countQuery).getSingleResult();
-            return PageUtil.createPage(pageNumber, pageSize, subCategorys, totalElements);
+            return PageUtil.createPage(pageNumber, pageSize, pockets, totalElements);
 
         }catch (Exception exception){
             throw new GeneralFailureException(GeneralFailureException.ERROR_FETCH,
@@ -95,15 +94,20 @@ public class SubCategoryDAOImpl implements SubCategoryDAO {
     }
 
     @Override
-    public List<SubCategory> get() {
-        return entityManager.createQuery("SELECT e FROM SubCategory e", SubCategory.class).getResultList();
+    public List<Pocket> get() {
+        return entityManager.createQuery("SELECT e FROM Pocket e", Pocket.class).getResultList();
     }
 
     @Override
-    public SubCategory update(SubCategory subCategory) {
+    public Pocket update(Pocket pocket) {
         try {
-            return entityManager.merge(subCategory);
+            entityManager.getTransaction().begin();
+            Pocket updatedPocket = entityManager.merge(pocket);
+            entityManager.getTransaction().commit();
+            return updatedPocket;
+
         }catch (Exception ex){
+            entityManager.getTransaction().rollback();
             throw new GeneralFailureException(GeneralFailureException.ERROR_UPDATE,
                     Map.of("original error message", ex.getMessage().substring(0, 15),
                             "error", "there was an error with your request couldn't update entity"));
@@ -113,11 +117,11 @@ public class SubCategoryDAOImpl implements SubCategoryDAO {
     @Override
     public String delete(String refNo) {
         try {
-            TypedQuery<SubCategory> subCategoryTypedQuery = entityManager.createQuery("SELECT e from SubCategory e WHERE e.refNo = :refNo", SubCategory.class);
-            subCategoryTypedQuery.setParameter("refNo", refNo);
-            SubCategory subCategory = subCategoryTypedQuery.getSingleResult();
-            if (subCategory != null) {
-                entityManager.remove(subCategory);
+            TypedQuery<Pocket> pocketTypedQuery = entityManager.createQuery("SELECT e from Pocket e WHERE e.refNo = :refNo", Pocket.class);
+            pocketTypedQuery.setParameter("refNo", refNo);
+            Pocket pocket = pocketTypedQuery.getSingleResult();
+            if (pocket != null) {
+                entityManager.remove(pocket);
             }
             return refNo;
         }catch (Exception ex){
@@ -128,15 +132,15 @@ public class SubCategoryDAOImpl implements SubCategoryDAO {
     }
 
     @Override
-    public Long checkCategoryAssociation(SubCategory subCategory) {
-        Category category;
+    public Long checkAccountAssociation(Pocket pocket) {
+        Account account;
         try{
-            TypedQuery<Category> query = entityManager.createQuery("SELECT c FROM Category c JOIN c.subCategories s WHERE s.id = :id", Category.class);
-            query.setParameter("id", subCategory.getId());
-            category = query.getSingleResult();
+            TypedQuery<Account> query = entityManager.createQuery("SELECT c FROM Account c JOIN c.pockets s WHERE s.id = :id", Account.class);
+            query.setParameter("id", pocket.getId());
+            account = query.getSingleResult();
         }catch (Exception ex){
             return null;
         }
-        return category.getId();
+        return account.getId();
     }
 }

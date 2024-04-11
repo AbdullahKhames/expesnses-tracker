@@ -19,22 +19,21 @@ import name.expenses.features.sub_category.dtos.request.SubCategoryUpdateDto;
 import name.expenses.features.sub_category.dtos.response.SubCategoryRespDto;
 import name.expenses.features.sub_category.mappers.SubCategoryMapper;
 import name.expenses.features.sub_category.models.SubCategory;
-import name.expenses.features.sub_category.service.SubCategoryService;
+import name.expenses.features.sub_category.service.SubService;
 import name.expenses.globals.Page;
 import name.expenses.globals.SortDirection;
 import name.expenses.globals.responses.ResponseDto;
 import name.expenses.utils.ResponseDtoBuilder;
-import name.expenses.utils.category_association_manager.CategoryUtils;
+import name.expenses.utils.ValidateInputUtils;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Stateless
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
 @Transactional
-public class SubCategoryServiceImpl implements SubCategoryService {
+public class SubServiceImpl implements SubService {
     public static final String SUBCATEGORY = "SubCategory";
     private final SubCategoryDAO subCategoryDAO;
     private final SubCategoryMapper subCategoryMapper;
@@ -123,16 +122,24 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
     @Override
     public boolean addAssociation(Category category, String refNo) {
-        if (CategoryUtils.isValidInput(category, category.getSubCategories())) {
+        if (ValidateInputUtils.isValidInput(category, category.getSubCategories())) {
             Optional<SubCategory> subCategoryOptional = getEntity(refNo);
             if (subCategoryOptional.isEmpty()) {
-                return false;
+                throw new GeneralFailureException(GeneralFailureException.OBJECT_NOT_FOUND,
+                        Map.of("error", String.format("the subcategory with given reference number : %s doesn't exist", refNo)));
             }
             SubCategory subCategory = subCategoryOptional.get();
-            if (subCategoryDAO.checkCategoryAssociation(subCategory)) {
-                throw new GeneralFailureException(GeneralFailureException.ERROR_UPDATE,
-                        Map.of("error", "this subcategory is already present in another category!!"));
+            Long categoryId = subCategoryDAO.checkCategoryAssociation(subCategory);
+            if (categoryId != null) {
+                if (Objects.equals(categoryId, category.getId())) {
+                    throw new GeneralFailureException(GeneralFailureException.ERROR_UPDATE,
+                            Map.of("error", "this subcategory is already present in the given category!!"));
+                }else {
+                    throw new GeneralFailureException(GeneralFailureException.ERROR_UPDATE,
+                            Map.of("error", "this subcategory is already present in another category!!"));
+                }
             }
+
             category.getSubCategories().add(subCategoryOptional.get());
             return true;
         }
@@ -141,12 +148,25 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
     @Override
     public boolean removeAssociation(Category category, String refNo) {
-        if (CategoryUtils.isValidInput(category, category.getSubCategories())) {
+        if (ValidateInputUtils.isValidInput(category, category.getSubCategories())) {
             Optional<SubCategory> subCategoryOptional = getEntity(refNo);
             if (subCategoryOptional.isEmpty()) {
-                return false;
+                throw new GeneralFailureException(GeneralFailureException.OBJECT_NOT_FOUND,
+                        Map.of("error", String.format("the subcategory with given reference number : %s doesn't exist", refNo)));
             }
-            category.getSubCategories().remove(subCategoryOptional.get());
+            SubCategory subCategory = subCategoryOptional.get();
+            Long categoryId = subCategoryDAO.checkCategoryAssociation(subCategory);
+            if (categoryId != null) {
+                if (Objects.equals(categoryId, category.getId())) {
+                    category.getSubCategories().remove(subCategoryOptional.get());
+                }else {
+                    throw new GeneralFailureException(GeneralFailureException.ERROR_UPDATE,
+                            Map.of("error", "this subcategory is already present in another category!!"));
+                }
+            }else {
+                throw new GeneralFailureException(GeneralFailureException.ERROR_UPDATE,
+                        Map.of("error", "this subcategory is bot present in any category!!"));
+            }
             return true;
         }
         return false;

@@ -23,6 +23,8 @@ public class Category extends BaseModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private String details;
+
     @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Set<SubCategory> subCategories = new HashSet<>();

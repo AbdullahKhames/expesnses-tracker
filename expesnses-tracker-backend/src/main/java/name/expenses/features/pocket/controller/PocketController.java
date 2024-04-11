@@ -1,4 +1,4 @@
-package name.expenses.features.sub_category.controller;
+package name.expenses.features.pocket.controller;
 
 import jakarta.inject.Inject;
 import jakarta.interceptor.Interceptors;
@@ -8,23 +8,24 @@ import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import name.expenses.config.AroundAdvice;
-import name.expenses.features.sub_category.dtos.request.SubCategoryReqDto;
-import name.expenses.features.sub_category.dtos.request.SubCategoryUpdateDto;
-import name.expenses.features.sub_category.service.SubService;
+
+import name.expenses.features.pocket.dtos.request.PocketReqDto;
+import name.expenses.features.pocket.dtos.request.PocketUpdateDto;
+import name.expenses.features.pocket.service.PocketService;
 import name.expenses.globals.SortDirection;
 import name.expenses.globals.responses.ResponseDto;
 
-@Path("/sub-categories")
+@Path("/pockets")
 @Slf4j
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
 @Interceptors(AroundAdvice.class)
-public class SubCategoryController {
-    private final SubService expenseService;
+public class PocketController {
+    private final PocketService pocketService;
     @POST
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createSubCategory(SubCategoryReqDto expense){
-        ResponseDto responseDto = expenseService.create(expense);
+    public Response createPocket(PocketReqDto pocket){
+        ResponseDto responseDto = pocketService.create(pocket);
         if (responseDto != null) {
             return Response.ok(responseDto).build();
         } else {
@@ -34,8 +35,8 @@ public class SubCategoryController {
     @GET
     @Path("/{refNo}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getSubCategory(@PathParam("refNo") String refNo) {
-        ResponseDto responseDto = expenseService.get(refNo);
+    public Response getPocket(@PathParam("refNo") String refNo) {
+        ResponseDto responseDto = pocketService.get(refNo);
         if (responseDto != null) {
             return Response.ok(responseDto).build();
         } else {
@@ -47,16 +48,16 @@ public class SubCategoryController {
     @Path("/{refNo}")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateSubCategory(@PathParam("refNo") String refNo, SubCategoryUpdateDto expenseUpdateDto) {
-        ResponseDto responseDto = expenseService.update(refNo, expenseUpdateDto);
+    public Response updatePocket(@PathParam("refNo") String refNo, PocketUpdateDto pocketUpdateDto) {
+        ResponseDto responseDto = pocketService.update(refNo, pocketUpdateDto);
         return Response.ok(responseDto).build();
     }
 
     @DELETE
     @Path("/{refNo}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteSubCategory(@PathParam("refNo") String refNo) {
-        ResponseDto responseDto = expenseService.delete(refNo);
+    public Response deletePocket(@PathParam("refNo") String refNo) {
+        ResponseDto responseDto = pocketService.delete(refNo);
         return Response.ok(responseDto).build();
     }
 
@@ -84,7 +85,7 @@ public class SubCategoryController {
         }else {
             sortDirection = SortDirection.ASC;
         }
-        ResponseDto responseDto = expenseService.getAllEntities(pageNumber, pageSize, sortBy, sortDirection);
+        ResponseDto responseDto = pocketService.getAllEntities(pageNumber, pageSize, sortBy, sortDirection);
         return Response.ok(responseDto).build();
 
     }

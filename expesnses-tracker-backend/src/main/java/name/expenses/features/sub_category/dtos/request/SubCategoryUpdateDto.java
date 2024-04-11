@@ -22,6 +22,8 @@ public class SubCategoryUpdateDto {
     @NotNull
     private String name;
     private String refNo;
+    private String details;
+
     @Builder.Default
     @Valid
     private Set<ExpenseUpdateDto> expenses = new HashSet<>();}

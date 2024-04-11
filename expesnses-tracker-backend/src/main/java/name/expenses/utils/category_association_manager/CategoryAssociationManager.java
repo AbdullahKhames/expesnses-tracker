@@ -1,13 +1,15 @@
 package name.expenses.utils.category_association_manager;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import name.expenses.features.category.models.Category;
-import name.expenses.features.sub_category.service.SubCategoryService;
+import name.expenses.features.sub_category.service.SubService;
+import name.expenses.globals.association.CollectionAdder;
+import name.expenses.globals.association.CollectionAssociation;
+import name.expenses.globals.association.CollectionRemover;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,11 +18,11 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
 public class CategoryAssociationManager {
-    private final SubCategoryService subCategoryService;
+    private final SubService subCategoryService;
 
 
-    private final Map<CollectionAssociation, CategoryCollectionAdder> adderHandler = new HashMap<>(5);
-    private final Map<CollectionAssociation, CategoryCollectionRemover> removerHandler = new HashMap<>(5);
+    private final Map<CollectionAssociation, CollectionAdder<Category>> adderHandler = new HashMap<>(5);
+    private final Map<CollectionAssociation, CollectionRemover<Category>> removerHandler = new HashMap<>(5);
 
     @PostConstruct
     private void init(){
@@ -35,7 +37,7 @@ public class CategoryAssociationManager {
                                   CollectionAssociation CategoryCollectionAssociation,
                                   String refNo) {
 
-        CategoryCollectionAdder CategoryCollectionAdder = adderHandler.get(CategoryCollectionAssociation);
+        CollectionAdder<Category> CategoryCollectionAdder = adderHandler.get(CategoryCollectionAssociation);
         if (CategoryCollectionAdder == null) {
             return false;
         }
@@ -47,7 +49,7 @@ public class CategoryAssociationManager {
                                      CollectionAssociation CategoryCollectionAssociation,
                                      String refNo) {
 
-        CategoryCollectionRemover CategoryCollectionRemover = removerHandler.get(CategoryCollectionAssociation);
+        CollectionRemover<Category> CategoryCollectionRemover = removerHandler.get(CategoryCollectionAssociation);
         if (CategoryCollectionRemover == null) {
             return false;
         }

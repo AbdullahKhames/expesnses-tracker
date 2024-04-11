@@ -20,6 +20,8 @@ import java.util.Set;
 public class CategoryReqDto {
     @NotNull
     private String name;
+    private String details;
+
     @Builder.Default
     @Valid
     private Set<SubCategoryReqDto> subCategories = new HashSet<>();}

@@ -17,5 +17,5 @@ public interface SubCategoryDAO {
     SubCategory update(SubCategory expense);
     String delete(String refNo);
 
-    boolean checkCategoryAssociation(SubCategory subCategory);
+    Long checkCategoryAssociation(SubCategory subCategory);
 }

@@ -19,10 +19,10 @@ import name.expenses.features.category.models.Category;
 import name.expenses.features.category.service.CategoryService;
 import name.expenses.globals.Page;
 import name.expenses.globals.SortDirection;
+import name.expenses.globals.association.CollectionAssociation;
 import name.expenses.globals.responses.ResponseDto;
 import name.expenses.utils.ResponseDtoBuilder;
 import name.expenses.utils.category_association_manager.CategoryAssociationManager;
-import name.expenses.utils.category_association_manager.CollectionAssociation;
 import name.expenses.utils.category_association_manager.UpdateCategoryServiceImpl;
 
 import java.time.LocalDateTime;
@@ -32,7 +32,7 @@ import java.util.Optional;
 @Slf4j
 @Stateless
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
-//@Transactional
+@Transactional
 public class CategoryServiceImpl implements CategoryService {
     public static final String CATEGORY = "Category";
     private final CategoryDAO categoryDAO;
@@ -113,8 +113,11 @@ public class CategoryServiceImpl implements CategoryService {
         Optional<Category> categoryOptional = getEntity(categoryRefNo);
         if (categoryOptional.isPresent()){
             Category category = categoryOptional.get();
-            categoryAssociationManager.addAssociation(category, CollectionAssociation.SUB_CATEGORY, subCategoryRefNo);
-            return ResponseDtoBuilder.getUpdateResponse(CATEGORY, categoryRefNo, categoryMapper.entityToRespDto(category));
+            if (categoryAssociationManager.addAssociation(category, CollectionAssociation.SUB_CATEGORY, subCategoryRefNo)){
+                return ResponseDtoBuilder.getUpdateResponse(CATEGORY, categoryRefNo, categoryMapper.entityToRespDto(category));
+            }
+            return ResponseDtoBuilder.getErrorResponse(804, "something went wrong couldn't add");
+
         }
         ResponseError responseError = new ResponseError();
         responseError.setErrorCategory(ErrorCategory.DATABASE_Error);
@@ -128,8 +131,10 @@ public class CategoryServiceImpl implements CategoryService {
         Optional<Category> categoryOptional = getEntity(categoryRefNo);
         if (categoryOptional.isPresent()){
             Category category = categoryOptional.get();
-            categoryAssociationManager.removeAssociation(category, CollectionAssociation.SUB_CATEGORY, subCategoryRefNo);
-            return ResponseDtoBuilder.getUpdateResponse(CATEGORY, categoryRefNo, categoryMapper.entityToRespDto(category));
+            if (categoryAssociationManager.removeAssociation(category, CollectionAssociation.SUB_CATEGORY, subCategoryRefNo)){
+                return ResponseDtoBuilder.getUpdateResponse(CATEGORY, categoryRefNo, categoryMapper.entityToRespDto(category));
+            }
+            return ResponseDtoBuilder.getErrorResponse(804, "something went wrong couldn't remove");
         }
         ResponseError responseError = new ResponseError();
         responseError.setErrorCategory(ErrorCategory.DATABASE_Error);

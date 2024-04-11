@@ -18,6 +18,7 @@ public class SubCategoryRespDto {
     private String name;
     private Set<ExpenseRespDto> expenses = new HashSet<>();
     private String refNo;
+    private String details;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

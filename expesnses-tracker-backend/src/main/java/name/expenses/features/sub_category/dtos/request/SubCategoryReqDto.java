@@ -22,6 +22,8 @@ import java.util.Set;
 public class SubCategoryReqDto {
     @NotNull
     private String name;
+    private String details;
+
     @Builder.Default
     @Valid
     private Set<ExpenseReqDto> expenses = new HashSet<>();}

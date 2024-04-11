@@ -1,5 +1,6 @@
-package name.expenses.features.category.dtos.response;
+package name.expenses.features.pocket.dtos.response;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,11 +15,10 @@ import java.util.Set;
 @NoArgsConstructor
 @Data
 @Builder
-public class CategoryRespDto {
+public class PocketRespDto {
     private String name;
-    private Set<SubCategoryRespDto> subCategories = new HashSet<>();
     private String details;
-
+    private Double amount;
     private String refNo;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

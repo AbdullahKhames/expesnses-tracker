@@ -1,4 +1,4 @@
-package name.expenses.features.sub_category.dao.dao_impl;
+package name.expenses.features.account.dao.dao_impl;
 
 import jakarta.ejb.Stateless;
 import jakarta.persistence.*;
@@ -6,11 +6,9 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Root;
-
 import name.expenses.error.exception.GeneralFailureException;
-import name.expenses.features.category.models.Category;
-import name.expenses.features.sub_category.dao.SubCategoryDAO;
-import name.expenses.features.sub_category.models.SubCategory;
+import name.expenses.features.account.dao.AccountDAO;
+import name.expenses.features.account.models.Account;
 import name.expenses.globals.Page;
 import name.expenses.globals.SortDirection;
 import name.expenses.utils.FieldValidator;
@@ -21,16 +19,16 @@ import java.util.Map;
 import java.util.Optional;
 
 @Stateless
-public class SubCategoryDAOImpl implements SubCategoryDAO {
+public class AccountDAOImpl implements AccountDAO {
 
     @PersistenceContext(unitName = "expenses-unit")
     private EntityManager entityManager;
 
     @Override
-    public SubCategory create(SubCategory subCategory) {
+    public Account create(Account account) {
         try{
-            entityManager.persist(subCategory);
-            return subCategory;
+            entityManager.persist(account);
+            return account;
         }catch (Exception ex){
             throw new GeneralFailureException(GeneralFailureException.ERROR_PERSISTING,
                     Map.of("original error message", ex.getMessage(),
@@ -39,11 +37,11 @@ public class SubCategoryDAOImpl implements SubCategoryDAO {
     }
 
     @Override
-    public Optional<SubCategory> get(String refNo) {
+    public Optional<Account> get(String refNo) {
         try {
-            TypedQuery<SubCategory> subCategoryTypedQuery = entityManager.createQuery("SELECT e from SubCategory e WHERE e.refNo = :refNo", SubCategory.class);
-            subCategoryTypedQuery.setParameter("refNo", refNo);
-            return Optional.ofNullable(subCategoryTypedQuery.getSingleResult());
+            TypedQuery<Account> accountTypedQuery = entityManager.createQuery("SELECT e from Account e WHERE e.refNo = :refNo", Account.class);
+            accountTypedQuery.setParameter("refNo", refNo);
+            return Optional.ofNullable(accountTypedQuery.getSingleResult());
         }catch (NoResultException ex){
             return Optional.empty();
         }catch (NonUniqueResultException ex){
@@ -57,15 +55,15 @@ public class SubCategoryDAOImpl implements SubCategoryDAO {
     }
 
     @Override
-    public Page<SubCategory> findAll(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
+    public Page<Account> findAll(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<SubCategory> query = cb.createQuery(SubCategory.class);
-        Root<SubCategory> root = query.from(SubCategory.class);
+        CriteriaQuery<Account> query = cb.createQuery(Account.class);
+        Root<Account> root = query.from(Account.class);
 
         query.select(root);
 
         Path<Object> sortByPath;
-        if (FieldValidator.hasField(sortBy, SubCategory.class)) {
+        if (FieldValidator.hasField(sortBy, Account.class)) {
             sortByPath = root.get(sortBy);
         }else {
             sortByPath = root.get("id");
@@ -77,14 +75,14 @@ public class SubCategoryDAOImpl implements SubCategoryDAO {
             query.orderBy(cb.desc(sortByPath));
         }
         try {
-            TypedQuery<SubCategory> typedQuery = entityManager.createQuery(query);
+            TypedQuery<Account> typedQuery = entityManager.createQuery(query);
             typedQuery.setFirstResult((int) ((pageNumber - 1) * pageSize));
             typedQuery.setMaxResults(Math.toIntExact(pageSize));
-            List<SubCategory> subCategorys = typedQuery.getResultList();
+            List<Account> accounts = typedQuery.getResultList();
             CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
-            countQuery.select(cb.count(countQuery.from(SubCategory.class)));
+            countQuery.select(cb.count(countQuery.from(Account.class)));
             Long totalElements = entityManager.createQuery(countQuery).getSingleResult();
-            return PageUtil.createPage(pageNumber, pageSize, subCategorys, totalElements);
+            return PageUtil.createPage(pageNumber, pageSize, accounts, totalElements);
 
         }catch (Exception exception){
             throw new GeneralFailureException(GeneralFailureException.ERROR_FETCH,
@@ -95,15 +93,20 @@ public class SubCategoryDAOImpl implements SubCategoryDAO {
     }
 
     @Override
-    public List<SubCategory> get() {
-        return entityManager.createQuery("SELECT e FROM SubCategory e", SubCategory.class).getResultList();
+    public List<Account> get() {
+        return entityManager.createQuery("SELECT e FROM Account e", Account.class).getResultList();
     }
 
     @Override
-    public SubCategory update(SubCategory subCategory) {
+    public Account update(Account account) {
         try {
-            return entityManager.merge(subCategory);
+            entityManager.getTransaction().begin();
+            Account updatedAccount = entityManager.merge(account);
+            entityManager.getTransaction().commit();
+            return updatedAccount;
+
         }catch (Exception ex){
+            entityManager.getTransaction().rollback();
             throw new GeneralFailureException(GeneralFailureException.ERROR_UPDATE,
                     Map.of("original error message", ex.getMessage().substring(0, 15),
                             "error", "there was an error with your request couldn't update entity"));
@@ -113,11 +116,11 @@ public class SubCategoryDAOImpl implements SubCategoryDAO {
     @Override
     public String delete(String refNo) {
         try {
-            TypedQuery<SubCategory> subCategoryTypedQuery = entityManager.createQuery("SELECT e from SubCategory e WHERE e.refNo = :refNo", SubCategory.class);
-            subCategoryTypedQuery.setParameter("refNo", refNo);
-            SubCategory subCategory = subCategoryTypedQuery.getSingleResult();
-            if (subCategory != null) {
-                entityManager.remove(subCategory);
+            TypedQuery<Account> accountTypedQuery = entityManager.createQuery("SELECT e from Account e WHERE e.refNo = :refNo", Account.class);
+            accountTypedQuery.setParameter("refNo", refNo);
+            Account account = accountTypedQuery.getSingleResult();
+            if (account != null) {
+                entityManager.remove(account);
             }
             return refNo;
         }catch (Exception ex){
@@ -125,18 +128,5 @@ public class SubCategoryDAOImpl implements SubCategoryDAO {
                     Map.of("original error message", ex.getMessage().substring(0, 15),
                             "error", "there was an error with your request couldn't delete entity"));
         }
-    }
-
-    @Override
-    public Long checkCategoryAssociation(SubCategory subCategory) {
-        Category category;
-        try{
-            TypedQuery<Category> query = entityManager.createQuery("SELECT c FROM Category c JOIN c.subCategories s WHERE s.id = :id", Category.class);
-            query.setParameter("id", subCategory.getId());
-            category = query.getSingleResult();
-        }catch (Exception ex){
-            return null;
-        }
-        return category.getId();
     }
 }

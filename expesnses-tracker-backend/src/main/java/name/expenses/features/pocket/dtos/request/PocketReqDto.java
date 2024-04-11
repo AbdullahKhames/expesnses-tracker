@@ -1,4 +1,5 @@
-package name.expenses.features.expesnse.dtos.request;
+package name.expenses.features.pocket.dtos.request;
+
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -7,19 +8,21 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import name.expenses.features.sub_category.dtos.request.SubCategoryReqDto;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Valid
 @Builder
-public class ExpenseUpdateDto {
+@Valid
+public class PocketReqDto {
     @NotNull
     private String name;
-    private String refNo;
     private String details;
-
-    @Min(value = 1, message = "amount cannot be less than 1")
     @NotNull
     private Double amount;
 }
+

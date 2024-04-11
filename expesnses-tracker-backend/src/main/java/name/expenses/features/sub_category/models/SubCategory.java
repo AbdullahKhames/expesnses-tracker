@@ -24,6 +24,8 @@ public class SubCategory extends BaseModel {
     private Long id;
     private String name;
 //    private double amount;
+    private String details;
+
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "sub-category-id", referencedColumnName = "id")
     private Set<Expense> expenses = new HashSet<>();
