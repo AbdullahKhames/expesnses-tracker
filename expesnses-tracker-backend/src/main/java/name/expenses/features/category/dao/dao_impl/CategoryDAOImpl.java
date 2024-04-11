@@ -1,4 +1,4 @@
-package name.expenses.features.expesnse.dao.dao_impl;
+package name.expenses.features.category.dao.dao_impl;
 
 import jakarta.ejb.Stateless;
 import jakarta.persistence.*;
@@ -6,9 +6,12 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Root;
+
 import name.expenses.error.exception.GeneralFailureException;
-import name.expenses.features.expesnse.dao.ExpenseDAO;
+import name.expenses.features.category.dao.CategoryDAO;
+import name.expenses.features.category.models.Category;
 import name.expenses.features.expesnse.models.Expense;
+import name.expenses.features.sub_category.models.SubCategory;
 import name.expenses.globals.Page;
 import name.expenses.globals.SortDirection;
 import name.expenses.utils.FieldValidator;
@@ -19,31 +22,29 @@ import java.util.Map;
 import java.util.Optional;
 
 @Stateless
-public class ExpenseDAOImpl implements ExpenseDAO {
+public class CategoryDAOImpl implements CategoryDAO {
 
     @PersistenceContext(unitName = "expenses-unit")
     private EntityManager entityManager;
 
     @Override
-    public Expense createExpense(Expense expense) {
+    public name.expenses.features.category.models.Category create(Category category) {
         try{
-            entityManager.persist(expense);
-            return expense;
+            entityManager.persist(category);
+            return category;
         }catch (Exception ex){
             throw new GeneralFailureException(GeneralFailureException.ERROR_PERSISTING,
                     Map.of("original error message", ex.getMessage(),
                             "error", "there was an error with your request couldn't persist"));
         }
-
     }
 
     @Override
-    public Optional<Expense> getExpense(String refNo) {
-
+    public Optional<Category> get(String refNo) {
         try {
-            TypedQuery<Expense> expenseTypedQuery = entityManager.createQuery("SELECT e from Expense e WHERE e.refNo = :refNo", Expense.class);
-            expenseTypedQuery.setParameter("refNo", refNo);
-            return Optional.ofNullable(expenseTypedQuery.getSingleResult());
+            TypedQuery<Category> categoryTypedQuery = entityManager.createQuery("SELECT e from Category e WHERE e.refNo = :refNo", Category.class);
+            categoryTypedQuery.setParameter("refNo", refNo);
+            return Optional.ofNullable(categoryTypedQuery.getSingleResult());
         }catch (NoResultException ex){
             return Optional.empty();
         }catch (NonUniqueResultException ex){
@@ -54,19 +55,18 @@ public class ExpenseDAOImpl implements ExpenseDAO {
                     Map.of("original error message", ex.getMessage(),
                             "error", String.format("there was an error with your request couldn't find object with reference number %s", refNo)));
         }
-
     }
 
     @Override
-    public Page<Expense> findAll(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
+    public Page<Category> findAll(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Expense> query = cb.createQuery(Expense.class);
-        Root<Expense> root = query.from(Expense.class);
+        CriteriaQuery<Category> query = cb.createQuery(Category.class);
+        Root<Category> root = query.from(Category.class);
 
         query.select(root);
 
         Path<Object> sortByPath;
-        if (FieldValidator.hasField(sortBy, Expense.class)) {
+        if (FieldValidator.hasField(sortBy, Category.class)) {
             sortByPath = root.get(sortBy);
         }else {
             sortByPath = root.get("id");
@@ -78,14 +78,15 @@ public class ExpenseDAOImpl implements ExpenseDAO {
             query.orderBy(cb.desc(sortByPath));
         }
         try {
-            TypedQuery<Expense> typedQuery = entityManager.createQuery(query);
+            TypedQuery<Category> typedQuery = entityManager.createQuery(query);
             typedQuery.setFirstResult((int) ((pageNumber - 1) * pageSize));
             typedQuery.setMaxResults(Math.toIntExact(pageSize));
-            List<Expense> expenses = typedQuery.getResultList();
+            List<Category> categorys = typedQuery.getResultList();
             CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
-            countQuery.select(cb.count(countQuery.from(Expense.class)));
+            countQuery.select(cb.count(countQuery.from(Category.class)));
             Long totalElements = entityManager.createQuery(countQuery).getSingleResult();
-            return PageUtil.createPage(pageNumber, pageSize, expenses, totalElements);
+            return PageUtil.createPage(pageNumber, pageSize, categorys, totalElements);
+
         }catch (Exception exception){
             throw new GeneralFailureException(GeneralFailureException.ERROR_FETCH,
                     Map.of("original message", exception.getMessage().substring(0, 15),
@@ -95,15 +96,30 @@ public class ExpenseDAOImpl implements ExpenseDAO {
     }
 
     @Override
-    public List<Expense> getAllExpenses() {
-        return entityManager.createQuery("SELECT e FROM Expense e", Expense.class).getResultList();
+    public List<Category> get() {
+        return entityManager.createQuery("SELECT e FROM Category e", Category.class).getResultList();
     }
 
     @Override
-    public Expense updateExpense(Expense expense) {
+    public Category update(Category category) {
         try {
-            return entityManager.merge(expense);
+            entityManager.getTransaction().begin();
+            for (SubCategory subCategory : category.getSubCategories()) {
+                for (Expense expense : subCategory.getExpenses()) {
+                    if (expense.getId() == null) {
+                        entityManager.persist(expense);
+                    }
+                }
+                if (subCategory.getId() == null) {
+                    entityManager.persist(subCategory);
+                }
+            }
+            Category updatedCategory = entityManager.merge(category);
+            entityManager.getTransaction().commit();
+            return updatedCategory;
+
         }catch (Exception ex){
+            entityManager.getTransaction().rollback();
             throw new GeneralFailureException(GeneralFailureException.ERROR_UPDATE,
                     Map.of("original error message", ex.getMessage().substring(0, 15),
                             "error", "there was an error with your request couldn't update entity"));
@@ -111,13 +127,13 @@ public class ExpenseDAOImpl implements ExpenseDAO {
     }
 
     @Override
-    public String deleteExpense(String refNo) {
+    public String delete(String refNo) {
         try {
-            TypedQuery<Expense> expenseTypedQuery = entityManager.createQuery("SELECT e from Expense e WHERE e.refNo = :refNo", Expense.class);
-            expenseTypedQuery.setParameter("refNo", refNo);
-            Expense expense = expenseTypedQuery.getSingleResult();
-            if (expense != null) {
-                entityManager.remove(expense);
+            TypedQuery<Category> categoryTypedQuery = entityManager.createQuery("SELECT e from Category e WHERE e.refNo = :refNo", Category.class);
+            categoryTypedQuery.setParameter("refNo", refNo);
+            Category category = categoryTypedQuery.getSingleResult();
+            if (category != null) {
+                entityManager.remove(category);
             }
             return refNo;
         }catch (Exception ex){

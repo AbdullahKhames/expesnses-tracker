@@ -5,5 +5,6 @@ public enum ErrorCategory {
     BusinessError,
     SecurityError,
     RuntimeError,
+    DATABASE_Error,
     UnknownError;
 }

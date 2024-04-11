@@ -6,7 +6,10 @@ import lombok.EqualsAndHashCode;
 import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class GeneralFailureException extends Exception {
+public class GeneralFailureException extends RuntimeException {
+
+
+
 
 	public enum Category {
 
@@ -34,7 +37,12 @@ public class GeneralFailureException extends Exception {
 	public static final String GENERAL_REMOVE_FAILURE_WITH_VARS = "SYS00001";
 
 	public static final String HASHING_ERROR = "SYS00004";
-
+	public static final String NON_UNIQUE_IDENTIFIER = "DB00002";
+	public static final String OBJECT_NOT_FOUND = "DB00001";
+	public static final String ERROR_PERSISTING = "DB00003";
+	public static final String ERROR_UPDATE = "DB00004";
+	public static final String ERROR_DELETE = "DB00005";
+	public static final String ERROR_FETCH = "DB00006";
 
 	protected static String getPrefix() {
 		return "00";

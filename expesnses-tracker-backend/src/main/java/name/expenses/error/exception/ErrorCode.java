@@ -19,8 +19,8 @@ public enum ErrorCode {
 	DELETED_USER("API_016"),
 
 	INVALID_ACCOUNTNUMBER("API_017"),
-
-	 INVALID_MOBILE_NUMBER ("API_018");
+	INVALID_MOBILE_NUMBER ("API_018"),
+	OBJECT_NOT_FOUND("DB_001");
 
 	private String value;
 	

@@ -9,12 +9,14 @@ import name.expenses.features.expesnse.models.Expense;
 import name.expenses.globals.Page;
 import org.mapstruct.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
 @Mapper(componentModel = "JAKARTA",
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-        nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
+        nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
+        imports = {LocalDateTime.class})
 public interface ExpenseMapper {
     @Mappings(
 
@@ -40,9 +42,23 @@ public interface ExpenseMapper {
                     @Mapping(target = "deleted", ignore = true),
                     @Mapping(target = "refNo", ignore = true),
                     @Mapping(target = "createdAt", ignore = true),
-                    @Mapping(target = "updatedAt", ignore = true),
+                    @Mapping(target = "updatedAt", expression = "java(LocalDateTime.now())"),
+
             }
 
     )
     void update(@MappingTarget Expense entity, ExpenseUpdateDto entityUpdateDto);
+    @Mappings(
+
+            {
+                    @Mapping(target = "id", ignore = true),
+                    @Mapping(target = "deleted", ignore = true),
+                    @Mapping(target = "refNo", ignore = true),
+                    @Mapping(target = "createdAt", ignore = true),
+                    @Mapping(target = "updatedAt", ignore = true),
+
+            }
+
+    )
+    Expense reqEntityToEntity(ExpenseUpdateDto newExpense);
 }

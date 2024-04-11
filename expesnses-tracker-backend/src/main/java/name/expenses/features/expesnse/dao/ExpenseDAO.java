@@ -6,11 +6,12 @@ import name.expenses.globals.Page;
 import name.expenses.globals.SortDirection;
 
 import java.util.List;
+import java.util.Optional;
 
 @Local
 public interface ExpenseDAO {
     Expense createExpense(Expense expense);
-    Expense getExpense(String refNo);
+    Optional<Expense> getExpense(String refNo);
     Page<Expense> findAll(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
     List<Expense> getAllExpenses();
     Expense updateExpense(Expense expense);

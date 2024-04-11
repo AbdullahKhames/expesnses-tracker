@@ -5,6 +5,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.ejb.Local;
 import name.expenses.features.expesnse.dtos.request.ExpenseReqDto;
 import name.expenses.features.expesnse.dtos.request.ExpenseUpdateDto;
+import name.expenses.features.sub_category.dtos.request.SubCategoryUpdateDto;
+import name.expenses.features.sub_category.models.SubCategory;
 import name.expenses.globals.SortDirection;
 import name.expenses.globals.responses.ResponseDto;
 
@@ -20,4 +22,5 @@ public interface ExpenseService {
 
     ResponseDto getAllEntities(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
 
+    void updateExpensesAssociation(SubCategory existingSubCategory, SubCategoryUpdateDto newSubCategory);
 }
