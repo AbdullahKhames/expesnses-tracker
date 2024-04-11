@@ -37,7 +37,7 @@ public class ExpenseDAOImpl implements ExpenseDAO {
     }
 
     @Override
-    public Page<Expense> findAll(int pageNumber, int pageSize, String sortBy, SortDirection sortDirection) {
+    public Page<Expense> findAll(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Expense> query = cb.createQuery(Expense.class);
         Root<Expense> root = query.from(Expense.class);
@@ -58,8 +58,8 @@ public class ExpenseDAOImpl implements ExpenseDAO {
         }
 
         TypedQuery<Expense> typedQuery = entityManager.createQuery(query);
-        typedQuery.setFirstResult((pageNumber - 1) * pageSize);
-        typedQuery.setMaxResults(pageSize);
+        typedQuery.setFirstResult((int) ((pageNumber - 1) * pageSize));
+        typedQuery.setMaxResults(Math.toIntExact(pageSize));
         List<Expense> expenses = typedQuery.getResultList();
         CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
         countQuery.select(cb.count(countQuery.from(Expense.class)));

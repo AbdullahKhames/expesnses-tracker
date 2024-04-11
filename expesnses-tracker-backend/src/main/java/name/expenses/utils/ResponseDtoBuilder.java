@@ -11,11 +11,11 @@ public class ResponseDtoBuilder {
                 801,
                 data);
     }
-    public static ResponseDto getErrorResponse(String resourceName, Object data){
+    public static ResponseDto getErrorResponse(int code, Object data){
         return createResponse(
-                String.format("There was an Error Creating %s resource\nplease Try again later!", resourceName),
+                "There was an Error Processing your request\nplease Try again later!",
                 false,
-                810,
+                code,
                 data);
     }
     public static ResponseDto getUpdateResponse(String resourceName, String refNo, Object data){

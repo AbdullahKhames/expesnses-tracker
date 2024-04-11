@@ -1,14 +1,9 @@
 package name.expenses.features.expesnse.service.service_impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import name.expenses.config.ObjectMapperConfig;
 import name.expenses.features.expesnse.dao.ExpenseDAO;
 import name.expenses.features.expesnse.dtos.request.ExpenseReqDto;
 import name.expenses.features.expesnse.dtos.request.ExpenseUpdateDto;
@@ -20,9 +15,6 @@ import name.expenses.globals.Page;
 import name.expenses.globals.SortDirection;
 import name.expenses.globals.responses.ResponseDto;
 import name.expenses.utils.ResponseDtoBuilder;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Stateless
@@ -62,7 +54,7 @@ public class ExpenseServiceStatelessmpl implements ExpenseService {
     }
 
     @Override
-    public ResponseDto getAllEntities(int pageNumber, int pageSize, String sortBy, SortDirection sortDirection) {
+    public ResponseDto getAllEntities(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
         Page<Expense> expensePage = expenseDAO.findAll(pageNumber, pageSize, sortBy, sortDirection);
 
 //        List<ExpenseRespDto> expenseDtos = expensePage.getContent().stream()

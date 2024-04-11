@@ -2,15 +2,15 @@ package name.expenses.features.expesnse.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.inject.Inject;
-import jakarta.validation.Valid;
+import jakarta.interceptor.Interceptors;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import name.expenses.config.AroundAdvice;
 import name.expenses.features.expesnse.dtos.request.ExpenseReqDto;
 import name.expenses.features.expesnse.dtos.request.ExpenseUpdateDto;
-import name.expenses.features.expesnse.models.Expense;
 import name.expenses.features.expesnse.service.ExpenseService;
 import name.expenses.features.expesnse.service.ExpenseServiceStateFull;
 import name.expenses.globals.SortDirection;
@@ -18,11 +18,11 @@ import name.expenses.globals.responses.ResponseDto;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 @Path("/expenses")
 @Slf4j
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
+@Interceptors(AroundAdvice.class)
 public class ExpensesController {
     private final ExpenseServiceStateFull expenseServiceStateFull;
     private final ExpenseService expenseService;
@@ -38,6 +38,7 @@ public class ExpensesController {
     }
     @POST
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces(MediaType.APPLICATION_JSON)
     public Response createExpense(ExpenseReqDto expense){
         try {
             ResponseDto responseDto = expenseService.createExpense(expense);
@@ -64,14 +65,16 @@ public class ExpensesController {
 
     @PUT
     @Path("/{refNo}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateExpense(@PathParam("refNo") String refNo,@Valid ExpenseUpdateDto expenseUpdateDto) throws JsonProcessingException {
+    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateExpense(@PathParam("refNo") String refNo, ExpenseUpdateDto expenseUpdateDto) throws JsonProcessingException {
         ResponseDto responseDto = expenseService.updateExpense(refNo, expenseUpdateDto);
         return Response.ok(responseDto).build();
     }
 
     @DELETE
     @Path("/{refNo}")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response deleteExpense(@PathParam("refNo") String refNo) throws JsonProcessingException {
         ResponseDto responseDto = expenseService.deleteExpense(refNo);
         return Response.ok(responseDto).build();
@@ -80,19 +83,18 @@ public class ExpensesController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllEntities(
-            @QueryParam("page") Integer pageNumber,
-            @QueryParam("size") Integer pageSize,
+            @QueryParam("page") Long pageNumber,
+            @QueryParam("size") Long pageSize,
             @QueryParam("sortBy") String sortBy,
             @QueryParam("sortDirection") String direction) {
-        // Set default values if parameters are not present
         if (pageNumber == null) {
-            pageNumber = 1; // Default page number
+            pageNumber = 1L;
         }
         if (pageSize == null) {
-            pageSize = 10; // Default page size
+            pageSize = 10L;
         }
         if (sortBy == null) {
-            sortBy = "id"; // Default sort by field
+            sortBy = "id";
         }
         SortDirection sortDirection;
         if (direction == null || direction.isBlank() || direction.equalsIgnoreCase("ASC")) {

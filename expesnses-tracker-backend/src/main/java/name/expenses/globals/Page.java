@@ -17,6 +17,7 @@ public class  Page<T> {
   private long pageNumber;
   private long pageSize;
   private long totalElements;
+  private long totalPages;
   private boolean hasNext;
   private boolean hasPrevious;
 
