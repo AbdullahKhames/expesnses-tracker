@@ -56,12 +56,18 @@ public class AuthService {
                 .orElse(false);
         log.info("isTokenValid :{}", isTokenValid);
 
-        Claims claims = jwtService.extractAllClaims(token);
-        String otpRef = claims.get("ref").toString();
-        String deviceId = claims.get("deviceId").toString();
-        boolean exists = authRepo.existsByPhoneAndTokenAndRfeNoAndDeviceId(phone, token, otpRef, deviceId);
-        String type1 = claims.get("type").toString();
-        return exists && isTokenValid && (type1.equals(type.toString()));
+        try{
+            Claims claims = jwtService.extractAllClaims(token);
+            String otpRef = claims.get("ref").toString();
+            String deviceId = claims.get("deviceId").toString();
+            boolean exists = authRepo.existsByPhoneAndTokenAndRfeNoAndDeviceId(phone, token, otpRef, deviceId);
+            String type1 = claims.get("type").toString();
+            return exists && isTokenValid && (type1.equals(type.toString()));
+        }catch (Exception exception){
+            throw new GeneralFailureException(ErrorCode.INVALID_VERIFICATION_TOKEN.getErrorCode(),
+                    Map.of("error", "invalid verification token"));
+        }
+
     }
 
 
