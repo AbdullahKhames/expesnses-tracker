@@ -2,13 +2,14 @@ package name.expenses.features.user.mappers;
 
 
 import name.expenses.features.user.dtos.request.UserReqDto;
-import name.expenses.features.user.dtos.request.UserUpdateDto;
 import name.expenses.features.user.dtos.response.UserRespDto;
+import name.expenses.features.user.models.Role;
 import name.expenses.features.user.models.User;
-import name.expenses.globals.Page;
 import org.mapstruct.*;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -18,48 +19,22 @@ import java.util.Set;
         uses = {
         },
         imports = {LocalDateTime.class})
-public interface UserMapper {
-    @Mappings(
+public abstract class UserMapper {
+    @Mappings({
+            @Mapping(target = "roles", source = "roles",qualifiedByName = "getRoles")
+    })
+    public abstract UserRespDto userToUserRespDto(User user);
 
-            {
-                    @Mapping(target = "id", ignore = true),
-                    @Mapping(target = "deleted", ignore = true),
-                    @Mapping(target = "password", ignore = true),
-                    @Mapping(target = "refNo", ignore = true),
-                    @Mapping(target = "createdAt", ignore = true),
-                    @Mapping(target = "updatedAt", ignore = true),
-            }
+    @Named("getRoles")
+    public List<String> getRoles(Set<Role> roles){
+        if (roles == null) {
+            return Collections.emptyList();
+        }
+        return roles.stream().map(Role::getName).toList();
+    }
 
-    )
-    User reqDtoToEntity(UserReqDto entityReqDto);
-    UserRespDto entityToRespDto(User entity);
-    Set<UserRespDto> entityToRespDto(Set<User> entities);
-    List<UserRespDto> entityToRespDto(List<User> entities);
-    Page<UserRespDto> entityToRespDto(Page<User> entitiesPage);
+    @Mapping(target = "roles", ignore = true)
+    public abstract User userReqDtoToUser(UserReqDto userReqDto);
 
-    @Mappings(
-
-            {
-                    @Mapping(target = "id", ignore = true),
-                    @Mapping(target = "deleted", ignore = true),
-                    @Mapping(target = "refNo", ignore = true),
-                    @Mapping(target = "createdAt", ignore = true),
-                    @Mapping(target = "updatedAt", expression = "java(LocalDateTime.now())"),
-
-            }
-
-    )
-    void update(@MappingTarget User entity, UserUpdateDto entityUpdateDto);
-    @Mappings(
-
-            {
-                    @Mapping(target = "id", ignore = true),
-                    @Mapping(target = "deleted", ignore = true),
-                    @Mapping(target = "refNo", ignore = true),
-                    @Mapping(target = "createdAt", ignore = true),
-                    @Mapping(target = "updatedAt", ignore = true),
-            }
-
-    )
-    User reqEntityToEntity(UserUpdateDto newUser);
+    public abstract Set<UserRespDto>  userToUserRespDto(Set<User> allByDeletedIsFalse);
 }

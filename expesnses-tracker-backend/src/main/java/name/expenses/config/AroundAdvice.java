@@ -11,12 +11,12 @@ import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import name.expenses.error.exception_handler.ResponseExceptionBuilder;
-import name.expenses.features.category.dtos.request.CategoryReqDto;
-import name.expenses.features.category.dtos.request.CategoryUpdateDto;
-import name.expenses.features.expesnse.dtos.request.ExpenseReqDto;
-import name.expenses.features.expesnse.dtos.request.ExpenseUpdateDto;
-import name.expenses.features.sub_category.dtos.request.SubCategoryReqDto;
-import name.expenses.features.sub_category.dtos.request.SubCategoryUpdateDto;
+import name.expenses.features.account.dtos.request.*;
+import name.expenses.features.category.dtos.request.*;
+import name.expenses.features.expesnse.dtos.request.*;
+import name.expenses.features.pocket.dtos.request.*;
+import name.expenses.features.sub_category.dtos.request.*;
+import name.expenses.features.user.dtos.request.*;
 import name.expenses.utils.validators.ValidatorUtils;
 
 import java.util.ArrayList;
@@ -39,6 +39,18 @@ public class AroundAdvice {
         classesToValidate.add(SubCategoryUpdateDto.class);
         classesToValidate.add(CategoryReqDto.class);
         classesToValidate.add(CategoryUpdateDto.class);
+        classesToValidate.add(AccountReqDto.class);
+        classesToValidate.add(AccountUpdateDto.class);
+        classesToValidate.add(PocketReqDto.class);
+        classesToValidate.add(PocketUpdateDto.class);
+        classesToValidate.add(_2authDto.class);
+        classesToValidate.add(ChangeEmailRequest.class);
+        classesToValidate.add(LoginRequest.class);
+        classesToValidate.add(UserReqDto.class);
+        classesToValidate.add(UserRoleDto.class);
+        classesToValidate.add(UserUpdateDto.class);
+        classesToValidate.add(ValidatePhoneDto.class);
+        classesToValidate.add(ValidAuthDto.class);
 
     }
     @AroundInvoke

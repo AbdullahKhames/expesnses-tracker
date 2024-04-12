@@ -10,7 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserUpdateDto {
-    private String name;
+    private String fullName;
+    private String email;
     private int age;
-    private String password;
+//    private String deviceId;
 }

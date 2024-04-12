@@ -52,10 +52,11 @@ public class JwtService {
 //        map.put("UUID",userDetails.getRef());
         return generateRefreshToken(map, userDetails);
     }
-    public String generateVerificationToken(String otpRef , Type type){
+    public String generateVerificationToken(String otpRef, String deviceId, Type type){
         Map<String , Object> map = new HashMap<>();
         map.put("ref",otpRef);
         map.put("type",type.toString());
+        map.put("deviceId", deviceId);
         return generateVerificationToken(map);
     }
     public String generateToken(Map<String , Object> extraClaims , User userDetails){

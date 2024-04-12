@@ -1,11 +1,14 @@
 package name.expenses.features.expesnse.dao.dao_impl;
 
 import jakarta.ejb.Stateless;
+import jakarta.interceptor.Interceptors;
 import jakarta.persistence.*;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Root;
+import jakarta.transaction.Transactional;
+import name.expenses.config.filters.RepoAdvice;
 import name.expenses.error.exception.GeneralFailureException;
 import name.expenses.features.expesnse.dao.ExpenseDAO;
 import name.expenses.features.expesnse.models.Expense;
@@ -19,6 +22,8 @@ import java.util.Map;
 import java.util.Optional;
 
 @Stateless
+@Interceptors(RepoAdvice.class)
+@Transactional
 public class ExpenseDAOImpl implements ExpenseDAO {
 
     @PersistenceContext(unitName = "expenses-unit")
@@ -27,8 +32,12 @@ public class ExpenseDAOImpl implements ExpenseDAO {
     @Override
     public Expense createExpense(Expense expense) {
         try{
-            entityManager.persist(expense);
-            return expense;
+            if (expense.getId() != null && entityManager.find(Expense.class, expense.getId()) != null) {
+                return entityManager.merge(expense);
+            } else {
+                entityManager.persist(expense);
+                return expense;
+            }
         }catch (Exception ex){
             throw new GeneralFailureException(GeneralFailureException.ERROR_PERSISTING,
                     Map.of("original error message", ex.getMessage(),

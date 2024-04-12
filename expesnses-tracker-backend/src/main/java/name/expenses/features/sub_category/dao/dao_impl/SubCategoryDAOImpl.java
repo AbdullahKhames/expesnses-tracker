@@ -1,12 +1,15 @@
 package name.expenses.features.sub_category.dao.dao_impl;
 
 import jakarta.ejb.Stateless;
+import jakarta.interceptor.Interceptors;
 import jakarta.persistence.*;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Root;
 
+import jakarta.transaction.Transactional;
+import name.expenses.config.filters.RepoAdvice;
 import name.expenses.error.exception.GeneralFailureException;
 import name.expenses.features.category.models.Category;
 import name.expenses.features.sub_category.dao.SubCategoryDAO;
@@ -21,6 +24,8 @@ import java.util.Map;
 import java.util.Optional;
 
 @Stateless
+@Interceptors(RepoAdvice.class)
+@Transactional
 public class SubCategoryDAOImpl implements SubCategoryDAO {
 
     @PersistenceContext(unitName = "expenses-unit")
@@ -29,8 +34,12 @@ public class SubCategoryDAOImpl implements SubCategoryDAO {
     @Override
     public SubCategory create(SubCategory subCategory) {
         try{
-            entityManager.persist(subCategory);
-            return subCategory;
+            if (subCategory.getId() != null && entityManager.find(SubCategory.class, subCategory.getId()) != null) {
+                return entityManager.merge(subCategory);
+            } else {
+                entityManager.persist(subCategory);
+                return subCategory;
+            }
         }catch (Exception ex){
             throw new GeneralFailureException(GeneralFailureException.ERROR_PERSISTING,
                     Map.of("original error message", ex.getMessage(),

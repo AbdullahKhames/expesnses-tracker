@@ -18,7 +18,7 @@ class HashingTest {
 
     @Test
     void hash() {
-        System.out.println(Hashing.hash("123"));
+        System.out.println(Hashing.hash("1234"));
     }
 
     @Test

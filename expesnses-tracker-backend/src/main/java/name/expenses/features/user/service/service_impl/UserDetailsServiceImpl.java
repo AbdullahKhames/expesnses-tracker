@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import name.expenses.error.exception.UsernameNotFoundException;
 import name.expenses.features.user.dao.UserDao;
 import name.expenses.features.user.models.User;
-import name.expenses.features.user.models.UserDetails;
 import name.expenses.features.user.service.UserDetailsService;
 
 import java.util.Optional;
@@ -21,7 +20,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private final UserDao userDao;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public User loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> userOptional = userDao.findUserByUsernameAndDeletedIsFalse(username);
         if (userOptional.isPresent()){
             return userOptional.get();

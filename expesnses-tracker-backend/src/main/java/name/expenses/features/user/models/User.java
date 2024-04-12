@@ -7,27 +7,28 @@ import lombok.*;
 import name.expenses.features.base.models.BaseModel;
 import org.hibernate.Hibernate;
 
+import java.security.Principal;
 import java.util.*;
 
-@Getter
 @Setter
+@Getter
 @Entity
+@ToString(callSuper = true)
 @Table(name = "user")
 @NoArgsConstructor
 @AllArgsConstructor
-public class User extends BaseModel implements UserDetails {
+public class User extends BaseModel implements UserDetails, Principal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    private String name;
+    private String fullName;
     private String email;
     private int age;
     private String password;
     private boolean verified = true;
     private boolean loggedIn = false;
     private String deviceId;
-
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER,cascade = CascadeType.PERSIST)
     @ToString.Exclude
     private List<Token> tokens;
@@ -97,4 +98,11 @@ public class User extends BaseModel implements UserDetails {
     public int hashCode() {
         return getClass().hashCode();
     }
+
+    @Override
+    public String getName() {
+        return email;
+    }
+
+
 }

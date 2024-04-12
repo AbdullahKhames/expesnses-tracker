@@ -1,11 +1,14 @@
 package name.expenses.features.pocket.dao.dao_impl;
 
 import jakarta.ejb.Stateless;
+import jakarta.interceptor.Interceptors;
 import jakarta.persistence.*;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Root;
+import jakarta.transaction.Transactional;
+import name.expenses.config.filters.RepoAdvice;
 import name.expenses.error.exception.GeneralFailureException;
 import name.expenses.features.account.models.Account;
 import name.expenses.features.pocket.dao.PocketDAO;
@@ -20,6 +23,8 @@ import java.util.Map;
 import java.util.Optional;
 
 @Stateless
+@Interceptors(RepoAdvice.class)
+@Transactional
 public class PocketDAOImpl implements PocketDAO {
 
     @PersistenceContext(unitName = "expenses-unit")
@@ -28,8 +33,12 @@ public class PocketDAOImpl implements PocketDAO {
     @Override
     public Pocket create(Pocket pocket) {
         try{
-            entityManager.persist(pocket);
-            return pocket;
+            if (pocket.getId() != null && entityManager.find(Pocket.class, pocket.getId()) != null) {
+                return entityManager.merge(pocket);
+            } else {
+                entityManager.persist(pocket);
+                return pocket;
+            }
         }catch (Exception ex){
             throw new GeneralFailureException(GeneralFailureException.ERROR_PERSISTING,
                     Map.of("original error message", ex.getMessage(),
