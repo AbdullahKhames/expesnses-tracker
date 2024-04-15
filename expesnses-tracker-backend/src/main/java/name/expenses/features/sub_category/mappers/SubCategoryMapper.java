@@ -2,6 +2,8 @@ package name.expenses.features.sub_category.mappers;
 
 
 
+import name.expenses.features.category.mappers.CategoryMapper;
+import name.expenses.features.customer.mappers.CustomerMapper;
 import name.expenses.features.expesnse.mappers.ExpenseMapper;
 import name.expenses.features.sub_category.dtos.request.SubCategoryReqDto;
 import name.expenses.features.sub_category.dtos.request.SubCategoryUpdateDto;
@@ -19,7 +21,9 @@ import java.util.UUID;
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
         uses = {
-            ExpenseMapper.class
+            ExpenseMapper.class,
+                CategoryMapper.class
+
         }
         ,imports = {
             UUID.class,
@@ -34,6 +38,8 @@ public interface SubCategoryMapper {
                     @Mapping(target = "refNo", ignore = true),
                     @Mapping(target = "createdAt", ignore = true),
                     @Mapping(target = "updatedAt", ignore = true),
+                    @Mapping(target = "customers", ignore = true),
+
             }
 
     )
@@ -52,6 +58,8 @@ public interface SubCategoryMapper {
                     @Mapping(target = "createdAt", ignore = true),
                     @Mapping(target = "updatedAt", expression = "java(LocalDateTime.now())"),
                     @Mapping(target = "expenses", ignore = true),
+                    @Mapping(target = "customers", ignore = true),
+
             }
 
     )
@@ -64,6 +72,8 @@ public interface SubCategoryMapper {
                     @Mapping(target = "refNo", ignore = true),
                     @Mapping(target = "createdAt", ignore = true),
                     @Mapping(target = "updatedAt", ignore = true),
+                    @Mapping(target = "customers", ignore = true),
+
             }
     )
     SubCategory reqEntityToEntity(SubCategoryUpdateDto subCategoryUpdateDto);

@@ -4,6 +4,7 @@ import lombok.*;
 import name.expenses.features.user.models.Role;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,7 +17,8 @@ public class UserRespDto {
     private String email;
     private int age;
     private String deviceId;
-    private List<String> roles;
+    @Builder.Default
+    private List<String> roles = new ArrayList<>();
     private String refNo;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

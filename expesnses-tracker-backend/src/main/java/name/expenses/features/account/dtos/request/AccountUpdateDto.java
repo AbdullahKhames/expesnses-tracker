@@ -22,5 +22,6 @@ public class AccountUpdateDto {
     private String name;
     private String refNo;
     private String details;
+    @Builder.Default
     private Set<PocketUpdateDto> pockets = new HashSet<>();
 }

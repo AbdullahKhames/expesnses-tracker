@@ -1,10 +1,13 @@
 package name.expenses.features.category.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import name.expenses.features.base.models.BaseModel;
+import name.expenses.features.customer.models.Customer;
 import name.expenses.features.expesnse.models.Expense;
 import name.expenses.features.sub_category.models.SubCategory;
+import name.expenses.utils.collection_getter.SubCategoryGetter;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.time.LocalDateTime;
@@ -18,7 +21,7 @@ import java.util.Set;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class Category extends BaseModel {
+public class Category extends BaseModel implements SubCategoryGetter {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,6 +31,10 @@ public class Category extends BaseModel {
     @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Set<SubCategory> subCategories = new HashSet<>();
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "categories")
+    @ToString.Exclude
+    @JsonIgnore
+    private Set<Customer> customers;
     @PreUpdate
     protected void onUpdate() {
         this.setUpdatedAt(LocalDateTime.now());

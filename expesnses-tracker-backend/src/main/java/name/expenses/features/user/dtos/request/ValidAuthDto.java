@@ -9,6 +9,7 @@ import lombok.*;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class ValidAuthDto {
     @NotBlank(message = "Invalid Phone number: Empty number")
     @NotNull(message = "Invalid Phone number: Number is NULL")

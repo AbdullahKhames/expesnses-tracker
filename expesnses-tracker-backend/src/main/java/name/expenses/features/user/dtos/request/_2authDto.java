@@ -12,6 +12,7 @@ import name.expenses.utils.validators.validatoranootations.EnumNamePattern;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor
+@Builder
 public class _2authDto {
         @NotNull
         private String email;

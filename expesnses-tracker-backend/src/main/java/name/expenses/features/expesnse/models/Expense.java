@@ -1,9 +1,12 @@
 package name.expenses.features.expesnse.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import name.expenses.features.base.models.BaseModel;
+import name.expenses.features.customer.models.Customer;
+import name.expenses.features.sub_category.models.SubCategory;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.time.LocalDateTime;
@@ -22,6 +25,16 @@ public class Expense extends BaseModel {
     private String name;
     private String details;
     private double amount;
+    @Transient
+    private boolean newObj = false;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @JsonIgnore
+    private Customer customer;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private SubCategory subCategory;
+    @JsonIgnore
     @PreUpdate
     protected void onUpdate() {
         this.setUpdatedAt(LocalDateTime.now());

@@ -1,4 +1,4 @@
-package name.expenses.config;
+package name.expenses.config.advice;
 
 
 import jakarta.ejb.Stateless;

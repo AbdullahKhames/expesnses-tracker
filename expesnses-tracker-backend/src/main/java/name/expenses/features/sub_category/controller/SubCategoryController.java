@@ -7,7 +7,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import name.expenses.config.AroundAdvice;
+import name.expenses.config.advice.AroundAdvice;
 import name.expenses.features.sub_category.dtos.request.SubCategoryReqDto;
 import name.expenses.features.sub_category.dtos.request.SubCategoryUpdateDto;
 import name.expenses.features.sub_category.service.SubService;

@@ -31,6 +31,8 @@ public interface CategoryMapper {
                     @Mapping(target = "refNo", ignore = true),
                     @Mapping(target = "createdAt", ignore = true),
                     @Mapping(target = "updatedAt", ignore = true),
+                    @Mapping(target = "customers", ignore = true),
+
             }
 
     )
@@ -49,6 +51,7 @@ public interface CategoryMapper {
                     @Mapping(target = "createdAt", ignore = true),
                     @Mapping(target = "updatedAt", expression = "java(LocalDateTime.now())"),
                     @Mapping(target = "subCategories", ignore = true),
+                    @Mapping(target = "customers", ignore = true),
 
             }
 

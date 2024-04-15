@@ -1,6 +1,5 @@
 package name.expenses.features.user.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.inject.Inject;
 import jakarta.interceptor.Interceptors;
@@ -9,7 +8,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import name.expenses.config.AroundAdvice;
+import name.expenses.config.advice.AroundAdvice;
 import name.expenses.error.exception_handler.ResponseExceptionBuilder;
 import name.expenses.features.user.dtos.request.ValidAuthDto;
 import name.expenses.features.user.dtos.request._2authDto;

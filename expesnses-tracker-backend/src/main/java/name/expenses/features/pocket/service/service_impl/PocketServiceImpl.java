@@ -8,8 +8,15 @@ import name.expenses.error.exception.ErrorCode;
 import name.expenses.error.exception.GeneralFailureException;
 import name.expenses.error.exception_handler.models.ErrorCategory;
 import name.expenses.error.exception_handler.models.ResponseError;
+import name.expenses.features.account.dao.AccountDAO;
 import name.expenses.features.account.dtos.request.AccountUpdateDto;
 import name.expenses.features.account.models.Account;
+import name.expenses.features.association.AssociationResponse;
+import name.expenses.features.association.Models;
+import name.expenses.features.customer.dao.CustomerDAO;
+import name.expenses.features.customer.models.Customer;
+import name.expenses.features.expesnse.dtos.request.ExpenseReqDto;
+import name.expenses.features.expesnse.models.Expense;
 import name.expenses.features.pocket.dao.PocketDAO;
 import name.expenses.features.pocket.dtos.request.PocketReqDto;
 import name.expenses.features.pocket.dtos.request.PocketUpdateDto;
@@ -18,14 +25,18 @@ import name.expenses.features.pocket.mappers.PocketMapper;
 import name.expenses.features.pocket.models.Pocket;
 import name.expenses.features.pocket.service.PocketService;
 
+import name.expenses.features.sub_category.models.SubCategory;
 import name.expenses.globals.Page;
 import name.expenses.globals.SortDirection;
 import name.expenses.globals.responses.ResponseDto;
 import name.expenses.utils.ResponseDtoBuilder;
 import name.expenses.utils.ValidateInputUtils;
+import name.expenses.utils.collection_getter.ExpenseGetter;
+import name.expenses.utils.collection_getter.PocketGetter;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Stateless
@@ -35,15 +46,56 @@ public class PocketServiceImpl implements PocketService {
     public static final String POCKET = "Pocket";
     private final PocketDAO pocketDAO;
     private final PocketMapper pocketMapper;
+    private final AccountDAO accountDAO;
+    private final CustomerDAO customerDAO;
 
 
 
     @Override
-    public ResponseDto create(PocketReqDto pocket) {
-        Pocket sentPocket = pocketMapper.reqDtoToEntity(pocket);
-        Pocket savedPocket = pocketDAO.create(sentPocket);
-        log.info("created pocket {}", savedPocket);
-        return ResponseDtoBuilder.getCreateResponse(POCKET, savedPocket.getRefNo(), pocketMapper.entityToRespDto(savedPocket));
+    public ResponseDto create(PocketReqDto pocketReqDto) {
+        try {
+            Pocket sentPocket = pocketMapper.reqDtoToEntity(pocketReqDto);
+//            Pocket savedPocket = pocketDAO.create(sentPocket);
+            Optional<Customer> customerOptional = customerDAO.get(pocketReqDto.getCustomerId());
+            if (customerOptional.isEmpty()){
+                throw new GeneralFailureException(ErrorCode.OBJECT_NOT_FOUND.getErrorCode(),
+                        Map.of("error", "account not found"));
+            }else {
+                Customer customer = customerOptional.get();
+                if (customer.getPockets() == null) {
+                    customer.setPockets(new HashSet<>());
+                }
+                customer.getPockets().add(sentPocket);
+                sentPocket.setCustomer(customer);
+//                customerDAO.update(customer);
+            }
+//            if (savedPocket == null || savedPocket.getId() == null){
+//                throw new GeneralFailureException(ErrorCode.OBJECT_NOT_FOUND.getErrorCode(),
+//                        Map.of("error", "savedPocket not found"));
+//            }
+            associateAccount(pocketReqDto, sentPocket);
+            Pocket savedPocket = pocketDAO.create(sentPocket);
+            log.info("created pocket {}", savedPocket);
+            return ResponseDtoBuilder.getCreateResponse(POCKET, savedPocket.getRefNo(), pocketMapper.entityToRespDto(savedPocket));
+        }catch (Exception ex){
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private void associateAccount(PocketReqDto pocketReqDto, Pocket sentPocket) {
+        Optional<Account> accountOptional = accountDAO.get(pocketReqDto.getAccountRefNo());
+        if (accountOptional.isEmpty()){
+            throw new GeneralFailureException(ErrorCode.OBJECT_NOT_FOUND.getErrorCode(),
+                    Map.of("error", "account not found"));
+        }else {
+            Account account = accountOptional.get();
+            if (account.getPockets() == null) {
+                account.setPockets(new HashSet<>());
+            }
+            account.getPockets().add(sentPocket);
+            sentPocket.setAccount(account);
+//                accountDAO.update(account);
+        }
     }
 
     public Optional<Pocket> getEntity(String refNo){
@@ -118,7 +170,12 @@ public class PocketServiceImpl implements PocketService {
     }
 
     @Override
-    public boolean addAssociation(Account entity, String refNo) {
+    public Set<Pocket> getEntities(Set<String> refNos) {
+        return pocketDAO.getEntities(refNos);
+    }
+
+    @Override
+    public boolean addAssociation(Account entity, Models entityModel, String refNo) {
         if (ValidateInputUtils.isValidInput(entity, entity.getPockets())) {
             Optional<Pocket> pocketOptional = getEntity(refNo);
             if (pocketOptional.isEmpty()) {
@@ -144,7 +201,76 @@ public class PocketServiceImpl implements PocketService {
     }
 
     @Override
-    public boolean removeAssociation(Account entity, String refNo) {
+    public ResponseDto addAssociation(Object entity, Models entityModel, Set<String> refNos) {
+        ResponseDto entityResponse = ValidateInputUtils.validateEntity(entity, PocketGetter.class);
+        if (entityResponse != null) {
+            return entityResponse;
+        }
+        PocketGetter pocketGetter = (PocketGetter) entity;
+        AssociationResponse associationResponse = new AssociationResponse();
+        for (String refNo: refNos){
+            Optional<Pocket> pocketOptional = getEntity(refNo);
+            if (pocketOptional.isPresent()){
+                Pocket pocket = pocketOptional.get();
+                if (pocketGetter.getPockets() == null){
+                    pocketGetter.setPockets(new HashSet<>());
+                }
+                if (pocketGetter.getPockets().contains(pocket)){
+                    associationResponse.getError().put(refNo, "this pocketGetter already contain this pocket");
+                } else if (customerDAO.existByPocket(pocket)) {
+                    associationResponse.getError().put(refNo, "this pocket already present on another customer");
+                } else {
+                    pocketGetter.getPockets().add(pocketOptional.get());
+                    associationResponse.getSuccess().put(refNo, "was added successfully");
+                }
+            }else {
+                associationResponse.getError().put(refNo, "no pocket corresponds to this ref no");
+            }
+        }
+        return ResponseDtoBuilder.getUpdateResponse(entityModel.name(), pocketGetter.getRefNo(), associationResponse);
+    }
+
+    @Override
+    public ResponseDto addDtoAssociation(Object entity, Models entityModel, Set<?> associationReqDto) {
+        ResponseDto entityResponse = ValidateInputUtils.validateEntity(entity, PocketGetter.class);
+        if (entityResponse != null) {
+            return entityResponse;
+        }
+        ResponseDto errorResponse = ValidateInputUtils.validateWildCardSet(associationReqDto, PocketReqDto.class);
+        if (errorResponse != null) {
+            return errorResponse;
+        }
+        PocketGetter pocketGetter = (PocketGetter) entity;
+        AssociationResponse associationResponse = new AssociationResponse();
+        try {
+            Set<Pocket> pockets = associationReqDto.stream()
+                    .map(reqDto ->{
+                        PocketReqDto pocketReqDto = (PocketReqDto) reqDto;
+                        Pocket pocket = pocketMapper.reqDtoToEntity(pocketReqDto);
+//                        pocketGetter.getPockets().add(pocket);
+                        if (entityModel == Models.CUSTOMER){
+                            pocket.setCustomer((Customer) pocketGetter);
+                        }
+                        associateAccount(pocketReqDto, pocket);
+                        return pocket;
+                    })
+                    .collect(Collectors.toSet());
+            pocketGetter.getPockets().addAll(pockets);
+            pocketDAO.saveAll(pockets);
+        }catch (Exception ex){
+            throw new IllegalArgumentException(ex);
+        }
+
+        return ResponseDtoBuilder.getUpdateResponse(entityModel.name(), pocketGetter.getRefNo(), associationResponse);
+    }
+
+//    @Override
+//    public ResponseDto addAssociation(Account entity, Set<PocketUpdateDto> associationsUpdateDto) {
+//        return null;
+//    }
+
+    @Override
+    public boolean removeAssociation(Account entity, Models entityModel, String refNo) {
         if (ValidateInputUtils.isValidInput(entity, entity.getPockets())) {
             Optional<Pocket> pocketOptional = getEntity(refNo);
             if (pocketOptional.isEmpty()) {
@@ -168,6 +294,63 @@ public class PocketServiceImpl implements PocketService {
         }
         return false;
     }
+
+    @Override
+    public ResponseDto removeAssociation(Object entity, Models entityModel, Set<String> refNos) {
+        ResponseDto entityResponse = ValidateInputUtils.validateEntity(entity, PocketGetter.class);
+        if (entityResponse != null) {
+            return entityResponse;
+        }
+        PocketGetter pocketGetter = (PocketGetter) entity;
+        AssociationResponse associationResponse = new AssociationResponse();
+        for (String refNo: refNos){
+            Optional<Pocket> pocketOptional = getEntity(refNo);
+            if (pocketOptional.isPresent()){
+                Pocket pocket = pocketOptional.get();
+                if (pocketGetter.getPockets() == null){
+                    pocketGetter.setPockets(new HashSet<>());
+                }
+                if (pocketGetter.getPockets().contains(pocket)){
+                    pocketGetter.getPockets().remove(pocketOptional.get());
+                    associationResponse.getSuccess().put(refNo, "was removed successfully");
+                }else {
+                    associationResponse.getError().put(refNo, "this pocketGetter doesn't contain this pocket");
+                }
+            }else {
+                associationResponse.getError().put(refNo, "no pocket corresponds to this ref no");
+            }
+        }
+        return ResponseDtoBuilder.getUpdateResponse(entityModel.name(), pocketGetter.getRefNo(), associationResponse);
+    }
+
+    @Override
+    public ResponseDto removeDtoAssociation(Object entity, Models entityModel, Set<?> associationsUpdateDto) {
+        ResponseDto errorResponse = ValidateInputUtils.validateWildCardSet(associationsUpdateDto, PocketUpdateDto.class);
+        if (errorResponse != null) {
+            return errorResponse;
+        }
+        try {
+            Set<Pocket> pockets = new HashSet<>();
+            for (Object obj : associationsUpdateDto) {
+                PocketUpdateDto pocketUpdateDto = (PocketUpdateDto) obj;
+                Optional<Pocket> pocketOptional = getEntity(pocketUpdateDto.getRefNo());
+                if (pocketOptional.isPresent())
+                    pockets.add(pocketOptional.get());
+                else {
+                    pockets.add(pocketMapper.reqEntityToEntity(pocketUpdateDto));
+                }
+            }
+        }catch (Exception ex){
+            return ResponseDtoBuilder.getErrorResponse(810, "error processing your request");
+        }
+        return null;
+    }
+
+
+//    @Override
+//    public ResponseDto removeAssociation(Account entity, Set<PocketUpdateDto> associationsUpdateDto) {
+//        return null;
+//    }
 
     @Override
     public void updateAssociation(Account entity, AccountUpdateDto entityUpdateDto) {

@@ -3,7 +3,7 @@ package name.expenses.features.user.dao.dao_impl;
 import jakarta.inject.Singleton;
 import jakarta.interceptor.Interceptors;
 import jakarta.transaction.Transactional;
-import name.expenses.config.filters.RepoAdvice;
+import name.expenses.config.advice.RepoAdvice;
 import name.expenses.features.user.dao._2authRepo;
 
 import jakarta.persistence.EntityManager;

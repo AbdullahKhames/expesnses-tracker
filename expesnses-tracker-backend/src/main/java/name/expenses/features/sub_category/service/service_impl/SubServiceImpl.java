@@ -5,11 +5,12 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import name.expenses.error.exception.ErrorCode;
 import name.expenses.error.exception.GeneralFailureException;
 import name.expenses.error.exception_handler.models.ErrorCategory;
 import name.expenses.error.exception_handler.models.ResponseError;
+import name.expenses.features.association.AssociationResponse;
+import name.expenses.features.association.Models;
 import name.expenses.features.category.dtos.request.CategoryUpdateDto;
 import name.expenses.features.category.models.Category;
 import name.expenses.features.expesnse.service.ExpenseService;
@@ -25,6 +26,7 @@ import name.expenses.globals.SortDirection;
 import name.expenses.globals.responses.ResponseDto;
 import name.expenses.utils.ResponseDtoBuilder;
 import name.expenses.utils.ValidateInputUtils;
+import name.expenses.utils.collection_getter.SubCategoryGetter;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -36,14 +38,27 @@ import java.util.*;
 public class SubServiceImpl implements SubService {
     public static final String SUBCATEGORY = "SubCategory";
     private final SubCategoryDAO subCategoryDAO;
+    private final name.expenses.features.category.dao.CategoryDAO categoryDAO;
     private final SubCategoryMapper subCategoryMapper;
     private final ExpenseService expenseService;
 
 
     @Override
-    public ResponseDto create(SubCategoryReqDto subCategory) {
-        SubCategory sentSubCategory = subCategoryMapper.reqDtoToEntity(subCategory);
+    public ResponseDto create(SubCategoryReqDto subCategoryReqDto) {
+        SubCategory sentSubCategory = subCategoryMapper.reqDtoToEntity(subCategoryReqDto);
         SubCategory savedSubCategory = subCategoryDAO.create(sentSubCategory);
+        Optional<Category> categoryOptional = categoryDAO.get(subCategoryReqDto.getCategoryRefNo());
+        if (categoryOptional.isPresent()){
+            Category category = categoryOptional.get();
+            if (category.getSubCategories() == null) {
+                category.setSubCategories(new HashSet<>());
+            }
+            category.getSubCategories().add(savedSubCategory);
+            categoryDAO.update(category);
+        }else {
+            throw new GeneralFailureException(ErrorCode.OBJECT_NOT_FOUND.getErrorCode(),
+                    Map.of("error", "category not found"));
+        }
         log.info("created subCategory {}", savedSubCategory);
         return ResponseDtoBuilder.getCreateResponse(SUBCATEGORY, savedSubCategory.getRefNo(), subCategoryMapper.entityToRespDto(savedSubCategory));
     }
@@ -121,7 +136,12 @@ public class SubServiceImpl implements SubService {
     }
 
     @Override
-    public boolean addAssociation(Category category, String refNo) {
+    public Set<SubCategory> getEntities(Set<String> refNos) {
+        return subCategoryDAO.getEntities(refNos);
+    }
+
+    @Override
+    public boolean addAssociation(Category category, Models entityModel, String refNo) {
         if (ValidateInputUtils.isValidInput(category, category.getSubCategories())) {
             Optional<SubCategory> subCategoryOptional = getEntity(refNo);
             if (subCategoryOptional.isEmpty()) {
@@ -147,7 +167,46 @@ public class SubServiceImpl implements SubService {
     }
 
     @Override
-    public boolean removeAssociation(Category category, String refNo) {
+    public ResponseDto addAssociation(Object entity, Models entityModel, Set<String> refNos) {
+        ResponseDto entityResponse = ValidateInputUtils.validateEntity(entity, SubCategoryGetter.class);
+        if (entityResponse != null) {
+            return entityResponse;
+        }
+        SubCategoryGetter subCategoryGetter = (SubCategoryGetter) entity;
+        AssociationResponse associationResponse = new AssociationResponse();
+        for (String refNo: refNos){
+            Optional<SubCategory> subCategoryOptional = getEntity(refNo);
+            if (subCategoryOptional.isPresent()){
+                SubCategory subCategory = subCategoryOptional.get();
+                if (subCategoryGetter.getSubCategories() == null){
+                    subCategoryGetter.setSubCategories(new HashSet<>());
+                }
+                if (subCategoryGetter.getSubCategories().contains(subCategory)){
+                    associationResponse.getError().put(refNo, "this subCategoryGetter already contain this subCategory");
+                }else {
+                    subCategoryGetter.getSubCategories().add(subCategory);
+                    associationResponse.getSuccess().put(refNo, "was added successfully");
+                }
+            }else {
+                associationResponse.getError().put(refNo, "no subCategory corresponds to this ref no");
+            }
+        }
+        return ResponseDtoBuilder.getUpdateResponse(entityModel.name(), subCategoryGetter.getRefNo(), associationResponse);
+    }
+
+    @Override
+    public ResponseDto addDtoAssociation(Object entity, Models entityModel, Set<?> associationUpdateDto) {
+        return null;
+    }
+
+//    @Override
+//    public ResponseDto addAssociation(Category entity, Models entityModel, Set<SubCategoryUpdateDto> associationsUpdateDto) {
+//        return null;
+//    }
+
+
+    @Override
+    public boolean removeAssociation(Category category, Models entityModel, String refNo) {
         if (ValidateInputUtils.isValidInput(category, category.getSubCategories())) {
             Optional<SubCategory> subCategoryOptional = getEntity(refNo);
             if (subCategoryOptional.isEmpty()) {
@@ -171,6 +230,45 @@ public class SubServiceImpl implements SubService {
         }
         return false;
     }
+
+    @Override
+    public ResponseDto removeAssociation(Object entity, Models entityModel, Set<String> refNos) {
+        ResponseDto entityResponse = ValidateInputUtils.validateEntity(entity, SubCategoryGetter.class);
+        if (entityResponse != null) {
+            return entityResponse;
+        }
+        SubCategoryGetter subCategoryGetter = (SubCategoryGetter) entity;
+        AssociationResponse associationResponse = new AssociationResponse();
+        for (String refNo: refNos){
+            Optional<SubCategory> subCategoryOptional = getEntity(refNo);
+            if (subCategoryOptional.isPresent()){
+                SubCategory subCategory = subCategoryOptional.get();
+                if (subCategoryGetter.getSubCategories() == null){
+                    subCategoryGetter.setSubCategories(new HashSet<>());
+                }
+                if (subCategoryGetter.getSubCategories().contains(subCategory)){
+                    subCategoryGetter.getSubCategories().remove(subCategoryOptional.get());
+                    associationResponse.getSuccess().put(refNo, "was removed successfully");
+                }else {
+                    associationResponse.getError().put(refNo, "this subCategoryGetter doesn't contain this subCategory");
+                }
+            }else {
+                associationResponse.getError().put(refNo, "no subCategory corresponds to this ref no");
+            }
+        }
+        return ResponseDtoBuilder.getUpdateResponse(entityModel.name(), subCategoryGetter.getRefNo(), associationResponse);
+    }
+
+    @Override
+    public ResponseDto removeDtoAssociation(Object entity, Models entityModel, Set<?> associationsUpdateDto) {
+        return null;
+    }
+
+//    @Override
+//    public ResponseDto removeAssociation(Category entity, Set<SubCategoryUpdateDto> associationsUpdateDto) {
+//        return null;
+//    }
+
 
     @Override
     public void updateAssociation(Category category, CategoryUpdateDto categoryUpdateDto) {

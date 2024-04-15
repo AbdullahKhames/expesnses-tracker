@@ -8,7 +8,7 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Transactional;
-import name.expenses.config.filters.RepoAdvice;
+import name.expenses.config.advice.RepoAdvice;
 import name.expenses.error.exception.GeneralFailureException;
 import name.expenses.features.account.dao.AccountDAO;
 import name.expenses.features.account.models.Account;
@@ -17,9 +17,7 @@ import name.expenses.globals.SortDirection;
 import name.expenses.utils.FieldValidator;
 import name.expenses.utils.PageUtil;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Stateless
 @Interceptors(RepoAdvice.class)
@@ -31,14 +29,20 @@ public class AccountDAOImpl implements AccountDAO {
 
     @Override
     public Account create(Account account) {
+
         try{
+            entityManager.getTransaction().begin();
             if (account.getId() != null && entityManager.find(Account.class, account.getId()) != null) {
-                return entityManager.merge(account);
+                Account account1 = entityManager.merge(account);
+                entityManager.getTransaction().commit();
+                return account1;
             } else {
                 entityManager.persist(account);
+                entityManager.getTransaction().commit();
                 return account;
             }
         }catch (Exception ex){
+            entityManager.getTransaction().rollback();
             throw new GeneralFailureException(GeneralFailureException.ERROR_PERSISTING,
                     Map.of("original error message", ex.getMessage(),
                             "error", "there was an error with your request couldn't persist"));
@@ -137,5 +141,17 @@ public class AccountDAOImpl implements AccountDAO {
                     Map.of("original error message", ex.getMessage().substring(0, 15),
                             "error", "there was an error with your request couldn't delete entity"));
         }
+    }
+
+    @Override
+    public Set<Account> getEntities(Set<String> refNos) {
+        if (refNos == null || refNos.isEmpty()) {
+            return new HashSet<>();
+        }
+
+        TypedQuery<Account> query = entityManager.createQuery(
+                "SELECT a FROM Account a WHERE a.refNo IN :refNos", Account.class);
+        query.setParameter("refNos", refNos);
+        return new HashSet<>(query.getResultList());
     }
 }

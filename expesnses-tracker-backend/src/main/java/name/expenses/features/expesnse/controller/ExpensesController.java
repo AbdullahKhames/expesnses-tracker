@@ -8,7 +8,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import name.expenses.config.AroundAdvice;
+import name.expenses.config.advice.AroundAdvice;
 import name.expenses.features.expesnse.dtos.request.ExpenseReqDto;
 import name.expenses.features.expesnse.dtos.request.ExpenseUpdateDto;
 import name.expenses.features.expesnse.service.ExpenseService;
@@ -40,22 +40,18 @@ public class ExpensesController {
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces(MediaType.APPLICATION_JSON)
     public Response createExpense(ExpenseReqDto expense){
-        try {
-            ResponseDto responseDto = expenseService.createExpense(expense);
-            if (responseDto != null) {
-                return Response.ok(responseDto).build();
-            } else {
-                return Response.status(Response.Status.NOT_FOUND).build();
-            }
-        } catch (JsonProcessingException e) {
-            return Response.noContent().build();
+        ResponseDto responseDto = expenseService.create(expense);
+        if (responseDto != null) {
+            return Response.ok(responseDto).build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).build();
         }
     }
     @GET
     @Path("/{refNo}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getExpense(@PathParam("refNo") String refNo) {
-        ResponseDto responseDto = expenseService.getExpense(refNo);
+        ResponseDto responseDto = expenseService.get(refNo);
         if (responseDto != null) {
             return Response.ok(responseDto).build();
         } else {
@@ -68,7 +64,7 @@ public class ExpensesController {
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateExpense(@PathParam("refNo") String refNo, ExpenseUpdateDto expenseUpdateDto) throws JsonProcessingException {
-        ResponseDto responseDto = expenseService.updateExpense(refNo, expenseUpdateDto);
+        ResponseDto responseDto = expenseService.update(refNo, expenseUpdateDto);
         return Response.ok(responseDto).build();
     }
 
@@ -76,7 +72,7 @@ public class ExpensesController {
     @Path("/{refNo}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteExpense(@PathParam("refNo") String refNo) throws JsonProcessingException {
-        ResponseDto responseDto = expenseService.deleteExpense(refNo);
+        ResponseDto responseDto = expenseService.delete(refNo);
         return Response.ok(responseDto).build();
     }
 

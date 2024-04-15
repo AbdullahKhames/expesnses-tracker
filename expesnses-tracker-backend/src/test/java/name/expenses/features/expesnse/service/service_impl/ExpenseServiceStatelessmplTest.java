@@ -54,7 +54,7 @@ class ExpenseServiceStatelessmplTest {
         when(expenseDAO.createExpense(expense)).thenReturn(expense);
 
         // Act
-        ResponseDto result = expenseService.createExpense(expenseReqDto);
+        ResponseDto result = expenseService.create(expenseReqDto);
 
         // Assert
         verify(expenseMapper, times(1)).reqDtoToEntity(expenseReqDto);

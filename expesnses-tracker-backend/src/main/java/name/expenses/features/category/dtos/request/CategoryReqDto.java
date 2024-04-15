@@ -22,6 +22,4 @@ public class CategoryReqDto {
     private String name;
     private String details;
 
-    @Builder.Default
-    @Valid
-    private Set<SubCategoryReqDto> subCategories = new HashSet<>();}
+}

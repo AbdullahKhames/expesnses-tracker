@@ -7,6 +7,7 @@ import name.expenses.globals.SortDirection;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Local
 public interface CategoryDAO {
@@ -16,4 +17,5 @@ public interface CategoryDAO {
     List<Category> get();
     Category update(Category expense);
     String delete(String refNo);
+    Set<Category> getEntities(Set<String> refNos);
 }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 import name.expenses.features.base.models.BaseModel;
+import name.expenses.features.customer.models.Customer;
 import org.hibernate.Hibernate;
 
 import java.security.Principal;
@@ -23,12 +24,16 @@ public class User extends BaseModel implements UserDetails, Principal {
     @Column(name = "id", nullable = false)
     private Long id;
     private String fullName;
+    @Column(unique = true)
     private String email;
     private int age;
     private String password;
     private boolean verified = true;
     private boolean loggedIn = false;
     private String deviceId;
+    @OneToOne(mappedBy = "user")
+    @ToString.Exclude
+    private Customer customer;
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER,cascade = CascadeType.PERSIST)
     @ToString.Exclude
     private List<Token> tokens;

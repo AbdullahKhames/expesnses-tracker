@@ -8,7 +8,7 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Transactional;
-import name.expenses.config.filters.RepoAdvice;
+import name.expenses.config.advice.RepoAdvice;
 import name.expenses.error.exception.GeneralFailureException;
 import name.expenses.features.expesnse.dao.ExpenseDAO;
 import name.expenses.features.expesnse.models.Expense;
@@ -17,9 +17,7 @@ import name.expenses.globals.SortDirection;
 import name.expenses.utils.FieldValidator;
 import name.expenses.utils.PageUtil;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Stateless
 @Interceptors(RepoAdvice.class)
@@ -134,5 +132,31 @@ public class ExpenseDAOImpl implements ExpenseDAO {
                     Map.of("original error message", ex.getMessage().substring(0, 15),
                             "error", "there was an error with your request couldn't delete entity"));
         }
+    }
+
+    @Override
+    public Set<Expense> getEntities(Set<String> refNos) {
+        if (refNos == null || refNos.isEmpty()) {
+            return new HashSet<>();
+        }
+
+        TypedQuery<Expense> query = entityManager.createQuery(
+                "SELECT a FROM Expense a WHERE a.refNo IN :refNos", Expense.class);
+        query.setParameter("refNos", refNos);
+        return new HashSet<>(query.getResultList());
+    }
+
+    @Override
+    public Set<Expense> saveAll(Set<Expense> expenses) {
+        Set<Expense> savedExpenses = new HashSet<>();
+        if (expenses != null && !expenses.isEmpty()) {
+            for (Expense expense : expenses) {
+                entityManager.persist(expense);
+                savedExpenses.add(expense);
+            }
+            entityManager.flush();
+            entityManager.clear();
+        }
+        return savedExpenses;
     }
 }

@@ -7,6 +7,7 @@ import name.expenses.globals.SortDirection;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Local
 public interface ExpenseDAO {
@@ -16,4 +17,7 @@ public interface ExpenseDAO {
     List<Expense> getAllExpenses();
     Expense updateExpense(Expense expense);
     String deleteExpense(String refNo);
+    Set<Expense> getEntities(Set<String> refNos);
+
+    Set<Expense> saveAll(Set<Expense> expenses);
 }

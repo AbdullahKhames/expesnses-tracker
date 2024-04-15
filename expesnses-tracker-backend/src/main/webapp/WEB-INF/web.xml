@@ -15,4 +15,8 @@
         <servlet-name>Jersey Web Application</servlet-name>
         <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
+    <login-config>
+        <auth-method>BASIC</auth-method>
+        <realm-name>JDBCRealm</realm-name>
+    </login-config>
 </web-app>

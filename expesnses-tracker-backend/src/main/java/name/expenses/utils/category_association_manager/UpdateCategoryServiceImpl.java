@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import name.expenses.features.category.dtos.request.CategoryUpdateDto;
 import name.expenses.features.category.models.Category;
 import name.expenses.features.sub_category.service.SubService;
-import name.expenses.globals.association.UpdateAssociation;
+import name.expenses.features.association.UpdateAssociation;
 
 import java.util.ArrayList;
 import java.util.List;

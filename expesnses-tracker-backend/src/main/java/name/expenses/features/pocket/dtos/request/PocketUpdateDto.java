@@ -6,7 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import name.expenses.features.pocket.models.PocketType;
 import name.expenses.features.sub_category.dtos.request.SubCategoryUpdateDto;
+import name.expenses.utils.validators.validatoranootations.EnumNamePattern;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,6 +23,9 @@ public class PocketUpdateDto {
     private String name;
     private String refNo;
     private String details;
+    @NotNull
+    @EnumNamePattern(regexp = "SERVICE|REPO|BAQA|WEEKLY|MOM|MISC|DONATION")
+    private PocketType pocketType;
     @NotNull
     private Double amount;
 }

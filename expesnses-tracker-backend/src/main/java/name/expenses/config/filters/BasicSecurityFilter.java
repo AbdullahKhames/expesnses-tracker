@@ -47,10 +47,11 @@ public class BasicSecurityFilter implements ContainerRequestFilter {
     @PostConstruct
     private void init()
     {
-        AUTHORIZATION_HEADER_PREFIX = propertyLoaderComponent.getPropertyAsString("AUTHORIZATION_HEADER_PREFIX") + " ";
+//        AUTHORIZATION_HEADER_PREFIX = propertyLoaderComponent.getPropertyAsString("AUTHORIZATION_HEADER_PREFIX") + " ";
     }
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
+        AUTHORIZATION_HEADER_PREFIX = propertyLoaderComponent.getPropertyAsString("AUTHORIZATION_HEADER_PREFIX") + " ";
         List<String> WHITELIST = new ArrayList<>(List.of(propertyLoaderComponent.getPropertyAsString("APIS.WHITELIST").split(",")));
         final String REQUEST_PATH = requestContext.getUriInfo().getAbsolutePath().getPath();
         final String METHOD = requestContext.getMethod();
@@ -69,32 +70,53 @@ public class BasicSecurityFilter implements ContainerRequestFilter {
                         username = jwtService.extractUsername(jwt);
 
                     }catch (ExpiredJwtException expiredJwtException){
-                        errorResponse(requestContext, new RuntimeException("token is expired"));
+                        Response response  = errorResponse(requestContext, new RuntimeException("token is expired"));
+                                requestContext.abortWith(response);
+
                     } catch (Exception exception){
-                        errorResponse(requestContext, exception);
+                        Response response  = errorResponse(requestContext, exception);
+                                requestContext.abortWith(response);
+
                     }
                     if(username != null && jwt != null){
                         User user = null;
                         try {
                             user = userDetailsService.loadUserByUsername(username);
                         } catch (Exception exception) {
-                            errorResponse(requestContext, exception);
+                            Response response  = errorResponse(requestContext, exception);
+                                    requestContext.abortWith(response);
+
                         }
 
                         if (user == null) {
-                            errorResponse(requestContext, null);
+                            Response response  = errorResponse(requestContext, null);
+                                    requestContext.abortWith(response);
+
                         }
                         var isTokenValid = tokenRepo.findByToken(jwt)
                                 .map(t -> !t.isExpired() && !t.isRevoked())
                                 .orElse(false);
 
-                        if (jwtService.isTokenValid(jwt , user) && isTokenValid){
-                            if (performAuthorizationRules(requestContext, user, REQUEST_PATH, METHOD)){
-                                return;
+                        try{
+                            if (jwtService.isTokenValid(jwt , user) && isTokenValid){
+                                if (performAuthorizationRules(requestContext, user, REQUEST_PATH, METHOD)){
+                                    return;
+                                }else {
+                                    Response response  = errorResponse(requestContext, null);
+                                            requestContext.abortWith(response);
+
+                                }
                             }else {
-                                errorResponse(requestContext, null);
+                                Response response  = errorResponse(requestContext, null);
+                                        requestContext.abortWith(response);
+
                             }
+                        }catch (Exception exception){
+                            Response response  = errorResponse(requestContext, exception);
+                                    requestContext.abortWith(response);
+
                         }
+
                     }
                 }else if (AUTHORIZATION_HEADER_PREFIX.equals("Basic ")){
                     String userName = null;
@@ -107,35 +129,54 @@ public class BasicSecurityFilter implements ContainerRequestFilter {
                         userName = stringTokenizer.nextToken();
                         password = stringTokenizer.nextToken();
                     }catch (Exception exception){
-                        errorResponse(requestContext, exception);
+                        Response response  = errorResponse(requestContext, exception);
+                                requestContext.abortWith(response);
+
                     }
                     if (userName == null || password == null) {
-                        errorResponse(requestContext, null);
+                        Response response  = errorResponse(requestContext, null);
+                                requestContext.abortWith(response);
+
                     }
                     User user = null;
                     try {
                         user = userDetailsService.loadUserByUsername(userName);
                     } catch (Exception exception) {
-                        errorResponse(requestContext, exception);
+                        Response response  = errorResponse(requestContext, exception);
+                                requestContext.abortWith(response);
+
                     }
 
                     if (user == null) {
-                        errorResponse(requestContext, null);
+                        Response response  = errorResponse(requestContext, null);
+                                requestContext.abortWith(response);
+
                     }
 
                     // if the password is correct check for authorization roles here
-                    if (Hashing.verify(password, user.getPassword())) {
-                        if (performAuthorizationRules(requestContext, user, REQUEST_PATH, METHOD)){
-                            return;
-                        }else {
-                            errorResponse(requestContext, null);
+                    try {
+                        if (Hashing.verify(password, user.getPassword())) {
+                            if (performAuthorizationRules(requestContext, user, REQUEST_PATH, METHOD)){
+                                return;
+                            }else {
+                                Response response  = errorResponse(requestContext, null);
+                                        requestContext.abortWith(response);
+
+                            }
                         }
+                    }catch (Exception ex){
+                        Response response  = errorResponse(requestContext, ex);
+                                requestContext.abortWith(response);
+
                     }
+
                 }
 
             }
             // no auth header found
-            errorResponse(requestContext, null);
+            Response response  = errorResponse(requestContext, null);
+                    requestContext.abortWith(response);
+
         }
         // here it means it is in white list
     }
@@ -154,19 +195,25 @@ public class BasicSecurityFilter implements ContainerRequestFilter {
                 if (SHARED_ROLES.stream().anyMatch(userSecurityContext::isUserInRole)) {
                     return true;
                 }else {
-                    errorResponse(requestContext, new RuntimeException("you are not authorized to use this request"));
+                    Response response  = errorResponse(requestContext, new RuntimeException("you are not authorized to use this request"));
+                            requestContext.abortWith(response);
+
                 }
             }else if (isPathInWhitelist(ADMIN_APIS, REQUEST_PATH, METHOD)){
                 if (userSecurityContext.isUserInRole("ROLE_ADMIN")) {
                     return true;
                 }else {
-                    errorResponse(requestContext, new RuntimeException("you are not authorized to use this request ADMIN ONLY"));
+                    Response response  = errorResponse(requestContext, new RuntimeException("you are not authorized to use this request ADMIN ONLY"));
+                            requestContext.abortWith(response);
+
                 }
             }else if(isPathInWhitelist(CUSTOMER_APIS, REQUEST_PATH, METHOD)){
                 if (userSecurityContext.isUserInRole("ROLE_CUSTOMER")) {
                     return true;
                 }else {
-                    errorResponse(requestContext, new RuntimeException("you are not authorized to use this request CUSTOMER ONLY"));
+                    Response response  = errorResponse(requestContext, new RuntimeException("you are not authorized to use this request CUSTOMER ONLY"));
+                            requestContext.abortWith(response);
+
                 }
             }
             // here means that there is no authorization rule for this api (end point)
@@ -180,7 +227,7 @@ public class BasicSecurityFilter implements ContainerRequestFilter {
 
     }
 
-    private static void errorResponse(ContainerRequestContext requestContext, Exception exception) {
+    private static Response errorResponse(ContainerRequestContext requestContext, Exception exception) {
         ResponseError responseError = new ResponseError();
         responseError.setErrorCategory(ErrorCategory.BusinessError);
         if (exception != null && exception.getMessage()!= null) {
@@ -195,7 +242,7 @@ public class BasicSecurityFilter implements ContainerRequestFilter {
                 .entity(ResponseDtoBuilder.getErrorResponse(810, responseError))
                 .build();
 
-        requestContext.abortWith(response);
+        return response;
     }
     public boolean isPathInWhitelist(List<String> WHITELIST, String path, String method) {
         for (String pattern : WHITELIST) {

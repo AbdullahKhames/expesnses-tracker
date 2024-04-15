@@ -1,10 +1,14 @@
 package name.expenses.features.sub_category.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import name.expenses.features.base.models.BaseModel;
+import name.expenses.features.category.models.Category;
+import name.expenses.features.customer.models.Customer;
 import name.expenses.features.expesnse.models.Expense;
+import name.expenses.utils.collection_getter.ExpenseGetter;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.time.LocalDateTime;
@@ -18,7 +22,7 @@ import java.util.Set;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class SubCategory extends BaseModel {
+public class SubCategory extends BaseModel implements ExpenseGetter {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,9 +30,16 @@ public class SubCategory extends BaseModel {
 //    private double amount;
     private String details;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "sub-category-id", referencedColumnName = "id")
     private Set<Expense> expenses = new HashSet<>();
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "subCategories")
+    @ToString.Exclude
+    @JsonIgnore
+    private Set<Customer> customers;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private Category category;
     @PreUpdate
     protected void onUpdate() {
         this.setUpdatedAt(LocalDateTime.now());

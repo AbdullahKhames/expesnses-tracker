@@ -3,13 +3,12 @@ package name.expenses.features.user.dao.dao_impl;
 import jakarta.inject.Singleton;
 import jakarta.interceptor.Interceptors;
 import jakarta.transaction.Transactional;
-import name.expenses.config.filters.RepoAdvice;
+import name.expenses.config.advice.RepoAdvice;
 import name.expenses.features.user.dao.RoleRepo;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import name.expenses.features.user.models.Role;
-import name.expenses.features.user.models._2auth;
 
 import java.util.List;
 import java.util.Optional;

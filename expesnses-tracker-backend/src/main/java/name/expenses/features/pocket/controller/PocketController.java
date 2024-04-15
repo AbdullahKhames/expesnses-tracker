@@ -1,5 +1,6 @@
 package name.expenses.features.pocket.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.inject.Inject;
 import jakarta.interceptor.Interceptors;
 import jakarta.ws.rs.*;
@@ -7,8 +8,9 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import name.expenses.config.AroundAdvice;
+import name.expenses.config.advice.AroundAdvice;
 
+import name.expenses.error.exception_handler.ResponseExceptionBuilder;
 import name.expenses.features.pocket.dtos.request.PocketReqDto;
 import name.expenses.features.pocket.dtos.request.PocketUpdateDto;
 import name.expenses.features.pocket.service.PocketService;
@@ -21,15 +23,21 @@ import name.expenses.globals.responses.ResponseDto;
 @Interceptors(AroundAdvice.class)
 public class PocketController {
     private final PocketService pocketService;
+    private final ResponseExceptionBuilder responseExceptionBuilder;
+
     @POST
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createPocket(PocketReqDto pocket){
-        ResponseDto responseDto = pocketService.create(pocket);
-        if (responseDto != null) {
-            return Response.ok(responseDto).build();
-        } else {
-            return Response.status(Response.Status.NOT_FOUND).build();
+    public Response createPocket(String rawRequestBody){
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            PocketReqDto request = objectMapper.readValue(rawRequestBody, PocketReqDto.class);
+            return Response.ok(pocketService.create(request)).build();
+        } catch (Exception e) {
+            // Handle the deserialization error here...
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(responseExceptionBuilder.buildResponse(e))
+                    .build();
         }
     }
     @GET
@@ -48,9 +56,17 @@ public class PocketController {
     @Path("/{refNo}")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updatePocket(@PathParam("refNo") String refNo, PocketUpdateDto pocketUpdateDto) {
-        ResponseDto responseDto = pocketService.update(refNo, pocketUpdateDto);
-        return Response.ok(responseDto).build();
+    public Response updatePocket(@PathParam("refNo") String refNo, String rawRequestBody) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            PocketUpdateDto request = objectMapper.readValue(rawRequestBody, PocketUpdateDto.class);
+            return Response.ok(pocketService.update(refNo, request)).build();
+        } catch (Exception e) {
+            // Handle the deserialization error here...
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(responseExceptionBuilder.buildResponse(e))
+                    .build();
+        }
     }
 
     @DELETE

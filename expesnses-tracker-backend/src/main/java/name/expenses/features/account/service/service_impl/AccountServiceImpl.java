@@ -15,18 +15,25 @@ import name.expenses.features.account.dtos.response.AccountRespDto;
 import name.expenses.features.account.mappers.AccountMapper;
 import name.expenses.features.account.models.Account;
 import name.expenses.features.account.service.AccountService;
-import name.expenses.features.category.models.Category;
+import name.expenses.features.association.AssociationResponse;
+import name.expenses.features.customer.models.Customer;
+import name.expenses.features.expesnse.models.Expense;
 import name.expenses.globals.Page;
 import name.expenses.globals.SortDirection;
-import name.expenses.globals.association.CollectionAssociation;
+import name.expenses.features.association.Models;
 import name.expenses.globals.responses.ResponseDto;
 import name.expenses.utils.ResponseDtoBuilder;
+import name.expenses.utils.ValidateInputUtils;
 import name.expenses.utils.account_association_manager.AccountAssociationManager;
 import name.expenses.utils.account_association_manager.UpdateAccountServiceImpl;
+import name.expenses.utils.collection_getter.AccountGetter;
+import name.expenses.utils.collection_getter.ExpenseGetter;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @Stateless
@@ -119,12 +126,21 @@ public class AccountServiceImpl implements AccountService {
         Page<AccountRespDto> accountDtos = accountMapper.entityToRespDto(accountPage);
         return ResponseDtoBuilder.getFetchAllResponse(ACCOUNT, accountDtos);
     }
+
+    @Override
+    public Set<Account> getEntities(Set<String> refNos) {
+        if (refNos == null || refNos.isEmpty()) {
+            return new HashSet<>();
+        }
+        return accountDAO.getEntities(refNos);
+    }
+
     @Override
     public ResponseDto addAssociation(String accountRefNo, String pocketRefNo) {
         Optional<Account> accountOptional = getEntity(accountRefNo);
         if (accountOptional.isPresent()){
             Account account = accountOptional.get();
-            if (accountAssociationManager.addAssociation(account, CollectionAssociation.POCKET, pocketRefNo)){
+            if (accountAssociationManager.addAssociation(account, Models.POCKET, pocketRefNo)){
                 return ResponseDtoBuilder.getUpdateResponse(ACCOUNT, accountRefNo, accountMapper.entityToRespDto(account));
             }
             return ResponseDtoBuilder.getErrorResponse(804, "something went wrong couldn't add");
@@ -142,7 +158,7 @@ public class AccountServiceImpl implements AccountService {
         Optional<Account> accountOptional = getEntity(accountRefNo);
         if (accountOptional.isPresent()){
             Account account = accountOptional.get();
-            if (accountAssociationManager.removeAssociation(account, CollectionAssociation.POCKET, pocketRefNo)){
+            if (accountAssociationManager.removeAssociation(account, Models.POCKET, pocketRefNo)){
                 return ResponseDtoBuilder.getUpdateResponse(ACCOUNT, accountRefNo, accountMapper.entityToRespDto(account));
             }
             return ResponseDtoBuilder.getErrorResponse(804, "something went wrong couldn't remove");
@@ -152,5 +168,84 @@ public class AccountServiceImpl implements AccountService {
         responseError.setErrorCode(ErrorCode.OBJECT_NOT_FOUND.getErrorCode());
         responseError.setErrorMessage(String.format("account with the ref number %s was not found", accountRefNo));
         return ResponseDtoBuilder.getErrorResponse(804, responseError);
+    }
+
+    @Override
+    public boolean addAssociation(Customer entity, Models entityModel, String refNo) {
+        return false;
+    }
+
+
+
+    @Override
+    public ResponseDto addDtoAssociation(Object entity, Models entityModel, Set<?> associationUpdateDto) {
+        return null;
+    }
+
+    @Override
+    public boolean removeAssociation(Customer entity, Models entityModel, String refNo) {
+        return false;
+    }
+
+
+
+    @Override
+    public ResponseDto removeDtoAssociation(Object entity, Models entityModel, Set<?> associationsUpdateDto) {
+        return null;
+    }
+
+    @Override
+    public ResponseDto addAssociation(Object entity, Models entityModel, Set<String> refNos) {
+        ResponseDto entityResponse = ValidateInputUtils.validateEntity(entity, AccountGetter.class);
+        if (entityResponse != null) {
+            return entityResponse;
+        }
+        AccountGetter accountsGetter = (AccountGetter) entity;
+        AssociationResponse associationResponse = new AssociationResponse();
+        for (String refNo: refNos){
+            Optional<Account> accountOptional = getEntity(refNo);
+            if (accountOptional.isPresent()){
+                Account account = accountOptional.get();
+                if (accountsGetter.getAccounts() == null){
+                    accountsGetter.setAccounts(new HashSet<>());
+                }
+                if (accountsGetter.getAccounts().contains(account)){
+                    associationResponse.getError().put(refNo, "this accountsGetter already contain this account");
+                }else {
+                    accountsGetter.getAccounts().add(account);
+                    associationResponse.getSuccess().put(refNo, "was added successfully");
+                }
+            }else {
+                associationResponse.getError().put(refNo, "no account corresponds to this ref no");
+            }
+        }
+        return ResponseDtoBuilder.getUpdateResponse(entityModel.name(), accountsGetter.getRefNo(), associationResponse);
+    }
+    @Override
+    public ResponseDto removeAssociation(Object entity, Models entityModel, Set<String> refNos) {
+        ResponseDto entityResponse = ValidateInputUtils.validateEntity(entity, AccountGetter.class);
+        if (entityResponse != null) {
+            return entityResponse;
+        }
+        AccountGetter accountsGetter = (AccountGetter) entity;
+        AssociationResponse associationResponse = new AssociationResponse();
+        for (String refNo: refNos){
+            Optional<Account> accountOptional = getEntity(refNo);
+            if (accountOptional.isPresent()){
+                Account account = accountOptional.get();
+                if (accountsGetter.getAccounts() == null){
+                    accountsGetter.setAccounts(new HashSet<>());
+                }
+                if (accountsGetter.getAccounts().contains(account)){
+                    accountsGetter.getAccounts().remove(accountOptional.get());
+                    associationResponse.getSuccess().put(refNo, "was removed successfully");
+                }else {
+                    associationResponse.getError().put(refNo, "this accountsGetter doesn't contain this account");
+                }
+            }else {
+                associationResponse.getError().put(refNo, "no account corresponds to this ref no");
+            }
+        }
+        return ResponseDtoBuilder.getUpdateResponse(entityModel.name(), accountsGetter.getRefNo(), associationResponse);
     }
 }

@@ -5,7 +5,7 @@ import jakarta.interceptor.Interceptors;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
-import name.expenses.config.filters.RepoAdvice;
+import name.expenses.config.advice.RepoAdvice;
 import name.expenses.features.user.dao.TokenRepo;
 import name.expenses.features.user.models.Token;
 import name.expenses.features.user.models.TokenType;

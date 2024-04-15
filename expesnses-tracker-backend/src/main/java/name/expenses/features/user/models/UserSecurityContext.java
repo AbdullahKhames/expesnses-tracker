@@ -26,6 +26,9 @@ public class UserSecurityContext implements SecurityContext {
                 .anyMatch(roleName -> roleName.equalsIgnoreCase(role));
     }
 
+    public User getUser(){
+        return this.user;
+    }
     @Override
     public boolean isSecure() {
         // Implement logic to determine if the request is secure

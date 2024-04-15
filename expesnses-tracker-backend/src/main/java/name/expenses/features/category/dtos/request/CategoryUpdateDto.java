@@ -24,4 +24,5 @@ public class CategoryUpdateDto {
     private String refNo;
     @Builder.Default
     @Valid
-    private Set<SubCategoryUpdateDto> subCategories = new HashSet<>();}
+    private Set<SubCategoryUpdateDto> subCategories = new HashSet<>();
+}

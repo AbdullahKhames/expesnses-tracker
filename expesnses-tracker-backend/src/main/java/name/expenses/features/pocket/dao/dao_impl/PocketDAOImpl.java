@@ -8,7 +8,7 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Transactional;
-import name.expenses.config.filters.RepoAdvice;
+import name.expenses.config.advice.RepoAdvice;
 import name.expenses.error.exception.GeneralFailureException;
 import name.expenses.features.account.models.Account;
 import name.expenses.features.pocket.dao.PocketDAO;
@@ -18,9 +18,7 @@ import name.expenses.globals.SortDirection;
 import name.expenses.utils.FieldValidator;
 import name.expenses.utils.PageUtil;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Stateless
 @Interceptors(RepoAdvice.class)
@@ -151,5 +149,31 @@ public class PocketDAOImpl implements PocketDAO {
             return null;
         }
         return account.getId();
+    }
+
+    @Override
+    public Set<Pocket> getEntities(Set<String> refNos) {
+        if (refNos == null || refNos.isEmpty()) {
+            return new HashSet<>();
+        }
+
+        TypedQuery<Pocket> query = entityManager.createQuery(
+                "SELECT a FROM Pocket a WHERE a.refNo IN :refNos", Pocket.class);
+        query.setParameter("refNos", refNos);
+        return new HashSet<>(query.getResultList());
+    }
+
+    @Override
+    public Set<Pocket> saveAll(Set<Pocket> pockets) {
+        Set<Pocket> savedPockets = new HashSet<>();
+        if (pockets != null && !pockets.isEmpty()) {
+            for (Pocket pocket : pockets) {
+                entityManager.persist(pocket); // Queue each Pocket object for persistence
+                savedPockets.add(pocket); // Add the Pocket to the set
+            }
+            entityManager.flush(); // Flush changes to the database
+            entityManager.clear(); // Clear the persistence context to release memory
+        }
+        return savedPockets;
     }
 }

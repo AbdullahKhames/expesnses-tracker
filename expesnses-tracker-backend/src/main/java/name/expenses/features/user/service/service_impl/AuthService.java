@@ -18,10 +18,7 @@ import name.expenses.error.exception.APIException;
 import name.expenses.error.exception.ErrorCode;
 import name.expenses.error.exception.GeneralFailureException;
 import name.expenses.error.exception.ObjectNotFoundException;
-import name.expenses.features.user.dao.RoleRepo;
-import name.expenses.features.user.dao.TokenRepo;
-import name.expenses.features.user.dao.UserRepo;
-import name.expenses.features.user.dao._2authRepo;
+import name.expenses.features.user.dao.*;
 import name.expenses.features.user.dtos.request.LoginRequest;
 import name.expenses.features.user.dtos.request.UserReqDto;
 import name.expenses.features.user.dtos.response.AuthResponse;
@@ -45,6 +42,7 @@ public class AuthService {
     private final RoleRepo roleRepo;
     private final UserMapper userMapper;
     private final JwtService jwtService;
+    private final GroupDao groupDao;
     @Context
     SecurityContext securityContext;
     public boolean verified(String phone, String token, Type type) {
@@ -118,21 +116,14 @@ public class AuthService {
         }
         user.setRoles(Set.of(role));
         user.setPassword(Hashing.hash(request.getPassword()));
-        var savedUser = userRepo.save(user);
-        var jwtToken = jwtService.generateToken(user);
-
-        saveUserToken(savedUser, jwtToken, TokenType.BEARER);
-        var jwtRefreshToken = jwtService.generateRefreshToken(user);
-        saveUserToken(savedUser, jwtRefreshToken, TokenType.REFRESH);
-
-        Map<String, String> refNo = new HashMap<>();
-        refNo.put("userRefNo", user.getRefNo());
-
+        User savedUser = userRepo.save(user);
+        Group group = new Group(user.getEmail(), "BASIC");
+        groupDao.save(group);
         return ResponseDto.builder()
                 .message("Registered Successfully")
                 .status(true)
                 .code(200)
-                .data(refNo)
+                .data(savedUser)
                 .build();
     }
     public void saveUserToken(User user, String jwtToken, TokenType tokenType) {

@@ -9,13 +9,12 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.SecurityContext;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import name.expenses.config.AroundAdvice;
+import name.expenses.config.advice.AroundAdvice;
 import name.expenses.features.user.dtos.request.ChangeEmailRequest;
 import name.expenses.features.user.dtos.request.LoginRequest;
 import name.expenses.features.user.dtos.request.UserReqDto;
@@ -77,7 +76,7 @@ public class UserController {
     public Response resetAccount(LoginRequest loginRequest) {
         return Response.ok(authService.resetAccount(loginRequest)).build();
     }
-    @RolesAllowed("CUSTOMER")
+    @RolesAllowed("ADMIN")
     @Path("/logout/{refNo}")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -89,7 +88,7 @@ public class UserController {
     @Path("/auth")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed("ADMIN")
+    @RolesAllowed("ROLE_ADMIN")
     public String test() {
         return "user";
     }
@@ -123,7 +122,6 @@ public class UserController {
     public Response delete(@PathParam("id") String refNo) {
         return Response.ok(userService.softDeleteUser(refNo)).build();
     }
-    @RolesAllowed({"ADMIN","CUSTOMER"})
     @Path("/all")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -154,7 +152,7 @@ public class UserController {
     public String testToken(@Context HttpServletRequest request) {
         JwtService jwtService = new JwtService();
 
-        return jwtService.extractUUIDFromRequest(request);
+        return jwtService.extractKeyFromRequest(request, "UUID");
     }
     @Path("/logout")
     @GET

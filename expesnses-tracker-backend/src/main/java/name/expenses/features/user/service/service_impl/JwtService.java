@@ -7,6 +7,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.inject.Singleton;
+import jakarta.ws.rs.core.Context;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -43,12 +44,18 @@ public class JwtService {
 
     public String generateToken(User userDetails){
         Map<String , Object> map = new HashMap<>();
+        if (userDetails.getCustomer() != null){
+            map.put("customerId",userDetails.getCustomer().getId());
+        }
         map.put("UUID",userDetails.getRefNo());
 //        map.put("id", userDetails.getId());
         return generateToken(map , userDetails);
     }
     public String generateRefreshToken(User userDetails){
         Map<String , Object> map = new HashMap<>();
+        if (userDetails.getCustomer() != null){
+            map.put("customerId",userDetails.getCustomer().getId());
+        }
 //        map.put("UUID",userDetails.getRef());
         return generateRefreshToken(map, userDetails);
     }
@@ -135,13 +142,16 @@ public class JwtService {
 
         return extractAllClaims(token).get("UUID").toString();
     }
-    public String extractUUIDFromRequest(HttpServletRequest request){
+    public String extractKeyFromRequest(@Context HttpServletRequest request, String key){
         String token;
         token = extractTokenFromRequest(request);
-
-        return extractAllClaims(token).get("UUID").toString();
+        Claims claims = extractAllClaims(token);
+        if (claims == null || claims.get(key) == null) {
+            return null;
+        }
+        return claims.get(key, String.class);
     }
-    public String extractTokenFromRequest(HttpServletRequest request){
+    public String extractTokenFromRequest(@Context HttpServletRequest request){
         String token;
         try {
             String operator = request.getHeader("Authorization");

@@ -9,6 +9,7 @@ import lombok.*;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class OtpResponseDto {
 
     @NotNull

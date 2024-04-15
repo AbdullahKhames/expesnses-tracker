@@ -10,6 +10,7 @@ import name.expenses.error.exception.ErrorCode;
 import name.expenses.error.exception.GeneralFailureException;
 import name.expenses.error.exception_handler.models.ErrorCategory;
 import name.expenses.error.exception_handler.models.ResponseError;
+import name.expenses.features.association.AssociationResponse;
 import name.expenses.features.category.dao.CategoryDAO;
 import name.expenses.features.category.dtos.request.CategoryReqDto;
 import name.expenses.features.category.dtos.request.CategoryUpdateDto;
@@ -17,17 +18,22 @@ import name.expenses.features.category.dtos.response.CategoryRespDto;
 import name.expenses.features.category.mappers.CategoryMapper;
 import name.expenses.features.category.models.Category;
 import name.expenses.features.category.service.CategoryService;
+import name.expenses.features.customer.models.Customer;
 import name.expenses.globals.Page;
 import name.expenses.globals.SortDirection;
-import name.expenses.globals.association.CollectionAssociation;
+import name.expenses.features.association.Models;
 import name.expenses.globals.responses.ResponseDto;
 import name.expenses.utils.ResponseDtoBuilder;
+import name.expenses.utils.ValidateInputUtils;
 import name.expenses.utils.category_association_manager.CategoryAssociationManager;
 import name.expenses.utils.category_association_manager.UpdateCategoryServiceImpl;
+import name.expenses.utils.collection_getter.CategoryGetter;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @Stateless
@@ -113,7 +119,7 @@ public class CategoryServiceImpl implements CategoryService {
         Optional<Category> categoryOptional = getEntity(categoryRefNo);
         if (categoryOptional.isPresent()){
             Category category = categoryOptional.get();
-            if (categoryAssociationManager.addAssociation(category, CollectionAssociation.SUB_CATEGORY, subCategoryRefNo)){
+            if (categoryAssociationManager.addAssociation(category, Models.SUB_CATEGORY, subCategoryRefNo)){
                 return ResponseDtoBuilder.getUpdateResponse(CATEGORY, categoryRefNo, categoryMapper.entityToRespDto(category));
             }
             return ResponseDtoBuilder.getErrorResponse(804, "something went wrong couldn't add");
@@ -131,7 +137,7 @@ public class CategoryServiceImpl implements CategoryService {
         Optional<Category> categoryOptional = getEntity(categoryRefNo);
         if (categoryOptional.isPresent()){
             Category category = categoryOptional.get();
-            if (categoryAssociationManager.removeAssociation(category, CollectionAssociation.SUB_CATEGORY, subCategoryRefNo)){
+            if (categoryAssociationManager.removeAssociation(category, Models.SUB_CATEGORY, subCategoryRefNo)){
                 return ResponseDtoBuilder.getUpdateResponse(CATEGORY, categoryRefNo, categoryMapper.entityToRespDto(category));
             }
             return ResponseDtoBuilder.getErrorResponse(804, "something went wrong couldn't remove");
@@ -155,5 +161,87 @@ public class CategoryServiceImpl implements CategoryService {
         Page<Category> categoryPage = categoryDAO.findAll(pageNumber, pageSize, sortBy, sortDirection);
         Page<CategoryRespDto> categoryDtos = categoryMapper.entityToRespDto(categoryPage);
         return ResponseDtoBuilder.getFetchAllResponse(CATEGORY, categoryDtos);
+    }
+
+    @Override
+    public Set<Category> getEntities(Set<String> refNos) {
+        return categoryDAO.getEntities(refNos);
+    }
+
+    @Override
+    public boolean addAssociation(Customer entity, Models entityModel, String refNo) {
+        return false;
+    }
+
+
+
+    @Override
+    public ResponseDto addDtoAssociation(Object entity, Models entityModel, Set<?> associationUpdateDto) {
+        return null;
+    }
+
+    @Override
+    public boolean removeAssociation(Customer entity, Models entityModel, String refNo) {
+        return false;
+    }
+
+    @Override
+    public ResponseDto removeDtoAssociation(Object entity, Models entityModel, Set<?> associationsUpdateDto) {
+        return null;
+    }
+    @Override
+    public ResponseDto addAssociation(Object entity, Models entityModel, Set<String> refNos) {
+        ResponseDto entityResponse = ValidateInputUtils.validateEntity(entity, CategoryGetter.class);
+        if (entityResponse != null) {
+            return entityResponse;
+        }
+        CategoryGetter categoryGetter = (CategoryGetter) entity;
+        AssociationResponse associationResponse = new AssociationResponse();
+        for (String refNo: refNos){
+            Optional<Category> categoryOptional = getEntity(refNo);
+            if (categoryOptional.isPresent()){
+                Category category = categoryOptional.get();
+                if (categoryGetter.getCategories() == null){
+                    categoryGetter.setCategories(new HashSet<>());
+                }
+                if (categoryGetter.getCategories().contains(category)){
+                    associationResponse.getError().put(refNo, "this categoryGetter already contain this category");
+                }else {
+                    categoryGetter.getCategories().add(category);
+                    associationResponse.getSuccess().put(refNo, "was added successfully");
+                }
+            }else {
+                associationResponse.getError().put(refNo, "no category corresponds to this ref no");
+            }
+        }
+        return ResponseDtoBuilder.getUpdateResponse(entityModel.name(), categoryGetter.getRefNo(), associationResponse);
+    }
+
+    @Override
+    public ResponseDto removeAssociation(Object entity, Models entityModel, Set<String> refNos) {
+        ResponseDto entityResponse = ValidateInputUtils.validateEntity(entity, CategoryGetter.class);
+        if (entityResponse != null) {
+            return entityResponse;
+        }
+        CategoryGetter categoryGetter = (CategoryGetter) entity;
+        AssociationResponse associationResponse = new AssociationResponse();
+        for (String refNo: refNos){
+            Optional<Category> categoryOptional = getEntity(refNo);
+            if (categoryOptional.isPresent()){
+                Category category = categoryOptional.get();
+                if (categoryGetter.getCategories() == null){
+                    categoryGetter.setCategories(new HashSet<>());
+                }
+                if (categoryGetter.getCategories().contains(category)){
+                    categoryGetter.getCategories().remove(categoryOptional.get());
+                    associationResponse.getSuccess().put(refNo, "was removed successfully");
+                }else {
+                    associationResponse.getError().put(refNo, "this categoryGetter doesn't contain this category");
+                }
+            }else {
+                associationResponse.getError().put(refNo, "no category corresponds to this ref no");
+            }
+        }
+        return ResponseDtoBuilder.getUpdateResponse(entityModel.name(), categoryGetter.getRefNo(), associationResponse);
     }
 }

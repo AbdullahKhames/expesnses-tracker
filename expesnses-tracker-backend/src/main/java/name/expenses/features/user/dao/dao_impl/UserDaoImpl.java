@@ -7,7 +7,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import name.expenses.config.filters.RepoAdvice;
+import name.expenses.config.advice.RepoAdvice;
 import name.expenses.error.exception.UsernameNotFoundException;
 import name.expenses.features.user.dao.UserDao;
 import name.expenses.features.user.dao.UserRepo;

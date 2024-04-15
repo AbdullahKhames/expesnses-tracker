@@ -2,10 +2,12 @@ package name.expenses.features.expesnse.mappers;
 
 
 import jakarta.ejb.Stateless;
+import name.expenses.features.customer.mappers.CustomerMapper;
 import name.expenses.features.expesnse.dtos.request.ExpenseReqDto;
 import name.expenses.features.expesnse.dtos.request.ExpenseUpdateDto;
 import name.expenses.features.expesnse.dtos.response.ExpenseRespDto;
 import name.expenses.features.expesnse.models.Expense;
+import name.expenses.features.sub_category.mappers.SubCategoryMapper;
 import name.expenses.globals.Page;
 import org.mapstruct.*;
 
@@ -16,6 +18,9 @@ import java.util.Set;
 @Mapper(componentModel = "JAKARTA",
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
+        uses = {
+                SubCategoryMapper.class
+        },
         imports = {LocalDateTime.class})
 public interface ExpenseMapper {
     @Mappings(
@@ -26,10 +31,19 @@ public interface ExpenseMapper {
                     @Mapping(target = "refNo", ignore = true),
                     @Mapping(target = "createdAt", ignore = true),
                     @Mapping(target = "updatedAt", ignore = true),
+                    @Mapping(target = "customer", ignore = true),
+
             }
 
     )
     Expense reqDtoToEntity(ExpenseReqDto entityReqDto);
+    @Mappings(
+
+            {
+                    @Mapping(target = "customer", ignore = true),
+            }
+
+    )
     ExpenseRespDto entityToRespDto(Expense entity);
     Set<ExpenseRespDto> entityToRespDto(Set<Expense> entities);
     List<ExpenseRespDto> entityToRespDto(List<Expense> entities);
@@ -43,6 +57,7 @@ public interface ExpenseMapper {
                     @Mapping(target = "refNo", ignore = true),
                     @Mapping(target = "createdAt", ignore = true),
                     @Mapping(target = "updatedAt", expression = "java(LocalDateTime.now())"),
+                    @Mapping(target = "customer", ignore = true),
 
             }
 
@@ -56,6 +71,8 @@ public interface ExpenseMapper {
                     @Mapping(target = "refNo", ignore = true),
                     @Mapping(target = "createdAt", ignore = true),
                     @Mapping(target = "updatedAt", ignore = true),
+                    @Mapping(target = "customer", ignore = true),
+
 
             }
 

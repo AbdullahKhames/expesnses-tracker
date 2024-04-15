@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import name.expenses.features.customer.dtos.response.CustomerRespDto;
 import name.expenses.features.sub_category.dtos.response.SubCategoryRespDto;
 
 import java.time.LocalDateTime;
@@ -19,6 +20,7 @@ public class PocketRespDto {
     private String name;
     private String details;
     private Double amount;
+    private CustomerRespDto customer;
     private String refNo;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

@@ -9,7 +9,7 @@ import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Root;
 
 import jakarta.transaction.Transactional;
-import name.expenses.config.filters.RepoAdvice;
+import name.expenses.config.advice.RepoAdvice;
 import name.expenses.error.exception.GeneralFailureException;
 import name.expenses.features.category.models.Category;
 import name.expenses.features.sub_category.dao.SubCategoryDAO;
@@ -19,9 +19,7 @@ import name.expenses.globals.SortDirection;
 import name.expenses.utils.FieldValidator;
 import name.expenses.utils.PageUtil;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Stateless
 @Interceptors(RepoAdvice.class)
@@ -147,5 +145,19 @@ public class SubCategoryDAOImpl implements SubCategoryDAO {
             return null;
         }
         return category.getId();
+    }
+
+    @Override
+    public Set<SubCategory> getEntities(Set<String> refNos) {
+        if (refNos == null || refNos.isEmpty()) {
+            return new HashSet<>();
+        }
+
+        TypedQuery<SubCategory> query = entityManager.createQuery(
+                "SELECT a FROM SubCategory a WHERE a.refNo IN :refNos", SubCategory.class);
+        query.setParameter("refNos", refNos);
+        List<SubCategory> accounts = query.getResultList();
+
+        return new HashSet<>(accounts);
     }
 }

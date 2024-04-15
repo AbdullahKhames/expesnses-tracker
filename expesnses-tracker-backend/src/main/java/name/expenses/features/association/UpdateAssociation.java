@@ -1,4 +1,4 @@
-package name.expenses.globals.association;
+package name.expenses.features.association;
 
 import name.expenses.features.category.dtos.request.CategoryUpdateDto;
 import name.expenses.features.category.models.Category;

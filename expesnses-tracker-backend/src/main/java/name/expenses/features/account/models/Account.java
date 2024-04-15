@@ -1,9 +1,12 @@
 package name.expenses.features.account.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import name.expenses.features.base.models.BaseModel;
+import name.expenses.features.customer.models.Customer;
 import name.expenses.features.pocket.models.Pocket;
+import name.expenses.utils.collection_getter.PocketGetter;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.time.LocalDateTime;
@@ -17,15 +20,19 @@ import java.util.Set;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class Account extends BaseModel {
+public class Account extends BaseModel implements PocketGetter {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private String details;
-    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(referencedColumnName = "id", name = "account_id")
     private Set<Pocket> pockets = new HashSet<>();
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "accounts")
+    @ToString.Exclude
+    @JsonIgnore
+    private Set<Customer> customers;
     @PreUpdate
     protected void onUpdate() {
         this.setUpdatedAt(LocalDateTime.now());

@@ -22,6 +22,5 @@ public class AccountReqDto {
     @NotNull
     private String name;
     private String details;
-    private Set<PocketReqDto> pockets = new HashSet<>();
 }
 

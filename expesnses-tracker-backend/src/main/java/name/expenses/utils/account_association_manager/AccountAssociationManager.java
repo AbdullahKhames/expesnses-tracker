@@ -6,13 +6,15 @@ import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import name.expenses.features.account.models.Account;
+import name.expenses.features.pocket.dtos.request.PocketUpdateDto;
 import name.expenses.features.pocket.service.PocketService;
-import name.expenses.globals.association.CollectionAdder;
-import name.expenses.globals.association.CollectionAssociation;
-import name.expenses.globals.association.CollectionRemover;
+import name.expenses.features.association.CollectionAdder;
+import name.expenses.features.association.Models;
+import name.expenses.features.association.CollectionRemover;
 
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Singleton
@@ -22,38 +24,47 @@ public class AccountAssociationManager {
     private final PocketService pocketService;
 
 
-    private final Map<CollectionAssociation, CollectionAdder<Account>> adderHandler = new HashMap<>(5);
-    private final Map<CollectionAssociation, CollectionRemover<Account>> removerHandler = new HashMap<>(5);
+    private final Map<Models, CollectionAdder<Account>> adderHandler = new HashMap<>(5);
+    private final Map<Models, CollectionRemover<Account>> removerHandler = new HashMap<>(5);
+//    private final Map<Models, CollectionAdder<Account, PocketUpdateDto>> adderHandler = new HashMap<>(5);
+//    private final Map<Models, CollectionRemover<Account, PocketUpdateDto>> removerHandler = new HashMap<>(5);
 
     @PostConstruct
     private void init(){
-        adderHandler.put(CollectionAssociation.POCKET, pocketService);
+        adderHandler.put(Models.POCKET, pocketService);
 
 
-        removerHandler.put(CollectionAssociation.POCKET, pocketService);
+        removerHandler.put(Models.POCKET, pocketService);
 
 
     }
-    public boolean addAssociation(Account category,
-                                  CollectionAssociation AccountCollectionAssociation,
-                                  String refNo) {
+    public <T> boolean addAssociation(Account account,
+                                      Models accountModels,
+                                      T refNo) {
 
-        CollectionAdder<Account> AccountCollectionAdder = adderHandler.get(AccountCollectionAssociation);
+        CollectionAdder<Account> AccountCollectionAdder = adderHandler.get(accountModels);
+//        CollectionAdder<Account, PocketUpdateDto> AccountCollectionAdder = adderHandler.get(accountModels);
         if (AccountCollectionAdder == null) {
             return false;
         }
-        return AccountCollectionAdder.addAssociation(category, refNo);
+        if (refNo instanceof String){
+            return AccountCollectionAdder.addAssociation(account, Models.ACCOUNT, (String) refNo);
+        }
+        return false;
     }
 
 
-    public boolean removeAssociation(Account category,
-                                     CollectionAssociation AccountCollectionAssociation,
-                                     String refNo) {
+    public boolean removeAssociation(Account account,
+                                     Models accountModels,
+                                     Object refNo) {
 
-        CollectionRemover<Account> AccountCollectionRemover = removerHandler.get(AccountCollectionAssociation);
+//        CollectionRemover<Account, PocketUpdateDto> AccountCollectionRemover = removerHandler.get(accountModels);
+        CollectionRemover<Account> AccountCollectionRemover = removerHandler.get(accountModels);
         if (AccountCollectionRemover == null) {
             return false;
         }
-        return AccountCollectionRemover.removeAssociation(category, refNo);
+//        return AccountCollectionRemover.removeAssociation(account, Models.ACCOUNT, refNo);
+        return false;
+
     }
 }
