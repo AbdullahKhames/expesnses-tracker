@@ -8,8 +8,9 @@ import org.mapstruct.*;
 import java.util.Set;
 
 @Mapper(componentModel = "JAKARTA",
-        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
-        ,nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+        nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
+        unmappedTargetPolicy = ReportingPolicy.IGNORE,
         uses = {
         })
 public interface _2authMapper {

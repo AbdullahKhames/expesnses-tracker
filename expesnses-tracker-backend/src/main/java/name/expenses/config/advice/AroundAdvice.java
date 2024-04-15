@@ -12,10 +12,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import name.expenses.error.exception_handler.ResponseExceptionBuilder;
 import name.expenses.features.account.dtos.request.*;
+import name.expenses.features.association.dto.AssociationGenericReqDto;
+import name.expenses.features.association.dto.AssociationReqDto;
 import name.expenses.features.category.dtos.request.*;
+import name.expenses.features.customer.dtos.request.CustomerReqDto;
+import name.expenses.features.customer.dtos.request.CustomerUpdateDto;
 import name.expenses.features.expesnse.dtos.request.*;
 import name.expenses.features.pocket.dtos.request.*;
 import name.expenses.features.sub_category.dtos.request.*;
+import name.expenses.features.transaction.dtos.request.PocketAmountReqDto;
+import name.expenses.features.transaction.dtos.request.TransactionReqDto;
+import name.expenses.features.transaction.dtos.request.TransactionUpdateDto;
 import name.expenses.features.user.dtos.request.*;
 import name.expenses.utils.validators.ValidatorUtils;
 
@@ -33,16 +40,24 @@ public class AroundAdvice {
     private final static List<Class<?>> classesToValidate = new ArrayList<>();
 
     static {
-        classesToValidate.add(ExpenseReqDto.class);
-        classesToValidate.add(ExpenseUpdateDto.class);
-        classesToValidate.add(SubCategoryReqDto.class);
-        classesToValidate.add(SubCategoryUpdateDto.class);
-        classesToValidate.add(CategoryReqDto.class);
-        classesToValidate.add(CategoryUpdateDto.class);
         classesToValidate.add(AccountReqDto.class);
         classesToValidate.add(AccountUpdateDto.class);
+        classesToValidate.add(AssociationGenericReqDto.class);
+        classesToValidate.add(AssociationReqDto.class);
+        classesToValidate.add(CategoryReqDto.class);
+        classesToValidate.add(CategoryUpdateDto.class);
+        classesToValidate.add(CustomerReqDto.class);
+        classesToValidate.add(CustomerUpdateDto.class);
+        classesToValidate.add(ExpenseReqDto.class);
+        classesToValidate.add(ExpenseUpdateDto.class);
         classesToValidate.add(PocketReqDto.class);
         classesToValidate.add(PocketUpdateDto.class);
+        classesToValidate.add(SubCategoryReqDto.class);
+        classesToValidate.add(SubCategoryUpdateDto.class);
+        classesToValidate.add(PocketAmountReqDto.class);
+        classesToValidate.add(TransactionReqDto.class);
+        classesToValidate.add(TransactionUpdateDto.class);
+
         classesToValidate.add(_2authDto.class);
         classesToValidate.add(ChangeEmailRequest.class);
         classesToValidate.add(LoginRequest.class);

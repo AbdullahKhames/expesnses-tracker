@@ -13,6 +13,7 @@ import name.expenses.features.customer.models.Customer;
 import name.expenses.features.expesnse.mappers.ExpenseMapper;
 import name.expenses.features.pocket.mappers.PocketMapper;
 import name.expenses.features.sub_category.mappers.SubCategoryMapper;
+import name.expenses.features.transaction.mappers.TransactionMapper;
 import name.expenses.features.user.mappers.UserMapper;
 import name.expenses.globals.Page;
 import org.mapstruct.*;
@@ -31,7 +32,8 @@ import java.util.Set;
                 PocketMapper.class,
                 CategoryMapper.class,
                 SubCategoryMapper.class,
-                ExpenseMapper.class
+                ExpenseMapper.class,
+                TransactionMapper.class
         },
         imports = {LocalDateTime.class})
 public interface CustomerMapper {

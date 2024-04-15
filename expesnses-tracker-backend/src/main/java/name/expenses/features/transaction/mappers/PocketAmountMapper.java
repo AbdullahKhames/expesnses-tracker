@@ -1,13 +1,10 @@
-package name.expenses.features.category.mappers;
+package name.expenses.features.transaction.mappers;
 
 
-
-import name.expenses.features.category.dtos.request.CategoryReqDto;
-import name.expenses.features.category.dtos.request.CategoryUpdateDto;
-
-import name.expenses.features.category.dtos.response.CategoryRespDto;
-import name.expenses.features.category.models.Category;
-import name.expenses.features.sub_category.mappers.SubCategoryMapper;
+import name.expenses.features.pocket.mappers.PocketMapper;
+import name.expenses.features.transaction.dtos.request.PocketAmountReqDto;
+import name.expenses.features.transaction.dtos.response.PocketAmountRespDto;
+import name.expenses.features.transaction.models.PocketAmount;
 import name.expenses.globals.Page;
 import org.mapstruct.*;
 
@@ -18,12 +15,11 @@ import java.util.Set;
 @Mapper(componentModel = "JAKARTA",
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
-        unmappedTargetPolicy = ReportingPolicy.IGNORE,
         uses = {
-            SubCategoryMapper.class
+                PocketMapper.class,
         },
         imports = {LocalDateTime.class})
-public interface CategoryMapper {
+public interface PocketAmountMapper {
     @Mappings(
 
             {
@@ -32,17 +28,16 @@ public interface CategoryMapper {
                     @Mapping(target = "refNo", ignore = true),
                     @Mapping(target = "createdAt", ignore = true),
                     @Mapping(target = "updatedAt", ignore = true),
-                    @Mapping(target = "customers", ignore = true),
-
+                    @Mapping(target = "pocket", ignore = true),
+                    @Mapping(target = "transaction", ignore = true),
             }
 
     )
-    Category reqDtoToEntity(CategoryReqDto entityReqDto);
-    CategoryRespDto entityToRespDto(Category entity);
-    Set<CategoryRespDto> entityToRespDto(Set<Category> entities);
-    List<CategoryRespDto> entityToRespDto(List<Category> entities);
-    Page<CategoryRespDto> entityToRespDto(Page<Category> entitiesPage);
-
+    PocketAmount reqDtoToEntity(PocketAmountReqDto entityReqDto);
+    PocketAmountRespDto entityToRespDto(PocketAmount entity);
+    Set<PocketAmountRespDto> entityToRespDto(Set<PocketAmount> entities);
+    List<PocketAmountRespDto> entityToRespDto(List<PocketAmount> entities);
+    Page<PocketAmountRespDto> entityToRespDto(Page<PocketAmount> entitiesPage);
     @Mappings(
 
             {
@@ -51,11 +46,10 @@ public interface CategoryMapper {
                     @Mapping(target = "refNo", ignore = true),
                     @Mapping(target = "createdAt", ignore = true),
                     @Mapping(target = "updatedAt", expression = "java(LocalDateTime.now())"),
-                    @Mapping(target = "subCategories", ignore = true),
-                    @Mapping(target = "customers", ignore = true),
-
+                    @Mapping(target = "pocket", ignore = true),
+                    @Mapping(target = "transaction", ignore = true),
             }
 
     )
-    void update(@MappingTarget Category entity, CategoryUpdateDto entityUpdateDto);
+    void update(@MappingTarget PocketAmount entity, PocketAmountReqDto entityUpdateDto);
 }

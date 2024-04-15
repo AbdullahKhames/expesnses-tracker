@@ -1,4 +1,4 @@
-package name.expenses.features.association;
+package name.expenses.features.association.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

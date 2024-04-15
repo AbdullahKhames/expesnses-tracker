@@ -9,9 +9,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import name.expenses.config.advice.AroundAdvice;
 import name.expenses.features.association.AssociationManager;
-import name.expenses.features.association.AssociationReqDto;
 import name.expenses.features.association.Models;
 import name.expenses.features.association.dto.AssociationGenericReqDto;
+import name.expenses.features.association.dto.AssociationReqDto;
 import name.expenses.features.expesnse.dtos.request.ExpenseReqDto;
 import name.expenses.features.pocket.dtos.request.PocketReqDto;
 

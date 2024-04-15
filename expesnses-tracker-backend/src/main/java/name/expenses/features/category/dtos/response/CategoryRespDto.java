@@ -16,6 +16,7 @@ import java.util.Set;
 @Builder
 public class CategoryRespDto {
     private String name;
+    @Builder.Default
     private Set<SubCategoryRespDto> subCategories = new HashSet<>();
     private String details;
 

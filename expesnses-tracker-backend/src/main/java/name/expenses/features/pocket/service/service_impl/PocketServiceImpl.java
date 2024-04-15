@@ -15,8 +15,6 @@ import name.expenses.features.association.AssociationResponse;
 import name.expenses.features.association.Models;
 import name.expenses.features.customer.dao.CustomerDAO;
 import name.expenses.features.customer.models.Customer;
-import name.expenses.features.expesnse.dtos.request.ExpenseReqDto;
-import name.expenses.features.expesnse.models.Expense;
 import name.expenses.features.pocket.dao.PocketDAO;
 import name.expenses.features.pocket.dtos.request.PocketReqDto;
 import name.expenses.features.pocket.dtos.request.PocketUpdateDto;
@@ -25,13 +23,11 @@ import name.expenses.features.pocket.mappers.PocketMapper;
 import name.expenses.features.pocket.models.Pocket;
 import name.expenses.features.pocket.service.PocketService;
 
-import name.expenses.features.sub_category.models.SubCategory;
 import name.expenses.globals.Page;
 import name.expenses.globals.SortDirection;
 import name.expenses.globals.responses.ResponseDto;
 import name.expenses.utils.ResponseDtoBuilder;
 import name.expenses.utils.ValidateInputUtils;
-import name.expenses.utils.collection_getter.ExpenseGetter;
 import name.expenses.utils.collection_getter.PocketGetter;
 
 import java.time.LocalDateTime;
@@ -57,11 +53,12 @@ public class PocketServiceImpl implements PocketService {
             Pocket sentPocket = pocketMapper.reqDtoToEntity(pocketReqDto);
 //            Pocket savedPocket = pocketDAO.create(sentPocket);
             Optional<Customer> customerOptional = customerDAO.get(pocketReqDto.getCustomerId());
+            Customer customer;
             if (customerOptional.isEmpty()){
                 throw new GeneralFailureException(ErrorCode.OBJECT_NOT_FOUND.getErrorCode(),
-                        Map.of("error", "account not found"));
+                        Map.of("error", "customer not found"));
             }else {
-                Customer customer = customerOptional.get();
+                customer = customerOptional.get();
                 if (customer.getPockets() == null) {
                     customer.setPockets(new HashSet<>());
                 }
@@ -73,17 +70,19 @@ public class PocketServiceImpl implements PocketService {
 //                throw new GeneralFailureException(ErrorCode.OBJECT_NOT_FOUND.getErrorCode(),
 //                        Map.of("error", "savedPocket not found"));
 //            }
-            associateAccount(pocketReqDto, sentPocket);
+            associateAccount(pocketReqDto.getAccountRefNo(), sentPocket, customer);
             Pocket savedPocket = pocketDAO.create(sentPocket);
             log.info("created pocket {}", savedPocket);
+            customerDAO.update(customer);
             return ResponseDtoBuilder.getCreateResponse(POCKET, savedPocket.getRefNo(), pocketMapper.entityToRespDto(savedPocket));
         }catch (Exception ex){
             throw new RuntimeException(ex);
         }
     }
 
-    private void associateAccount(PocketReqDto pocketReqDto, Pocket sentPocket) {
-        Optional<Account> accountOptional = accountDAO.get(pocketReqDto.getAccountRefNo());
+    @Override
+    public void associateAccount(String accountRefNo, Pocket sentPocket, Customer customer) {
+        Optional<Account> accountOptional = accountDAO.get(accountRefNo);
         if (accountOptional.isEmpty()){
             throw new GeneralFailureException(ErrorCode.OBJECT_NOT_FOUND.getErrorCode(),
                     Map.of("error", "account not found"));
@@ -94,6 +93,10 @@ public class PocketServiceImpl implements PocketService {
             }
             account.getPockets().add(sentPocket);
             sentPocket.setAccount(account);
+            if (customer.getAccounts() == null){
+                customer.setAccounts(new HashSet<>());
+            }
+            customer.getAccounts().add(account);
 //                accountDAO.update(account);
         }
     }
@@ -249,9 +252,17 @@ public class PocketServiceImpl implements PocketService {
                         Pocket pocket = pocketMapper.reqDtoToEntity(pocketReqDto);
 //                        pocketGetter.getPockets().add(pocket);
                         if (entityModel == Models.CUSTOMER){
-                            pocket.setCustomer((Customer) pocketGetter);
+                            Customer customer = (Customer) pocketGetter;
+                            pocket.setCustomer(customer);
+                            associateAccount(((PocketReqDto) reqDto).getAccountRefNo(), pocket, customer);
+                            try {
+                                customerDAO.update(customer);
+                            }catch (Exception ex){
+                                log.error("exception occured {}", ex.getMessage());
+                            }
+                        }else {
+                            associateAccount(((PocketReqDto) reqDto).getAccountRefNo(), pocket, null);
                         }
-                        associateAccount(pocketReqDto, pocket);
                         return pocket;
                     })
                     .collect(Collectors.toSet());

@@ -2,18 +2,18 @@ package name.expenses.features.user.models;
 
 import jakarta.persistence.*;
 import lombok.*;
+import name.expenses.features.base.models.BaseModel;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.util.Objects;
 
+@Entity
 @Getter
 @Setter
 @ToString
+@RequiredArgsConstructor
 @AllArgsConstructor
-@NoArgsConstructor
-@Entity
-@Table(name = "group")
-public class Group {
+public class Group extends BaseModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)

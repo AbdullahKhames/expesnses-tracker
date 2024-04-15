@@ -8,6 +8,7 @@ import name.expenses.features.category.models.Category;
 import name.expenses.features.expesnse.models.Expense;
 import name.expenses.features.pocket.models.Pocket;
 import name.expenses.features.sub_category.models.SubCategory;
+import name.expenses.features.transaction.models.Transaction;
 import name.expenses.features.user.models.User;
 import name.expenses.utils.collection_getter.*;
 import org.hibernate.proxy.HibernateProxy;
@@ -58,6 +59,9 @@ public class Customer implements
     @JoinColumn(name = "customer_id")
     private Set<Expense> expenses = new HashSet<>();
 
+    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "customer_id")
+    private Set<Transaction> transactions = new HashSet<>();
 
     @Override
     public final boolean equals(Object o) {

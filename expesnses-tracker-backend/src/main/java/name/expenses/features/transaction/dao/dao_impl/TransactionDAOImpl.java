@@ -1,4 +1,4 @@
-package name.expenses.features.expesnse.dao.dao_impl;
+package name.expenses.features.transaction.dao.dao_impl;
 
 import jakarta.ejb.Stateless;
 import jakarta.interceptor.Interceptors;
@@ -10,48 +10,51 @@ import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Transactional;
 import name.expenses.config.advice.RepoAdvice;
 import name.expenses.error.exception.GeneralFailureException;
-import name.expenses.features.expesnse.dao.ExpenseDAO;
-import name.expenses.features.expesnse.models.Expense;
+import name.expenses.features.transaction.dao.TransactionDAO;
+import name.expenses.features.transaction.models.Transaction;
 import name.expenses.globals.Page;
 import name.expenses.globals.SortDirection;
 import name.expenses.utils.FieldValidator;
 import name.expenses.utils.PageUtil;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Stateless
 @Interceptors(RepoAdvice.class)
 @Transactional
-public class ExpenseDAOImpl implements ExpenseDAO {
+public class TransactionDAOImpl implements TransactionDAO {
 
     @PersistenceContext(unitName = "expenses-unit")
     private EntityManager entityManager;
 
     @Override
-    public Expense createExpense(Expense expense) {
+    public Transaction create(Transaction transaction) {
+
         try{
-            if (expense.getId() != null && entityManager.find(Expense.class, expense.getId()) != null) {
-                return entityManager.merge(expense);
+            entityManager.getTransaction().begin();
+            if (transaction.getId() != null && entityManager.find(Transaction.class, transaction.getId()) != null) {
+                Transaction transaction1 = entityManager.merge(transaction);
+                entityManager.getTransaction().commit();
+                return transaction1;
             } else {
-                entityManager.persist(expense);
-                return expense;
+                entityManager.persist(transaction);
+                entityManager.getTransaction().commit();
+                return transaction;
             }
         }catch (Exception ex){
+            entityManager.getTransaction().rollback();
             throw new GeneralFailureException(GeneralFailureException.ERROR_PERSISTING,
                     Map.of("original error message", ex.getMessage(),
                             "error", "there was an error with your request couldn't persist"));
         }
-
     }
 
     @Override
-    public Optional<Expense> getExpense(String refNo) {
-
+    public Optional<Transaction> get(String refNo) {
         try {
-            TypedQuery<Expense> expenseTypedQuery = entityManager.createQuery("SELECT e from Expense e WHERE e.refNo = :refNo", Expense.class);
-            expenseTypedQuery.setParameter("refNo", refNo);
-            return Optional.ofNullable(expenseTypedQuery.getSingleResult());
+            TypedQuery<Transaction> transactionTypedQuery = entityManager.createQuery("SELECT e from Transaction e WHERE e.refNo = :refNo", Transaction.class);
+            transactionTypedQuery.setParameter("refNo", refNo);
+            return Optional.ofNullable(transactionTypedQuery.getSingleResult());
         }catch (NoResultException ex){
             return Optional.empty();
         }catch (NonUniqueResultException ex){
@@ -62,19 +65,18 @@ public class ExpenseDAOImpl implements ExpenseDAO {
                     Map.of("original error message", ex.getMessage(),
                             "error", String.format("there was an error with your request couldn't find object with reference number %s", refNo)));
         }
-
     }
 
     @Override
-    public Page<Expense> findAll(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
+    public Page<Transaction> findAll(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Expense> query = cb.createQuery(Expense.class);
-        Root<Expense> root = query.from(Expense.class);
+        CriteriaQuery<Transaction> query = cb.createQuery(Transaction.class);
+        Root<Transaction> root = query.from(Transaction.class);
 
         query.select(root);
 
         Path<Object> sortByPath;
-        if (FieldValidator.hasField(sortBy, Expense.class)) {
+        if (FieldValidator.hasField(sortBy, Transaction.class)) {
             sortByPath = root.get(sortBy);
         }else {
             sortByPath = root.get("id");
@@ -86,14 +88,15 @@ public class ExpenseDAOImpl implements ExpenseDAO {
             query.orderBy(cb.desc(sortByPath));
         }
         try {
-            TypedQuery<Expense> typedQuery = entityManager.createQuery(query);
+            TypedQuery<Transaction> typedQuery = entityManager.createQuery(query);
             typedQuery.setFirstResult((int) ((pageNumber - 1) * pageSize));
             typedQuery.setMaxResults(Math.toIntExact(pageSize));
-            List<Expense> expenses = typedQuery.getResultList();
+            List<Transaction> transactions = typedQuery.getResultList();
             CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
-            countQuery.select(cb.count(countQuery.from(Expense.class)));
+            countQuery.select(cb.count(countQuery.from(Transaction.class)));
             Long totalElements = entityManager.createQuery(countQuery).getSingleResult();
-            return PageUtil.createPage(pageNumber, pageSize, expenses, totalElements);
+            return PageUtil.createPage(pageNumber, pageSize, transactions, totalElements);
+
         }catch (Exception exception){
             throw new GeneralFailureException(GeneralFailureException.ERROR_FETCH,
                     Map.of("original message", exception.getMessage().substring(0, 15),
@@ -103,15 +106,20 @@ public class ExpenseDAOImpl implements ExpenseDAO {
     }
 
     @Override
-    public List<Expense> getAllExpenses() {
-        return entityManager.createQuery("SELECT e FROM Expense e", Expense.class).getResultList();
+    public List<Transaction> get() {
+        return entityManager.createQuery("SELECT e FROM Transaction e", Transaction.class).getResultList();
     }
 
     @Override
-    public Expense updateExpense(Expense expense) {
+    public Transaction update(Transaction transaction) {
         try {
-            return entityManager.merge(expense);
+            entityManager.getTransaction().begin();
+            Transaction updatedTransaction = entityManager.merge(transaction);
+            entityManager.getTransaction().commit();
+            return updatedTransaction;
+
         }catch (Exception ex){
+            entityManager.getTransaction().rollback();
             throw new GeneralFailureException(GeneralFailureException.ERROR_UPDATE,
                     Map.of("original error message", ex.getMessage().substring(0, 15),
                             "error", "there was an error with your request couldn't update entity"));
@@ -119,13 +127,13 @@ public class ExpenseDAOImpl implements ExpenseDAO {
     }
 
     @Override
-    public String deleteExpense(String refNo) {
+    public String delete(String refNo) {
         try {
-            TypedQuery<Expense> expenseTypedQuery = entityManager.createQuery("SELECT e from Expense e WHERE e.refNo = :refNo", Expense.class);
-            expenseTypedQuery.setParameter("refNo", refNo);
-            Expense expense = expenseTypedQuery.getSingleResult();
-            if (expense != null) {
-                entityManager.remove(expense);
+            TypedQuery<Transaction> transactionTypedQuery = entityManager.createQuery("SELECT e from Transaction e WHERE e.refNo = :refNo", Transaction.class);
+            transactionTypedQuery.setParameter("refNo", refNo);
+            Transaction transaction = transactionTypedQuery.getSingleResult();
+            if (transaction != null) {
+                entityManager.remove(transaction);
             }
             return refNo;
         }catch (Exception ex){
@@ -136,54 +144,14 @@ public class ExpenseDAOImpl implements ExpenseDAO {
     }
 
     @Override
-    public Set<Expense> getEntities(Set<String> refNos) {
+    public Set<Transaction> getEntities(Set<String> refNos) {
         if (refNos == null || refNos.isEmpty()) {
             return new HashSet<>();
         }
 
-        TypedQuery<Expense> query = entityManager.createQuery(
-                "SELECT a FROM Expense a WHERE a.refNo IN :refNos", Expense.class);
+        TypedQuery<Transaction> query = entityManager.createQuery(
+                "SELECT a FROM Transaction a WHERE a.refNo IN :refNos", Transaction.class);
         query.setParameter("refNos", refNos);
         return new HashSet<>(query.getResultList());
-    }
-
-    @Override
-    public Set<Expense> saveAll(Set<Expense> expenses) {
-        Set<Expense> savedExpenses = new HashSet<>();
-        if (expenses != null && !expenses.isEmpty()) {
-            for (Expense expense : expenses) {
-                if (expense != null && expense.getId() != null){
-                    entityManager.persist(expense);
-                    savedExpenses.add(expense);
-                }
-            }
-//            entityManager.flush();
-//            entityManager.clear();
-        }
-        return savedExpenses;
-    }
-
-    @Override
-    public Set<Expense> updateAll(Set<Expense> expenses) {
-        return expenses
-                .stream()
-                .map(this::update)
-                .collect(Collectors.toSet());
-    }
-
-    @Override
-    public Expense update(Expense expense) {
-        try {
-            entityManager.getTransaction().begin();
-            Expense updatedExpense = entityManager.merge(expense);
-            entityManager.getTransaction().commit();
-            return updatedExpense;
-
-        }catch (Exception ex){
-            entityManager.getTransaction().rollback();
-            throw new GeneralFailureException(GeneralFailureException.ERROR_UPDATE,
-                    Map.of("original error message", ex.getMessage().substring(0, 15),
-                            "error", "there was an error with your request couldn't update entity"));
-        }
     }
 }

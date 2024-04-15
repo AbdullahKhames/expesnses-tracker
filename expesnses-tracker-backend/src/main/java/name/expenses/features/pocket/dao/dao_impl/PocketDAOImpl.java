@@ -19,6 +19,7 @@ import name.expenses.utils.FieldValidator;
 import name.expenses.utils.PageUtil;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Stateless
 @Interceptors(RepoAdvice.class)
@@ -105,21 +106,7 @@ public class PocketDAOImpl implements PocketDAO {
         return entityManager.createQuery("SELECT e FROM Pocket e", Pocket.class).getResultList();
     }
 
-    @Override
-    public Pocket update(Pocket pocket) {
-        try {
-            entityManager.getTransaction().begin();
-            Pocket updatedPocket = entityManager.merge(pocket);
-            entityManager.getTransaction().commit();
-            return updatedPocket;
 
-        }catch (Exception ex){
-            entityManager.getTransaction().rollback();
-            throw new GeneralFailureException(GeneralFailureException.ERROR_UPDATE,
-                    Map.of("original error message", ex.getMessage().substring(0, 15),
-                            "error", "there was an error with your request couldn't update entity"));
-        }
-    }
 
     @Override
     public String delete(String refNo) {
@@ -168,12 +155,36 @@ public class PocketDAOImpl implements PocketDAO {
         Set<Pocket> savedPockets = new HashSet<>();
         if (pockets != null && !pockets.isEmpty()) {
             for (Pocket pocket : pockets) {
-                entityManager.persist(pocket); // Queue each Pocket object for persistence
-                savedPockets.add(pocket); // Add the Pocket to the set
+                if (pocket != null && pocket.getId() != null) {
+                    entityManager.persist(pocket);
+                    savedPockets.add(pocket);
+                }
             }
-            entityManager.flush(); // Flush changes to the database
-            entityManager.clear(); // Clear the persistence context to release memory
+//            entityManager.flush();
+//            entityManager.clear();
         }
         return savedPockets;
+    }
+    @Override
+    public Pocket update(Pocket pocket) {
+        try {
+            entityManager.getTransaction().begin();
+            Pocket updatedPocket = entityManager.merge(pocket);
+            entityManager.getTransaction().commit();
+            return updatedPocket;
+
+        }catch (Exception ex){
+            entityManager.getTransaction().rollback();
+            throw new GeneralFailureException(GeneralFailureException.ERROR_UPDATE,
+                    Map.of("original error message", ex.getMessage().substring(0, 15),
+                            "error", "there was an error with your request couldn't update entity"));
+        }
+    }
+    @Override
+    public Set<Pocket> updateAll(Set<Pocket> pockets) {
+        return pockets
+                .stream()
+                .map(this::update)
+                .collect(Collectors.toSet());
     }
 }

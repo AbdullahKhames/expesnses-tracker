@@ -14,5 +14,5 @@ public interface CustomerService extends
 //        CollectionRemover <Customer>,
         UpdateAssociation<Customer, CustomerUpdateDto>,
         CrudService<CustomerReqDto, CustomerUpdateDto, String, Customer> {
-
+    Customer update(Customer customer);
 }

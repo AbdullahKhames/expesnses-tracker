@@ -18,6 +18,7 @@ import java.util.Set;
 @Mapper(componentModel = "JAKARTA",
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
+        unmappedTargetPolicy = ReportingPolicy.IGNORE,
         uses = {
                 SubCategoryMapper.class
         },

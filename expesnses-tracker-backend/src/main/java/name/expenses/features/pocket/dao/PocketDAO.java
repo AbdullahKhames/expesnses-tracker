@@ -1,7 +1,6 @@
 package name.expenses.features.pocket.dao;
 
 import jakarta.ejb.Local;
-import name.expenses.features.expesnse.models.Expense;
 import name.expenses.features.pocket.models.Pocket;
 import name.expenses.globals.Page;
 import name.expenses.globals.SortDirection;
@@ -16,11 +15,13 @@ public interface PocketDAO {
     Optional<Pocket> get(String refNo);
     Page<Pocket> findAll(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
     List<Pocket> get();
-    Pocket update(Pocket expense);
     String delete(String refNo);
 
     Long checkAccountAssociation(Pocket pocket);
     Set<Pocket> getEntities(Set<String> refNos);
 
     Set<Pocket> saveAll(Set<Pocket> pockets);
+    Set<Pocket> updateAll(Set<Pocket> pockets);
+    Pocket update(Pocket expense);
+
 }

@@ -117,8 +117,8 @@ public class AuthService {
         user.setRoles(Set.of(role));
         user.setPassword(Hashing.hash(request.getPassword()));
         User savedUser = userRepo.save(user);
-        Group group = new Group(user.getEmail(), "BASIC");
-        groupDao.save(group);
+//        Group group = new Group(user.getEmail(), "BASIC");
+//        groupDao.save(group);
         return ResponseDto.builder()
                 .message("Registered Successfully")
                 .status(true)

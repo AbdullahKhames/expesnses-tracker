@@ -20,4 +20,6 @@ public interface ExpenseDAO {
     Set<Expense> getEntities(Set<String> refNos);
 
     Set<Expense> saveAll(Set<Expense> expenses);
+    Set<Expense> updateAll(Set<Expense> expenses);
+    Expense update(Expense expense);
 }

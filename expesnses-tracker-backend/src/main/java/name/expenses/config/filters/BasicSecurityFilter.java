@@ -15,7 +15,6 @@ import name.expenses.error.exception_handler.models.ErrorCategory;
 import name.expenses.error.exception_handler.models.ResponseError;
 import name.expenses.features.user.dao.TokenRepo;
 import name.expenses.features.user.models.User;
-import name.expenses.features.user.models.UserDetails;
 import name.expenses.features.user.models.UserSecurityContext;
 import name.expenses.features.user.service.UserDetailsService;
 import name.expenses.features.user.service.service_impl.JwtService;
@@ -43,7 +42,6 @@ public class BasicSecurityFilter implements ContainerRequestFilter {
     @Inject
     private PropertyLoaderComponent propertyLoaderComponent;
 
-    private String AUTHORIZATION_HEADER_PREFIX;
     @PostConstruct
     private void init()
     {
@@ -51,7 +49,7 @@ public class BasicSecurityFilter implements ContainerRequestFilter {
     }
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
-        AUTHORIZATION_HEADER_PREFIX = propertyLoaderComponent.getPropertyAsString("AUTHORIZATION_HEADER_PREFIX") + " ";
+        String AUTHORIZATION_HEADER_PREFIX = propertyLoaderComponent.getPropertyAsString("AUTHORIZATION_HEADER_PREFIX") + " ";
         List<String> WHITELIST = new ArrayList<>(List.of(propertyLoaderComponent.getPropertyAsString("APIS.WHITELIST").split(",")));
         final String REQUEST_PATH = requestContext.getUriInfo().getAbsolutePath().getPath();
         final String METHOD = requestContext.getMethod();

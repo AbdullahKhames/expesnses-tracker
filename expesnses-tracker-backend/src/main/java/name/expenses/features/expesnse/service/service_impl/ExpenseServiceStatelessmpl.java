@@ -10,7 +10,6 @@ import name.expenses.error.exception_handler.models.ErrorCategory;
 import name.expenses.error.exception_handler.models.ResponseError;
 import name.expenses.features.association.AssociationResponse;
 import name.expenses.features.association.Models;
-import name.expenses.features.category.models.Category;
 import name.expenses.features.customer.dao.CustomerDAO;
 import name.expenses.features.customer.models.Customer;
 import name.expenses.features.expesnse.dao.ExpenseDAO;
@@ -20,7 +19,6 @@ import name.expenses.features.expesnse.dtos.response.ExpenseRespDto;
 import name.expenses.features.expesnse.mappers.ExpenseMapper;
 import name.expenses.features.expesnse.models.Expense;
 import name.expenses.features.expesnse.service.ExpenseService;
-import name.expenses.features.pocket.dtos.request.PocketUpdateDto;
 import name.expenses.features.sub_category.dao.SubCategoryDAO;
 import name.expenses.features.sub_category.dtos.request.SubCategoryUpdateDto;
 import name.expenses.features.sub_category.models.SubCategory;
@@ -51,8 +49,9 @@ public class ExpenseServiceStatelessmpl implements ExpenseService {
     public ResponseDto create(ExpenseReqDto expenseReqDto) {
         Expense sentExpense = expenseMapper.reqDtoToEntity(expenseReqDto);
         Optional<Customer> customerOptional = customerDAO.get(expenseReqDto.getCustomerId());
+        Customer customer;
         if (customerOptional.isPresent()){
-            Customer customer = customerOptional.get();
+            customer = customerOptional.get();
             if (customer.getExpenses() == null) {
                 customer.setExpenses(new HashSet<>());
             }
@@ -64,19 +63,26 @@ public class ExpenseServiceStatelessmpl implements ExpenseService {
                     Map.of("error", "customer not found"));
         }
 
-        associateSubCategory(expenseReqDto, sentExpense);
-        Expense savedExpense = expenseDAO.createExpense(sentExpense);
+        associateSubCategory(expenseReqDto.getSubCategoryRefNo(), sentExpense, customer);
+        Expense savedExpense = save(sentExpense);
 
         if (savedExpense == null || savedExpense.getId() == null){
             throw new GeneralFailureException(ErrorCode.OBJECT_NOT_FOUND.getErrorCode(),
                     Map.of("error", "expense not found"));
         }
         log.info("created expense {}", savedExpense);
+        customerDAO.update(customer);
         return ResponseDtoBuilder.getCreateResponse(EXPENSE, savedExpense.getRefNo(), expenseMapper.entityToRespDto(savedExpense));
     }
 
-    private void associateSubCategory(ExpenseReqDto expenseReqDto, Expense sentExpense) {
-        Optional<SubCategory> subCategoryOptional = subCategoryDAO.get(expenseReqDto.getSubCategoryRefNo());
+    @Override
+    public Expense save(Expense sentExpense) {
+        return expenseDAO.createExpense(sentExpense);
+    }
+
+    @Override
+    public void associateSubCategory(String subCatRefNo, Expense sentExpense, Customer customer) {
+        Optional<SubCategory> subCategoryOptional = subCategoryDAO.get(subCatRefNo);
         if (subCategoryOptional.isPresent()){
             SubCategory subCategory = subCategoryOptional.get();
             if (subCategory.getExpenses() == null) {
@@ -84,6 +90,17 @@ public class ExpenseServiceStatelessmpl implements ExpenseService {
             }
             subCategory.getExpenses().add(sentExpense);
             sentExpense.setSubCategory(subCategory);
+            if (customer != null){
+                if (customer.getSubCategories() == null){
+                    customer.setSubCategories(new HashSet<>());
+                }
+                customer.getSubCategories().add(subCategory);
+
+                if (customer.getCategories() == null){
+                    customer.setCategories(new HashSet<>());
+                }
+                customer.getCategories().add(subCategory.getCategory());
+            }
 //            subCategoryDAO.update(subCategory);
         }else {
             throw new GeneralFailureException(ErrorCode.OBJECT_NOT_FOUND.getErrorCode(),
@@ -195,6 +212,11 @@ public class ExpenseServiceStatelessmpl implements ExpenseService {
     }
 
     @Override
+    public Expense reqDtoToEntity(ExpenseReqDto expenseReqDto) {
+        return expenseMapper.reqDtoToEntity(expenseReqDto);
+    }
+
+    @Override
     public boolean addAssociation(SubCategory entity, Models entityModel, String refNo) {
         return false;
     }
@@ -220,9 +242,17 @@ public class ExpenseServiceStatelessmpl implements ExpenseService {
                         Expense expense = expenseMapper.reqDtoToEntity(expenseReqDto);
 //                        expensesGetter.getExpenses().add(expense);
                         if (entityModel == Models.CUSTOMER){
-                            expense.setCustomer((Customer) expensesGetter);
+                            Customer customer = (Customer) expensesGetter;
+                            expense.setCustomer(customer);
+                            associateSubCategory(expenseReqDto.getSubCategoryRefNo(), expense, customer);
+                            try {
+                                customerDAO.update(customer);
+                            }catch (Exception ex){
+                                log.error("exception occured {}", ex.getMessage());
+                            }
+                        }else {
+                            associateSubCategory(expenseReqDto.getSubCategoryRefNo(), expense, null);
                         }
-                        associateSubCategory(expenseReqDto, expense);
                         return expense;
                     })
                     .collect(Collectors.toSet());

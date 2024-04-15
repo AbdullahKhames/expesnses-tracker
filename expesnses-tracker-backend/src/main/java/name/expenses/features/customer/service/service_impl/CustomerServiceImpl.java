@@ -2,7 +2,6 @@ package name.expenses.features.customer.service.service_impl;
 
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import name.expenses.error.exception.ErrorCode;
@@ -22,13 +21,11 @@ import name.expenses.features.expesnse.service.ExpenseService;
 import name.expenses.features.pocket.service.PocketService;
 import name.expenses.features.sub_category.service.SubService;
 import name.expenses.features.user.models.User;
-import name.expenses.features.user.service.UserService;
 import name.expenses.features.user.service.service_impl.AuthService;
 import name.expenses.globals.Page;
 import name.expenses.globals.SortDirection;
 import name.expenses.globals.responses.ResponseDto;
 import name.expenses.utils.ResponseDtoBuilder;
-import name.expenses.utils.ValidateInputUtils;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -145,5 +142,10 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public void updateAssociation(Customer entity, CustomerUpdateDto entityUpdateDto) {
+    }
+
+    @Override
+    public Customer update(Customer customer) {
+        return customerDAO.update(customer);
     }
 }

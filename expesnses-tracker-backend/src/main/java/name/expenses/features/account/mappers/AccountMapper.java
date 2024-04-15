@@ -36,7 +36,7 @@ public interface AccountMapper {
                     @Mapping(target = "createdAt", ignore = true),
                     @Mapping(target = "updatedAt", ignore = true),
                     @Mapping(target = "customers", ignore = true),
-
+                    @Mapping(target = "pockets", ignore = true),
             }
 
     )

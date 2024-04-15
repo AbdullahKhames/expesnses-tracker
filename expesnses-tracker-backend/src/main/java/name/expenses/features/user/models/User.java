@@ -30,6 +30,7 @@ public class User extends BaseModel implements UserDetails, Principal {
     private String password;
     private boolean verified = true;
     private boolean loggedIn = false;
+    @Column(unique = true)
     private String deviceId;
     @OneToOne(mappedBy = "user")
     @ToString.Exclude

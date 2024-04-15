@@ -9,6 +9,8 @@ import name.expenses.features.category.dtos.response.CategoryRespDto;
 import name.expenses.features.expesnse.dtos.response.ExpenseRespDto;
 import name.expenses.features.pocket.dtos.response.PocketRespDto;
 import name.expenses.features.sub_category.dtos.response.SubCategoryRespDto;
+import name.expenses.features.transaction.dtos.request.TransactionUpdateDto;
+import name.expenses.features.transaction.dtos.response.TransactionRespDto;
 import name.expenses.features.user.dtos.response.UserRespDto;
 
 import java.util.HashSet;
@@ -32,4 +34,6 @@ public class CustomerRespDto {
     private Set<SubCategoryRespDto> subCategories = new HashSet<>();
     @Builder.Default
     private Set<ExpenseRespDto> expenses = new HashSet<>();
+    @Builder.Default
+    private Set<TransactionRespDto> transactions = new HashSet<>();
 }

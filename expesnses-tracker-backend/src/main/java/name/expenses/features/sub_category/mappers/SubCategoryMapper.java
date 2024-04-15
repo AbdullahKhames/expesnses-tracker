@@ -20,6 +20,7 @@ import java.util.UUID;
 @Mapper(componentModel = "JAKARTA",
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
+        unmappedTargetPolicy = ReportingPolicy.IGNORE,
         uses = {
             ExpenseMapper.class,
                 CategoryMapper.class

@@ -6,6 +6,7 @@ import jakarta.ejb.Local;
 import name.expenses.features.account.dtos.request.AccountUpdateDto;
 import name.expenses.features.account.models.Account;
 
+import name.expenses.features.customer.models.Customer;
 import name.expenses.features.pocket.dtos.request.PocketReqDto;
 import name.expenses.features.pocket.dtos.request.PocketUpdateDto;
 import name.expenses.features.pocket.models.Pocket;
@@ -25,6 +26,9 @@ public interface PocketService extends
         UpdateAssociation<Account, AccountUpdateDto>,
         CrudService<PocketReqDto, PocketUpdateDto, String, Pocket> {
     ResponseDto create(PocketReqDto expense);
+
+    void associateAccount(String accountRefNo, Pocket sentPocket, Customer customer);
+
     ResponseDto get(String refNo);
 
     ResponseDto update(String refNo, PocketUpdateDto expense);

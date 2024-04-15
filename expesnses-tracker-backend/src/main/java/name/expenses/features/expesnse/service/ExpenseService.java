@@ -3,6 +3,7 @@ package name.expenses.features.expesnse.service;
 import jakarta.ejb.Local;
 import name.expenses.features.association.CollectionAdder;
 import name.expenses.features.association.CollectionRemover;
+import name.expenses.features.customer.models.Customer;
 import name.expenses.features.expesnse.dtos.request.ExpenseReqDto;
 import name.expenses.features.expesnse.dtos.request.ExpenseUpdateDto;
 import name.expenses.features.expesnse.models.Expense;
@@ -18,5 +19,11 @@ public interface ExpenseService extends
 //        CollectionAdder<Category, SubCategoryUpdateDto>,
         CollectionRemover<SubCategory>,
         CollectionAdder<SubCategory>{
+    Expense save(Expense sentExpense);
+
+
+    void associateSubCategory(String subCatRefNo, Expense sentExpense, Customer customer);
+
     void updateExpensesAssociation(SubCategory existingSubCategory, SubCategoryUpdateDto newSubCategory);
+    Expense reqDtoToEntity(ExpenseReqDto expenseReqDto);
 }
