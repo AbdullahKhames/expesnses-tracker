@@ -2,13 +2,20 @@ package name.expenses.features.customer.service.service_impl;
 
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.SecurityContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import name.expenses.error.exception.APIException;
 import name.expenses.error.exception.ErrorCode;
 import name.expenses.error.exception.GeneralFailureException;
 import name.expenses.error.exception_handler.models.ErrorCategory;
 import name.expenses.error.exception_handler.models.ResponseError;
+import name.expenses.features.account.mappers.AccountMapper;
+import name.expenses.features.account.models.Account;
 import name.expenses.features.account.service.AccountService;
+import name.expenses.features.association.Models;
+import name.expenses.features.category.mappers.CategoryMapper;
 import name.expenses.features.category.service.CategoryService;
 import name.expenses.features.customer.dao.CustomerDAO;
 import name.expenses.features.customer.dtos.request.CustomerReqDto;
@@ -17,9 +24,13 @@ import name.expenses.features.customer.dtos.response.CustomerRespDto;
 import name.expenses.features.customer.mappers.CustomerMapper;
 import name.expenses.features.customer.models.Customer;
 import name.expenses.features.customer.service.CustomerService;
+import name.expenses.features.expesnse.mappers.ExpenseMapper;
 import name.expenses.features.expesnse.service.ExpenseService;
+import name.expenses.features.pocket.mappers.PocketMapper;
 import name.expenses.features.pocket.service.PocketService;
+import name.expenses.features.sub_category.mappers.SubCategoryMapper;
 import name.expenses.features.sub_category.service.SubService;
+import name.expenses.features.transaction.mappers.TransactionMapper;
 import name.expenses.features.user.models.User;
 import name.expenses.features.user.service.service_impl.AuthService;
 import name.expenses.globals.Page;
@@ -38,12 +49,20 @@ public class CustomerServiceImpl implements CustomerService {
     public static final String CUSTOMER = "Customer";
     private final CustomerDAO customerDAO;
     private final CustomerMapper customerMapper;
+    private final AccountMapper accountMapper;
+    private final PocketMapper pocketMapper;
+    private final CategoryMapper categoryMapper;
+    private final SubCategoryMapper subCategoryMapper;
+    private final TransactionMapper transactionMapper;
+    private final ExpenseMapper expenseMapper;
     private final AccountService accountService;
     private final PocketService pocketService;
     private final CategoryService categoryService;
     private final SubService subService;
     private final ExpenseService expenseService;
     private final AuthService authService;
+    @Context
+    private SecurityContext securityContext;
 
 
 
@@ -147,5 +166,30 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer update(Customer customer) {
         return customerDAO.update(customer);
+    }
+    private Customer getCustomer(){
+        try {
+            return ((User) securityContext.getUserPrincipal()).getCustomer();
+        }catch (Exception ex){
+            return null;
+        }
+    }
+
+    @Override
+    public ResponseDto getCustomerAssociation(Models models) {
+        Customer customer = getCustomer();
+        if (customer == null) {
+            throw new APIException(ErrorCode.OBJECT_NOT_FOUND.getErrorCode());
+        }
+        Object associations = switch (models){
+            case ACCOUNT -> accountMapper.entityToRespDto(customer.getAccounts());
+            case SUB_CATEGORY -> subCategoryMapper.entityToRespDto(customer.getSubCategories());
+            case EXPENSE -> expenseMapper.entityToRespDto(customer.getExpenses());
+            case POCKET -> pocketMapper.entityToRespDto(customer.getPockets());
+            case CATEGORY -> categoryMapper.entityToRespDto(customer.getCategories());
+            case TRANSACTION -> transactionMapper.entityToRespDto(customer.getTransactions());
+            default -> null;
+        };
+        return ResponseDtoBuilder.getFetchResponse(String.format("customer's %ss", models), customer.getRefNo(), associations);
     }
 }

@@ -17,6 +17,8 @@ import name.expenses.features.association.CollectionRemover;
 import name.expenses.features.association.UpdateAssociation;
 import name.expenses.globals.responses.ResponseDto;
 
+import java.util.Set;
+
 @Local
 public interface PocketService extends
         CollectionAdder<Account>,
@@ -37,4 +39,5 @@ public interface PocketService extends
 
     ResponseDto getAllEntities(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
 
+    Set<Pocket> updateAll(Set<Pocket> pockets);
 }

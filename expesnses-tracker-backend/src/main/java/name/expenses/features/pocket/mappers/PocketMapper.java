@@ -5,6 +5,7 @@ package name.expenses.features.pocket.mappers;
 
 import name.expenses.features.account.mappers.AccountMapper;
 import name.expenses.features.customer.mappers.CustomerMapper;
+import name.expenses.features.customer.models.Customer;
 import name.expenses.features.pocket.dtos.request.PocketReqDto;
 import name.expenses.features.pocket.dtos.request.PocketUpdateDto;
 import name.expenses.features.pocket.dtos.response.PocketRespDto;
@@ -41,11 +42,17 @@ public interface PocketMapper {
     @Mappings(
 
             {
-                    @Mapping(target = "customer", ignore = true),
+//                    @Mapping(target = "customer", ignore = true),
+                    @Mapping(target = "customerName", source = "customer", qualifiedByName = "getCustomerName"),
             }
 
     )
     PocketRespDto entityToRespDto(Pocket entity);
+
+    @Named("getCustomerName")
+    default String getCustomerName(Customer customer){
+        return customer.getUser().getFullName();
+    }
     Set<PocketRespDto> entityToRespDto(Set<Pocket> entities);
     List<PocketRespDto> entityToRespDto(List<Pocket> entities);
     Page<PocketRespDto> entityToRespDto(Page<Pocket> entitiesPage);

@@ -20,7 +20,8 @@ public class PocketRespDto {
     private String name;
     private String details;
     private Double amount;
-    private CustomerRespDto customer;
+//    private CustomerRespDto customer;
+    private String customerName;
     private String refNo;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

@@ -4,7 +4,12 @@ public interface
 ProjectConfigLoader {
 
 	public String getProjectName();
-	public String getUserHome();
+
+	String getConfigProjectName();
+
+	String getProjectHomeDir();
+
+    public String getUserHome();
 	public String getActiveMQBrokerURL();
 	public String getActiveMQBrokerReceiveTimeout();
 	public String getActiveMQBrokerReceiveTimeToLive();

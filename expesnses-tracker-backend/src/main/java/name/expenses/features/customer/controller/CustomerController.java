@@ -183,4 +183,41 @@ public class CustomerController {
         return Response.ok(associationManager.removeAssociation(null, Models.CUSTOMER, associationReqDto.getAssociationRefNos(), Models.POCKET)).build();
     }
 
+    @GET
+    @Path("/accounts")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getCustomerAccounts() {
+        return Response.ok(customerService.getCustomerAssociation(Models.ACCOUNT)).build();
+    }
+    @GET
+    @Path("/categories")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getCustomerCategories() {
+        return Response.ok(customerService.getCustomerAssociation(Models.CATEGORY)).build();
+    }
+    @GET
+    @Path("/sub-categories")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getCustomerSubCategories() {
+        return Response.ok(customerService.getCustomerAssociation(Models.SUB_CATEGORY)).build();
+    }
+    @GET
+    @Path("/pockets")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getCustomerPockets() {
+        return Response.ok(customerService.getCustomerAssociation(Models.POCKET)).build();
+    }
+    @GET
+    @Path("/expenses")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getCustomerExpenses() {
+        return Response.ok(customerService.getCustomerAssociation(Models.EXPENSE)).build();
+    }
+    @GET
+    @Path("/transactions")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getCustomerTransactions() {
+        return Response.ok(customerService.getCustomerAssociation(Models.TRANSACTION)).build();
+    }
+
 }

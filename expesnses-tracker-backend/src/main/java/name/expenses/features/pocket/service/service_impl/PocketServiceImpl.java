@@ -173,6 +173,11 @@ public class PocketServiceImpl implements PocketService {
     }
 
     @Override
+    public Set<Pocket> updateAll(Set<Pocket> pockets) {
+        return pocketDAO.updateAll(pockets);
+    }
+
+    @Override
     public Set<Pocket> getEntities(Set<String> refNos) {
         return pocketDAO.getEntities(refNos);
     }

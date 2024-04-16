@@ -21,7 +21,7 @@ public class TransactionRespDto {
     private Double amount;
     private ExpenseRespDto expense;
     @Builder.Default
-    private Set<PocketAmountRespDto> pockets = new HashSet<>();
+    private Set<PocketAmountRespDto> pocketAmounts = new HashSet<>();
     private String refNo;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

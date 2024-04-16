@@ -2,11 +2,27 @@ package name.expenses.utils.property_loader;
 
 import jakarta.inject.Singleton;
 
+import java.io.File;
+
 @Singleton
 public class ProjectConfigLoaderImpl implements ProjectConfigLoader {
 	
 	public String getProjectName() {
             return System.getenv("PROJECT");
+	}
+	@Override
+	public String getConfigProjectName() {
+            return "expenses-apis-config" + File.separator + "expenses";
+	}
+	@Override
+	public String getProjectHomeDir() {
+		String currentDir = System.getProperty("user.dir");
+
+		// Navigate upwards to the project root
+		File projectRoot = new File(currentDir).getParentFile().getParentFile().getParentFile();
+
+		// Set projectHome to the project root path
+		return projectRoot.getAbsolutePath();
 	}
 
 	public String getUserHome() {

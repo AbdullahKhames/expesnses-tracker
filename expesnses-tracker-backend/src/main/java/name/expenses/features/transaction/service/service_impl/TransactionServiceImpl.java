@@ -87,7 +87,7 @@ public class TransactionServiceImpl implements TransactionService {
 //            throw new GeneralFailureException(ErrorCode.OBJECT_NOT_FOUND.getErrorCode(),
 //                    Map.of("error", "expense not found"));
 //        }
-
+        Set<Pocket> pockets = new HashSet<>();
         Set<PocketAmount> pocketAmounts = transactionReqDto
                 .getPocketAmountReqDtos()
                 .stream()
@@ -95,7 +95,10 @@ public class TransactionServiceImpl implements TransactionService {
                     PocketAmount pocketAmount = pocketAmountMapper.reqDtoToEntity(reqDto);
                     Optional<Pocket> pocketOptional = pocketService.getEntity(reqDto.getRefNo());
                     if (pocketOptional.isPresent()){
-                        pocketAmount.setPocket(pocketOptional.get());
+                        Pocket pocket = pocketOptional.get();
+                        pocketAmount.setPocket(pocket);
+                        pocket.setAmount(pocket.getAmount() - pocketAmount.getAmount());
+                        pockets.add(pocket);
                     }else {
                         return null;
                     }
@@ -120,8 +123,13 @@ public class TransactionServiceImpl implements TransactionService {
                 .reduce(0.0, (x, y) -> x + y)
         );
 
+        if (sentTransaction.getAmount() != sentTransaction.getExpense().getAmount()){
+            throw new APIException(ErrorCode.AMOUNT_NOT_EQUAL.getErrorCode());
+        }
+
         Transaction savedTransaction = transactionDAO.create(sentTransaction);
         customerService.update(customer);
+        pocketService.updateAll(pockets);
         log.info("created transaction {}", savedTransaction);
         return ResponseDtoBuilder.getCreateResponse(TRANSACTION, savedTransaction.getRefNo(), transactionMapper.entityToRespDto(savedTransaction));
     }

@@ -6,5 +6,5 @@ public enum Models {
     CUSTOMER,
     SUB_CATEGORY,
     EXPENSE,
-    POCKET;
+    POCKET, TRANSACTION;
 }
