@@ -1,15 +1,12 @@
-package name.expenses.features.transaction.dtos.request;
+package name.expenses.features.pocket_transfer.dtos.request;
 
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import name.expenses.features.expesnse.dtos.request.ExpenseReqDto;
-import name.expenses.features.pocket_transfer.dtos.request.PocketAmountReqDto;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -19,15 +16,15 @@ import java.util.Set;
 @Data
 @Builder
 @Valid
-public class TransactionReqDto {
+public class PocketTransferReqDto {
     private String name;
     private String details;
     @Valid
     @Builder.Default
     @NotNull
-    private Set<PocketAmountReqDto> pocketAmountReqDtos = new HashSet<>();
+    private Set<PocketAmountReqDto> receiverPocketAmountsDtos = new HashSet<>();
     @Valid
     @NotNull
-    private ExpenseReqDto expense;
+    private PocketAmountReqDto senderPocketAmount;
 }
 

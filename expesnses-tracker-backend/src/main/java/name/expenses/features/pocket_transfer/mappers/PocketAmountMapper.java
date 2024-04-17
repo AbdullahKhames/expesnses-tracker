@@ -1,10 +1,11 @@
-package name.expenses.features.transaction.mappers;
+package name.expenses.features.pocket_transfer.mappers;
 
 
 import name.expenses.features.pocket.mappers.PocketMapper;
-import name.expenses.features.transaction.dtos.request.PocketAmountReqDto;
-import name.expenses.features.transaction.dtos.response.PocketAmountRespDto;
-import name.expenses.features.transaction.models.PocketAmount;
+
+import name.expenses.features.pocket_transfer.dtos.request.PocketAmountReqDto;
+import name.expenses.features.pocket_transfer.dtos.response.PocketAmountRespDto;
+import name.expenses.features.pocket_transfer.models.PocketAmount;
 import name.expenses.globals.Page;
 import org.mapstruct.*;
 

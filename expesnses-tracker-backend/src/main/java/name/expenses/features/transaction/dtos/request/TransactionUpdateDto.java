@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import name.expenses.features.expesnse.dtos.request.ExpenseUpdateDto;
+import name.expenses.features.pocket_transfer.dtos.request.PocketAmountReqDto;
 
 import java.util.HashSet;
 import java.util.Set;

@@ -1,15 +1,10 @@
-package name.expenses.features.transaction.models;
+package name.expenses.features.pocket_transfer.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import name.expenses.features.base.models.BaseModel;
 import name.expenses.features.customer.models.Customer;
-import name.expenses.features.expesnse.models.Expense;
-import name.expenses.features.pocket.models.Pocket;
-import name.expenses.features.pocket_transfer.models.PocketAmount;
-import name.expenses.utils.collection_getter.ExpenseGetter;
-import name.expenses.utils.collection_getter.PocketGetter;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.time.LocalDateTime;
@@ -23,23 +18,25 @@ import java.util.Set;
 @ToString
 @AllArgsConstructor
 @Entity
-public class Transaction extends BaseModel {
+public class PocketTransfer extends BaseModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private String details;
     private Double amount;
-    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "transaction_id")
-    private Set<PocketAmount> pocketAmounts = new HashSet<>();
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @ToString.Exclude
     @JsonIgnore
     private Customer customer;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
-    @JoinColumn(referencedColumnName = "id", name = "expense_id")
-    private Expense expense;
+    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "sender_pocket_amount_id")
+    private PocketAmount senderPocketAmount;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "pocket_transfer_id")
+    @ToString.Exclude
+    private Set<PocketAmount> receiverPocketAmounts = new HashSet<>();
     @PreUpdate
     protected void onUpdate() {
         this.setUpdatedAt(LocalDateTime.now());
@@ -52,7 +49,7 @@ public class Transaction extends BaseModel {
         Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
         Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
-        Transaction that = (Transaction) o;
+        PocketTransfer that = (PocketTransfer) o;
         return getId() != null && Objects.equals(getId(), that.getId());
     }
 

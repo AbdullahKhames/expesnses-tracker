@@ -1,12 +1,10 @@
-package name.expenses.features.transaction.mappers;
+package name.expenses.features.pocket_transfer.mappers;
 
 
-import name.expenses.features.expesnse.mappers.ExpenseMapper;
-import name.expenses.features.pocket_transfer.mappers.PocketAmountMapper;
-import name.expenses.features.transaction.dtos.request.TransactionReqDto;
-import name.expenses.features.transaction.dtos.request.TransactionUpdateDto;
-import name.expenses.features.transaction.dtos.response.TransactionRespDto;
-import name.expenses.features.transaction.models.Transaction;
+import name.expenses.features.pocket_transfer.dtos.request.PocketTransferReqDto;
+import name.expenses.features.pocket_transfer.dtos.request.PocketTransferUpdateDto;
+import name.expenses.features.pocket_transfer.dtos.response.PocketTransferRespDto;
+import name.expenses.features.pocket_transfer.models.PocketTransfer;
 import name.expenses.globals.Page;
 import org.mapstruct.*;
 
@@ -20,10 +18,9 @@ import java.util.Set;
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         uses = {
                 PocketAmountMapper.class,
-                ExpenseMapper.class
         },
         imports = {LocalDateTime.class})
-public interface TransactionMapper {
+public interface PocketTransferMapper {
     @Mappings(
 
             {
@@ -32,15 +29,16 @@ public interface TransactionMapper {
                     @Mapping(target = "refNo", ignore = true),
                     @Mapping(target = "createdAt", ignore = true),
                     @Mapping(target = "updatedAt", ignore = true),
-                    @Mapping(target = "expense", ignore = true)
+                    @Mapping(target = "senderPocketAmount", ignore = true),
+                    @Mapping(target = "receiverPocketAmounts", ignore = true),
             }
 
     )
-    Transaction reqDtoToEntity(TransactionReqDto entityReqDto);
-    TransactionRespDto entityToRespDto(Transaction entity);
-    Set<TransactionRespDto> entityToRespDto(Set<Transaction> entities);
-    List<TransactionRespDto> entityToRespDto(List<Transaction> entities);
-    Page<TransactionRespDto> entityToRespDto(Page<Transaction> entitiesPage);
+    PocketTransfer reqDtoToEntity(PocketTransferReqDto entityReqDto);
+    PocketTransferRespDto entityToRespDto(PocketTransfer entity);
+    Set<PocketTransferRespDto> entityToRespDto(Set<PocketTransfer> entities);
+    List<PocketTransferRespDto> entityToRespDto(List<PocketTransfer> entities);
+    Page<PocketTransferRespDto> entityToRespDto(Page<PocketTransfer> entitiesPage);
 
     @Mappings(
 
@@ -50,8 +48,10 @@ public interface TransactionMapper {
                     @Mapping(target = "refNo", ignore = true),
                     @Mapping(target = "createdAt", ignore = true),
                     @Mapping(target = "updatedAt", expression = "java(LocalDateTime.now())"),
+                    @Mapping(target = "senderPocketAmount", ignore = true),
+                    @Mapping(target = "receiverPocketAmounts", ignore = true),
             }
 
     )
-    void update(@MappingTarget Transaction entity, TransactionUpdateDto entityUpdateDto);
+    void update(@MappingTarget PocketTransfer entity, PocketTransferUpdateDto entityUpdateDto);
 }

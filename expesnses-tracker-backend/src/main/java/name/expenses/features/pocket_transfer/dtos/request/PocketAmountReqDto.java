@@ -1,4 +1,4 @@
-package name.expenses.features.transaction.dtos.request;
+package name.expenses.features.pocket_transfer.dtos.request;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;

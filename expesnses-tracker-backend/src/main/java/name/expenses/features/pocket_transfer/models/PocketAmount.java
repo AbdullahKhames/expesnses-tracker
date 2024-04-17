@@ -1,4 +1,4 @@
-package name.expenses.features.transaction.models;
+package name.expenses.features.pocket_transfer.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.Valid;

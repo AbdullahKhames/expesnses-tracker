@@ -1,4 +1,4 @@
-package name.expenses.features.transaction.dtos.response;
+package name.expenses.features.pocket_transfer.dtos.response;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
