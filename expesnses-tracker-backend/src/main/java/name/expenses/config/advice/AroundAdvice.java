@@ -20,6 +20,9 @@ import name.expenses.features.customer.dtos.request.CustomerUpdateDto;
 import name.expenses.features.expesnse.dtos.request.*;
 import name.expenses.features.pocket.dtos.request.*;
 import name.expenses.features.pocket_transfer.dtos.request.PocketAmountReqDto;
+import name.expenses.features.pocket_transfer.dtos.request.PocketAmountUpdateDto;
+import name.expenses.features.pocket_transfer.dtos.request.PocketTransferReqDto;
+import name.expenses.features.pocket_transfer.dtos.request.PocketTransferUpdateDto;
 import name.expenses.features.sub_category.dtos.request.*;
 import name.expenses.features.transaction.dtos.request.TransactionReqDto;
 import name.expenses.features.transaction.dtos.request.TransactionUpdateDto;
@@ -42,19 +45,31 @@ public class AroundAdvice {
     static {
         classesToValidate.add(AccountReqDto.class);
         classesToValidate.add(AccountUpdateDto.class);
+
         classesToValidate.add(AssociationGenericReqDto.class);
         classesToValidate.add(AssociationReqDto.class);
+
         classesToValidate.add(CategoryReqDto.class);
         classesToValidate.add(CategoryUpdateDto.class);
+
         classesToValidate.add(CustomerReqDto.class);
         classesToValidate.add(CustomerUpdateDto.class);
+
         classesToValidate.add(ExpenseReqDto.class);
         classesToValidate.add(ExpenseUpdateDto.class);
+
         classesToValidate.add(PocketReqDto.class);
         classesToValidate.add(PocketUpdateDto.class);
+
         classesToValidate.add(SubCategoryReqDto.class);
         classesToValidate.add(SubCategoryUpdateDto.class);
+
         classesToValidate.add(PocketAmountReqDto.class);
+        classesToValidate.add(PocketAmountUpdateDto.class);
+
+        classesToValidate.add(PocketTransferReqDto.class);
+        classesToValidate.add(PocketTransferUpdateDto.class);
+
         classesToValidate.add(TransactionReqDto.class);
         classesToValidate.add(TransactionUpdateDto.class);
 

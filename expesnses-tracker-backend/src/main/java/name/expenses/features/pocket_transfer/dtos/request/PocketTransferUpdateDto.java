@@ -26,8 +26,8 @@ public class PocketTransferUpdateDto {
     @Valid
     @Builder.Default
     @NotNull
-    private Set<PocketAmountReqDto> receiverPocketAmountsDtos = new HashSet<>();
+    private Set<PocketAmountUpdateDto> receiverPocketAmountsUpdateDtos = new HashSet<>();
     @Valid
     @NotNull
-    private PocketAmountReqDto senderPocketAmount;
+    private PocketAmountUpdateDto senderPocketAmountUpdateDto;
 }

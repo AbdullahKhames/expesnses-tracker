@@ -18,7 +18,7 @@ public class PocketTransferRespDto {
     private String name;
     private String details;
     private Double amount;
-    private PocketAmountRespDto expense;
+    private PocketAmountRespDto senderPocketAmount;
     @Builder.Default
     private Set<PocketAmountRespDto> receiverPocketAmounts = new HashSet<>();
     private String refNo;

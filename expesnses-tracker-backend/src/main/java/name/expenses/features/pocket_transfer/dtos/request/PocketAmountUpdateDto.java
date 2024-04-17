@@ -14,10 +14,11 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 @Valid
-public class PocketAmountReqDto {
+public class PocketAmountUpdateDto {
     @NotNull
     @NotBlank
     private String pocketRefNo;
+    private String refNo;
     @NotNull
     @Min(0)
     private Double amount;

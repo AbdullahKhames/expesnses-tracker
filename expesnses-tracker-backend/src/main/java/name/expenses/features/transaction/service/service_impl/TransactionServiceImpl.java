@@ -93,9 +93,13 @@ public class TransactionServiceImpl implements TransactionService {
                 .stream()
                 .map(reqDto -> {
                     PocketAmount pocketAmount = pocketAmountMapper.reqDtoToEntity(reqDto);
-                    Optional<Pocket> pocketOptional = pocketService.getEntity(reqDto.getRefNo());
+                    Optional<Pocket> pocketOptional = pocketService.getEntity(reqDto.getPocketRefNo());
                     if (pocketOptional.isPresent()){
                         Pocket pocket = pocketOptional.get();
+                        if (!Objects.equals(pocket.getCustomer(), customer)){
+                            throw new GeneralFailureException(ErrorCode.OBJECT_NOT_FOUND.getErrorCode(),
+                                    Map.of("error", "pocket customer the same as current customer please use your pocket!"));
+                        }
                         pocketAmount.setPocket(pocket);
                         pocket.setAmount(pocket.getAmount() - pocketAmount.getAmount());
                         pockets.add(pocket);

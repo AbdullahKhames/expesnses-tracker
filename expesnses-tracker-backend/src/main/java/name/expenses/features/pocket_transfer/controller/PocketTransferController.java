@@ -17,7 +17,7 @@ import name.expenses.features.pocket_transfer.service.PocketTransferService;
 import name.expenses.globals.SortDirection;
 import name.expenses.globals.responses.ResponseDto;
 
-@Path("/transactions")
+@Path("/pocket-transfers")
 @Slf4j
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
 @Interceptors(AroundAdvice.class)

@@ -22,9 +22,9 @@ public class PocketTransferReqDto {
     @Valid
     @Builder.Default
     @NotNull
-    private Set<PocketAmountReqDto> receiverPocketAmountsDtos = new HashSet<>();
+    private Set<PocketAmountReqDto> receiverPocketAmountsReqDtos = new HashSet<>();
     @Valid
     @NotNull
-    private PocketAmountReqDto senderPocketAmount;
+    private PocketAmountReqDto senderPocketAmountReqDto;
 }
 
