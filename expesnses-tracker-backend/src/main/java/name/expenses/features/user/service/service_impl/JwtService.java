@@ -47,7 +47,9 @@ public class JwtService {
         if (userDetails.getCustomer() != null){
             map.put("customerId",userDetails.getCustomer().getId());
         }
-        map.put("UUID",userDetails.getRefNo());
+        map.put("refNo",userDetails.getRefNo());
+        map.put("name",userDetails.getFullName());
+        map.put("email",userDetails.getEmail());
 //        map.put("id", userDetails.getId());
         return generateToken(map , userDetails);
     }
@@ -56,7 +58,10 @@ public class JwtService {
         if (userDetails.getCustomer() != null){
             map.put("customerId",userDetails.getCustomer().getId());
         }
-//        map.put("UUID",userDetails.getRef());
+//        map.put("RefNo",userDetails.getRef());
+        map.put("refNo",userDetails.getRefNo());
+        map.put("name",userDetails.getFullName());
+        map.put("email",userDetails.getEmail());
         return generateRefreshToken(map, userDetails);
     }
     public String generateVerificationToken(String otpRef, String deviceId, Type type){
@@ -138,9 +143,9 @@ public class JwtService {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);
     }
-    public String extractUUIDFromToken(String token){
+    public String extractRefNoFromToken(String token){
 
-        return extractAllClaims(token).get("UUID").toString();
+        return extractAllClaims(token).get("refNo").toString();
     }
     public String extractKeyFromRequest(@Context HttpServletRequest request, String key){
         String token;

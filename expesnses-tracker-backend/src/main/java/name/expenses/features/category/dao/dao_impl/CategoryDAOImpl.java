@@ -3,10 +3,7 @@ package name.expenses.features.category.dao.dao_impl;
 import jakarta.ejb.Stateless;
 import jakarta.interceptor.Interceptors;
 import jakarta.persistence.*;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Path;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
 
 import jakarta.transaction.Transactional;
 import name.expenses.config.advice.RepoAdvice;
@@ -160,5 +157,54 @@ public class CategoryDAOImpl implements CategoryDAO {
                 "SELECT a FROM Category a WHERE a.refNo IN :refNos", Category.class);
         query.setParameter("refNos", refNos);
         return new HashSet<>(query.getResultList());
+    }
+
+    public Page<SubCategory> getSubcategories(String refNo, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
+        try {
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<SubCategory> query = cb.createQuery(SubCategory.class);
+            Root<SubCategory> root = query.from(SubCategory.class);
+
+            // Join with Category based on reference number
+            Join<SubCategory, Category> categoryJoin = root.join("category", JoinType.INNER);
+            Predicate refNoPredicate = cb.equal(categoryJoin.get("refNo"), refNo);
+
+            // Where clause
+            query.where(refNoPredicate);
+
+            // Sorting
+            Path<Object> sortByPath;
+            if (FieldValidator.hasField(sortBy, SubCategory.class)) {
+                sortByPath = root.get(sortBy);
+            } else {
+                sortByPath = root.get("id");
+            }
+            if (sortDirection == SortDirection.ASC) {
+                query.orderBy(cb.asc(sortByPath));
+            } else {
+                query.orderBy(cb.desc(sortByPath));
+            }
+
+            // Count query
+            CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+            Root<SubCategory> subCategoryRoot = countQuery.from(SubCategory.class);
+            countQuery.select(cb.count(subCategoryRoot));
+            Join<SubCategory, Category> newCategoryJoin = subCategoryRoot.join("category", JoinType.INNER);
+            Predicate categoryPredicate = cb.equal(newCategoryJoin.get("refNo"), refNo);
+            countQuery.where(categoryPredicate);
+            Long totalElements = entityManager.createQuery(countQuery).getSingleResult();
+
+            // Typed query
+            TypedQuery<SubCategory> typedQuery = entityManager.createQuery(query);
+            typedQuery.setFirstResult((int) ((pageNumber - 1) * pageSize));
+            typedQuery.setMaxResults(Math.toIntExact(pageSize));
+            List<SubCategory> subCategories = typedQuery.getResultList();
+
+            return PageUtil.createPage(pageNumber, pageSize, subCategories, totalElements);
+        } catch (Exception exception) {
+            throw new GeneralFailureException(GeneralFailureException.ERROR_FETCH,
+                    Map.of("original message", exception.getMessage().substring(0, 15),
+                            "error", "there was an error with your request"));
+        }
     }
 }

@@ -30,6 +30,7 @@ public class _2auth {
     private boolean expired = false;
     @Enumerated(EnumType.STRING)
     private Type type;
+    @Column(columnDefinition = "TEXT")
     private String token;
     private String deviceId;
 

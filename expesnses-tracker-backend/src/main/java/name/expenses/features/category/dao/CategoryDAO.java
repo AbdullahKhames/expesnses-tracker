@@ -2,6 +2,7 @@ package name.expenses.features.category.dao;
 
 import jakarta.ejb.Local;
 import name.expenses.features.category.models.Category;
+import name.expenses.features.sub_category.models.SubCategory;
 import name.expenses.globals.Page;
 import name.expenses.globals.SortDirection;
 
@@ -18,4 +19,6 @@ public interface CategoryDAO {
     Category update(Category expense);
     String delete(String refNo);
     Set<Category> getEntities(Set<String> refNos);
+
+    Page<SubCategory> getSubcategories(String refNo, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
 }

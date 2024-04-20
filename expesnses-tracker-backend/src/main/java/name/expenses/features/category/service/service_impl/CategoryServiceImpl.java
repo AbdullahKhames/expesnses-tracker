@@ -19,6 +19,9 @@ import name.expenses.features.category.mappers.CategoryMapper;
 import name.expenses.features.category.models.Category;
 import name.expenses.features.category.service.CategoryService;
 import name.expenses.features.customer.models.Customer;
+import name.expenses.features.sub_category.dtos.response.SubCategoryRespDto;
+import name.expenses.features.sub_category.mappers.SubCategoryMapper;
+import name.expenses.features.sub_category.models.SubCategory;
 import name.expenses.globals.Page;
 import name.expenses.globals.SortDirection;
 import name.expenses.features.association.Models;
@@ -43,6 +46,7 @@ public class CategoryServiceImpl implements CategoryService {
     public static final String CATEGORY = "Category";
     private final CategoryDAO categoryDAO;
     private final CategoryMapper categoryMapper;
+    private final SubCategoryMapper subCategoryMapper;
     private final CategoryAssociationManager categoryAssociationManager;
     private final UpdateCategoryServiceImpl updateCategoryService;
 
@@ -147,6 +151,20 @@ public class CategoryServiceImpl implements CategoryService {
         responseError.setErrorCode(ErrorCode.OBJECT_NOT_FOUND.getErrorCode());
         responseError.setErrorMessage(String.format("category with the ref number %s was not found", categoryRefNo));
         return ResponseDtoBuilder.getErrorResponse(804, responseError);
+    }
+
+    @Override
+    public ResponseDto getSubcategories(String refNo, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
+        if (pageNumber < 1){
+            pageNumber = 1L;
+        }
+        if (pageSize < 1)
+        {
+            pageSize = 1L;
+        }
+        Page<SubCategory> subCategoryPage = categoryDAO.getSubcategories(refNo, pageNumber, pageSize, sortBy, sortDirection);
+        Page<SubCategoryRespDto> subCategoryDtos = subCategoryMapper.entityToRespDto(subCategoryPage);
+        return ResponseDtoBuilder.getFetchAllResponse(CATEGORY, subCategoryDtos);
     }
 
     @Override

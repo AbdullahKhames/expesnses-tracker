@@ -51,6 +51,41 @@ public class CategoryController {
         ResponseDto responseDto = expenseService.update(refNo, expenseUpdateDto);
         return Response.ok(responseDto).build();
     }
+    @GET
+    @Path("/{refNo}/subCategories")
+    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getSubcategories(@PathParam("refNo") String refNo,
+                                   @QueryParam("page") Long pageNumber,
+                                   @QueryParam("per_page") Long pageSize,
+                                   @QueryParam("sortBy") String sortBy,
+                                   @QueryParam("sortDirection") String direction) {
+        if (pageNumber == null) {
+            pageNumber = 1L;
+        }
+        if (pageSize == null) {
+            pageSize = 10L;
+        }
+        if (sortBy == null) {
+            sortBy = "id";
+        }
+        SortDirection sortDirection;
+        if (direction == null || direction.isBlank() || direction.equalsIgnoreCase("ASC")) {
+            sortDirection = SortDirection.ASC;
+        }else if (direction.equalsIgnoreCase("DESC")){
+            sortDirection = SortDirection.DESC;
+        }else {
+            sortDirection = SortDirection.ASC;
+        }
+        ResponseDto responseDto = expenseService
+                .getSubcategories(refNo,
+                        pageNumber,
+                        pageSize,
+                        sortBy,
+                        sortDirection);
+        return Response.ok(responseDto).build();
+    }
+
     @PUT
     @Path("/addAssociation/{categoryRefNo}/{subCategoryRefNo}")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
@@ -80,7 +115,7 @@ public class CategoryController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllEntities(
             @QueryParam("page") Long pageNumber,
-            @QueryParam("size") Long pageSize,
+            @QueryParam("per_page") Long pageSize,
             @QueryParam("sortBy") String sortBy,
             @QueryParam("sortDirection") String direction) {
         if (pageNumber == null) {

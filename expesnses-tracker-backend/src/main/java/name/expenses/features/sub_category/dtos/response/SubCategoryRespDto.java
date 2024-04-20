@@ -16,10 +16,11 @@ import java.util.Set;
 @Builder
 public class SubCategoryRespDto {
     private String name;
-    @Builder.Default
-    private Set<ExpenseRespDto> expenses = new HashSet<>();
+//    @Builder.Default
+//    private Set<ExpenseRespDto> expenses = new HashSet<>();
     private String refNo;
     private String details;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Double totalSpent;
 }

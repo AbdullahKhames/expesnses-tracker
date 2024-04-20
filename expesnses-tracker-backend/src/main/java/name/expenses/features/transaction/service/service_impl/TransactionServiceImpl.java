@@ -98,7 +98,7 @@ public class TransactionServiceImpl implements TransactionService {
                         Pocket pocket = pocketOptional.get();
                         if (!Objects.equals(pocket.getCustomer(), customer)){
                             throw new GeneralFailureException(ErrorCode.OBJECT_NOT_FOUND.getErrorCode(),
-                                    Map.of("error", "pocket customer the same as current customer please use your pocket!"));
+                                    Map.of("error", "pocket customer is not the same as current customer please use your pocket!"));
                         }
                         pocketAmount.setPocket(pocket);
                         pocket.setAmount(pocket.getAmount() - pocketAmount.getAmount());

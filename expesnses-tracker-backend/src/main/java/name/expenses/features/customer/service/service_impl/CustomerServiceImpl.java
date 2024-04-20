@@ -73,7 +73,7 @@ public class CustomerServiceImpl implements CustomerService {
         sentCustomer.setCategories(categoryService.getEntities(customerReqDto.getCategoriesRefs()));
         sentCustomer.setSubCategories(subService.getEntities(customerReqDto.getSubCategoriesRefs()));
         customerReqDto.getUser().setRole("CUSTOMER");
-        ResponseDto response = authService.register(customerReqDto.getUser());
+        ResponseDto response = authService.register(customerReqDto.getUser(), true);
         if (!response.isStatus())
             return response;
         sentCustomer.setUser((User) response.getData());
@@ -191,5 +191,10 @@ public class CustomerServiceImpl implements CustomerService {
             default -> null;
         };
         return ResponseDtoBuilder.getFetchResponse(String.format("customer's %ss", models), customer.getRefNo(), associations);
+    }
+
+    @Override
+    public CustomerRespDto create(Customer customer) {
+        return customerMapper.entityToRespDto(customerDAO.create(customer));
     }
 }

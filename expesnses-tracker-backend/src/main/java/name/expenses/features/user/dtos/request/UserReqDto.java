@@ -24,6 +24,9 @@ public class UserReqDto {
     private String password;
     @NotNull
     @NotBlank
+    private String confirmPassword;
+    @NotNull
+    @NotBlank
     private String deviceId;
     @NotNull
     @NotBlank

@@ -5,6 +5,7 @@ import jakarta.ejb.Local;
 import name.expenses.features.association.Models;
 import name.expenses.features.customer.dtos.request.CustomerReqDto;
 import name.expenses.features.customer.dtos.request.CustomerUpdateDto;
+import name.expenses.features.customer.dtos.response.CustomerRespDto;
 import name.expenses.features.customer.models.Customer;
 import name.expenses.globals.CrudService;
 import name.expenses.features.association.UpdateAssociation;
@@ -19,4 +20,6 @@ public interface CustomerService extends
     Customer update(Customer customer);
 
     ResponseDto getCustomerAssociation(Models models);
+
+    CustomerRespDto create(Customer customer);
 }

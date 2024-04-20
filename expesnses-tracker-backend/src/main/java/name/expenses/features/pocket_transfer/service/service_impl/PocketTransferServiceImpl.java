@@ -77,7 +77,7 @@ public class PocketTransferServiceImpl implements PocketTransferService {
         Pocket senderPocket = senderPocketOptional.get();
         if (!Objects.equals(senderPocket.getCustomer(), customer)){
             throw new GeneralFailureException(ErrorCode.OBJECT_NOT_FOUND.getErrorCode(),
-                    Map.of("error", "pocket customer the same as current customer please use your pocket!"));
+                    Map.of("error", "sender pocket customer is not the same as current customer please use your pocket!"));
         }
         PocketAmount senderPocketAmount = pocketAmountMapper.reqDtoToEntity(pocketTransferReqDto.getSenderPocketAmountReqDto());
         senderPocketAmount.setPocket(senderPocket);
@@ -101,10 +101,10 @@ public class PocketTransferServiceImpl implements PocketTransferService {
                             throw new GeneralFailureException(ErrorCode.OBJECT_NOT_FOUND.getErrorCode(),
                                     Map.of("error", "the sender pocket cannot be one of the receivers"));
                         }
-                        if (!Objects.equals(pocket.getCustomer(), customer)){
-                            throw new GeneralFailureException(ErrorCode.OBJECT_NOT_FOUND.getErrorCode(),
-                                    Map.of("error", "pocket customer the same as current customer please use your pocket!"));
-                        }
+//                        if (!Objects.equals(pocket.getCustomer(), customer)){
+//                            throw new GeneralFailureException(ErrorCode.OBJECT_NOT_FOUND.getErrorCode(),
+//                                    Map.of("error", "pocket customer the same as current customer please use your pocket!"));
+//                        }
                         pocketAmount.setPocket(pocket);
                         pocketAmount.setTrans(true);
                         pocket.setAmount(pocket.getAmount() + pocketAmount.getAmount());

@@ -7,7 +7,10 @@ import name.expenses.features.category.dtos.request.CategoryUpdateDto;
 
 import name.expenses.features.category.dtos.response.CategoryRespDto;
 import name.expenses.features.category.models.Category;
+import name.expenses.features.expesnse.models.Expense;
+import name.expenses.features.sub_category.dtos.response.SubCategoryRespDto;
 import name.expenses.features.sub_category.mappers.SubCategoryMapper;
+import name.expenses.features.sub_category.models.SubCategory;
 import name.expenses.globals.Page;
 import org.mapstruct.*;
 
@@ -58,4 +61,15 @@ public interface CategoryMapper {
 
     )
     void update(@MappingTarget Category entity, CategoryUpdateDto entityUpdateDto);
+    @AfterMapping
+    default CategoryRespDto afterEntityToRespDto(Category entity, @MappingTarget CategoryRespDto.CategoryRespDtoBuilder categoryRespDtoBuilder) {
+        CategoryRespDto categoryRespDto = categoryRespDtoBuilder.build();
+        categoryRespDto.setTotalSpent(
+                categoryRespDto.getSubCategories()
+                        .stream()
+                        .map(SubCategoryRespDto::getTotalSpent)
+                        .reduce(0.0, Double::sum)
+        );
+        return categoryRespDto;
+    }
 }

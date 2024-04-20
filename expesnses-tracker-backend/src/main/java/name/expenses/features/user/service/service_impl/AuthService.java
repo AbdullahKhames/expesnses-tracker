@@ -18,6 +18,8 @@ import name.expenses.error.exception.APIException;
 import name.expenses.error.exception.ErrorCode;
 import name.expenses.error.exception.GeneralFailureException;
 import name.expenses.error.exception.ObjectNotFoundException;
+import name.expenses.features.customer.models.Customer;
+import name.expenses.features.customer.service.CustomerService;
 import name.expenses.features.user.dao.*;
 import name.expenses.features.user.dtos.request.LoginRequest;
 import name.expenses.features.user.dtos.request.UserReqDto;
@@ -43,6 +45,7 @@ public class AuthService {
     private final UserMapper userMapper;
     private final JwtService jwtService;
     private final GroupDao groupDao;
+    private final CustomerService customerService;
     @Context
     SecurityContext securityContext;
     public boolean verified(String phone, String token, Type type) {
@@ -91,10 +94,10 @@ public class AuthService {
         }
         String token = userReqDto.getVerificationToken();
         revokeToken(token);
-        return register(userReqDto);
+        return register(userReqDto, false);
     }
 
-    public ResponseDto register(UserReqDto request) {
+    public ResponseDto register(UserReqDto request, boolean fromOtherController) {
         if (request == null){
             return ResponseDto.builder()
                     .message("error must provide profile type")
@@ -117,6 +120,16 @@ public class AuthService {
         user.setRoles(Set.of(role));
         user.setPassword(Hashing.hash(request.getPassword()));
         User savedUser = userRepo.save(user);
+        if (!fromOtherController && request.getRole().equalsIgnoreCase("CUSTOMER")) {
+            Customer customer = new Customer();
+            customer.setUser(savedUser);
+            return ResponseDto.builder()
+                    .message("Registered Successfully")
+                    .status(true)
+                    .code(200)
+                    .data(customerService.create(customer))
+                    .build();
+        }
 //        Group group = new Group(user.getEmail(), "BASIC");
 //        groupDao.save(group);
         return ResponseDto.builder()

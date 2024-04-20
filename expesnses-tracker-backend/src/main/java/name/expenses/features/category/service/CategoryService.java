@@ -8,6 +8,7 @@ import name.expenses.features.category.dtos.request.CategoryUpdateDto;
 import name.expenses.features.category.models.Category;
 import name.expenses.features.customer.models.Customer;
 import name.expenses.globals.CrudService;
+import name.expenses.globals.SortDirection;
 import name.expenses.globals.responses.ResponseDto;
 
 @Local
@@ -20,4 +21,5 @@ public interface CategoryService extends CrudService<CategoryReqDto, CategoryUpd
 
     ResponseDto removeAssociation(String categoryRefNo, String subCategoryRefNo);
 
+    ResponseDto getSubcategories(String refNo, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
 }

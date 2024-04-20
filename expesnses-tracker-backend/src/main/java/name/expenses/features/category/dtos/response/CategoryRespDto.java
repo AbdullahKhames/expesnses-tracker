@@ -19,7 +19,7 @@ public class CategoryRespDto {
     @Builder.Default
     private Set<SubCategoryRespDto> subCategories = new HashSet<>();
     private String details;
-
+    private Double totalSpent;
     private String refNo;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

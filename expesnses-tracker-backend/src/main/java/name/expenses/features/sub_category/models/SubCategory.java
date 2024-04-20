@@ -30,8 +30,10 @@ public class SubCategory extends BaseModel implements ExpenseGetter {
 //    private double amount;
     private String details;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "sub-category-id", referencedColumnName = "id")
+    @ToString.Exclude
+    @JsonIgnore
     private Set<Expense> expenses = new HashSet<>();
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "subCategories")
     @ToString.Exclude

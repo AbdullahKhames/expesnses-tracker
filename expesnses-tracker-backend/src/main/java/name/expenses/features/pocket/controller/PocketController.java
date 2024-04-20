@@ -81,7 +81,7 @@ public class PocketController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllEntities(
             @QueryParam("page") Long pageNumber,
-            @QueryParam("size") Long pageSize,
+            @QueryParam("per_page") Long pageSize,
             @QueryParam("sortBy") String sortBy,
             @QueryParam("sortDirection") String direction) {
         if (pageNumber == null) {

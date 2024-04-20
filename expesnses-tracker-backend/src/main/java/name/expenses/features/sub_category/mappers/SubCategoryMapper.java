@@ -5,6 +5,7 @@ package name.expenses.features.sub_category.mappers;
 import name.expenses.features.category.mappers.CategoryMapper;
 import name.expenses.features.customer.mappers.CustomerMapper;
 import name.expenses.features.expesnse.mappers.ExpenseMapper;
+import name.expenses.features.expesnse.models.Expense;
 import name.expenses.features.sub_category.dtos.request.SubCategoryReqDto;
 import name.expenses.features.sub_category.dtos.request.SubCategoryUpdateDto;
 import name.expenses.features.sub_category.dtos.response.SubCategoryRespDto;
@@ -45,6 +46,9 @@ public interface SubCategoryMapper {
 
     )
     SubCategory reqDtoToEntity(SubCategoryReqDto entityReqDto);
+    @Mappings({
+            @Mapping(target = "totalSpent", source = "expenses", qualifiedByName = "getTotalSpent")
+    })
     SubCategoryRespDto entityToRespDto(SubCategory entity);
     Set<SubCategoryRespDto> entityToRespDto(Set<SubCategory> entities);
     List<SubCategoryRespDto> entityToRespDto(List<SubCategory> entities);
@@ -78,4 +82,14 @@ public interface SubCategoryMapper {
             }
     )
     SubCategory reqEntityToEntity(SubCategoryUpdateDto subCategoryUpdateDto);
+
+    @Named("getTotalSpent")
+    public default Double getTotalSpent(Set<Expense> expenses){
+        if (expenses == null) {
+            return 0.0;
+        }
+        return expenses.stream()
+                .map(Expense::getAmount)
+                .reduce(0.0, Double::sum);
+    }
 }
