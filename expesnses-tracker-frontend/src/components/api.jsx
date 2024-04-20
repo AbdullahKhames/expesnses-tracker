@@ -36,6 +36,7 @@ const api = axios.create({
           const access_token = await refreshAccessToken();
           if (originalRequest.headers) {
             originalRequest.headers['Authorization'] = `Bearer ${access_token}`;
+            originalRequest.headers['Device-ID'] = `${DeviceIdHolder.getDeviceId()}`;
           } else {
             originalRequest.headers = {
               'Authorization': `Bearer ${access_token}`,
@@ -51,6 +52,7 @@ const api = axios.create({
           if (retryError?.response?.status === 401){
             localStorage.removeItem('access_token');
             localStorage.removeItem('refresh_token');    
+            localStorage.removeItem('deviceId');    
             window.location.href = '/login';
           }
           return Promise.reject(retryError);
@@ -76,7 +78,8 @@ const api = axios.create({
     } catch (error) {
       console.error('Error refreshing access token:', error.message);
       localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');    
+      localStorage.removeItem('refresh_token');
+      localStorage.removeItem("deviceId");  
     }
   }
   export default api;

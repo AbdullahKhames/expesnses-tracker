@@ -67,6 +67,7 @@ export default function Logout(props) {
   function doLogOut() {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
+    localStorage.removeItem("deviceId");
     userContext.setUserData(null);
     navigate('/login');
   }

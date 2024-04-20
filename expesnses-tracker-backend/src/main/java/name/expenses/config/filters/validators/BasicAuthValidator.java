@@ -1,4 +1,4 @@
-package name.expenses.config.filters;
+package name.expenses.config.filters.validators;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -15,7 +15,7 @@ import java.util.StringTokenizer;
 public class BasicAuthValidator {
     @Inject
     private UserDetailsService userDetailsService;
-    public boolean basicAuthValidation(String authToken, String AUTHORIZATION_HEADER_PREFIX, User user) {
+    public User basicAuthValidation(String authToken, String AUTHORIZATION_HEADER_PREFIX) {
         String userName = null;
         String password = null;
         try{
@@ -31,6 +31,7 @@ public class BasicAuthValidator {
         if (userName == null || password == null) {
             throw new IllegalArgumentException("provided username and password cannot be null");
         }
+        User user;
         try {
             user = userDetailsService.loadUserByUsername(userName);
         } catch (Exception exception) {
@@ -43,7 +44,10 @@ public class BasicAuthValidator {
 
         // if the password is correct check for authorization roles here
         try {
-            return Hashing.verify(password, user.getPassword());
+            if (Hashing.verify(password, user.getPassword())){
+                return user;
+            }
+            return null;
         }catch (Exception exception){
             throw new RuntimeException(exception);
         }

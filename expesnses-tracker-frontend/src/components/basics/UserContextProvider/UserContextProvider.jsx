@@ -33,6 +33,7 @@ export default function UserContextProvider(props) {
         setUserData(null);
         localStorage.removeItem("access_token");
         localStorage.removeItem("refresh_token");
+        localStorage.removeItem("deviceId");
         return null;
       }
     }

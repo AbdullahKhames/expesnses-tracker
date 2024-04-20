@@ -1,4 +1,4 @@
-package name.expenses.config.filters;
+package name.expenses.config.filters.validators;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.inject.Inject;
@@ -20,7 +20,7 @@ public class JWTAuthValidator {
     @Inject
     private UserDetailsService userDetailsService;
 
-    public boolean bearerTokenValidation(String authToken, User user) {
+    public User bearerTokenValidation(String authToken) {
         String jwt = null;
         String username = null;
         try {
@@ -37,6 +37,7 @@ public class JWTAuthValidator {
         }
         if (username != null && jwt != null) {
 
+            User user;
             try {
                 user = userDetailsService.loadUserByUsername(username);
             } catch (Exception exception) {
@@ -51,7 +52,10 @@ public class JWTAuthValidator {
                     .orElse(false);
 
             try {
-                return jwtService.isTokenValid(jwt, user) && isTokenValid;
+                if (jwtService.isTokenValid(jwt, user) && isTokenValid){
+                    return user;
+                }
+                return null;
             } catch (Exception exception) {
                 throw new RuntimeException(exception);
             }
