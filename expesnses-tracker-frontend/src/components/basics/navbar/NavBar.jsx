@@ -13,8 +13,10 @@ export default function NavBar(props) {
   const userData = userContext.userData;
 
   const [categories, setCategories] = React.useState([]);
+  const [subCategories, setSubCategories] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
-  const url_api = config.api + "/categories?page=1&per_page=20";
+  const url_api = config.api + "/categories?page=1&per_page=50";
+  const url_api_subCategories = config.api + "/sub-categories?page=1&per_page=50";
 
   useEffect(() => {
     console.log(userData);
@@ -33,6 +35,21 @@ export default function NavBar(props) {
       });
     }
   }, [userData, url_api]);
+  useEffect(() => {
+      api
+      .get(url_api_subCategories)
+      .then((response) => {
+        console.log(response);
+        if (response.status === 200) {
+          setSubCategories(response.data.data.content);
+          setLoading(false);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    
+  }, [url_api_subCategories]);
 
   useEffect(() => {
     console.log("userData changed");
@@ -107,6 +124,37 @@ export default function NavBar(props) {
                   <li>
                     <Link className="dropdown-item" to="/categories">
                       All Categories
+                    </Link>
+                  </li>
+                </ul>
+              </li>
+              <li className="nav-item dropdown">
+                <Link
+                  className="nav-link dropdown-toggle"
+                  to="/subCategories"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Sub Categories
+                </Link>
+                <ul className="dropdown-menu">
+                  {loading ? <Loading /> : subCategories.map((subCategory, index) => (
+                    <li key={subCategory.refNo || index}>
+                      <Link
+                        className="dropdown-item"
+                        to={"/subCategories/" + subCategory.refNo}
+                      >
+                        {subCategory.name}
+                      </Link>
+                    </li>
+                  ))}
+                  <li>
+                    <hr className="dropdown-divider" />
+                  </li>
+                  <li>
+                    <Link className="dropdown-item" to="/subCategories">
+                      All Sub Categories
                     </Link>
                   </li>
                 </ul>

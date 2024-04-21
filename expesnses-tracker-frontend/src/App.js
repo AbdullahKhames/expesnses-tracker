@@ -31,6 +31,11 @@ import ShowSubCategory from './components/AdminDashboard/subcategories-component
 import SearchSubCategory from './components/AdminDashboard/subcategories-components/search-SubCategory/SearchSubCategory';
 import AddSubCategory from './components/AdminDashboard/subcategories-components/add-SubCategory/AddSubCategory';
 import UpdateSubCategory from "./components/AdminDashboard/subcategories-components/update-SubCategory/UpdateSubCategory";
+import Categories from './components/categories/Categories';
+import CategoryPage from './components/categories/categoryPage';
+import SubCategories from './components/subCategories/SubCategories';
+import SubCategoryPage from './components/subCategories/subCategory-page/SubCategoryPage';
+import SubCategoryFilter from './components/subCategories/SubCategoryFilter';
 
 function App() {
   let routers = createBrowserRouter([
@@ -65,6 +70,43 @@ function App() {
               <ViewAccounts />
             </ProtectedRoute>
           ),
+        },
+        {
+          path: "categories",
+          children: [
+            {
+              index: true,
+              element: (
+                <ProtectedRoute>
+                  <Categories />
+                </ProtectedRoute>
+              ),
+            },
+            {
+              path: ":refNo",
+              element: (
+                <ProtectedRoute>
+                  <CategoryPage />
+                </ProtectedRoute>
+              ),
+            },
+          ],
+        },
+        {
+          path: "subCategories",
+          children: [
+            {
+              index: true,
+              element: (
+                <ProtectedRoute>
+                  <SubCategories />
+                </ProtectedRoute>
+              ),
+            },
+
+            { path: ":refNo", element: <SubCategoryPage /> },
+            { path: "filter", element: <SubCategoryFilter /> },
+          ],
         },
       ],
     },
