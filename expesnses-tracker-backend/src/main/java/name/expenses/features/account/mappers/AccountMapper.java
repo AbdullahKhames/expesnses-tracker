@@ -11,9 +11,8 @@ import name.expenses.features.account.models.Account;
 import name.expenses.features.association.Models;
 import name.expenses.features.pocket.mappers.PocketMapper;
 import name.expenses.features.user.models.Role;
-import name.expenses.features.user.models.User;
 import name.expenses.globals.Page;
-import name.expenses.utils.CurrentUserFromContext;
+import name.expenses.utils.CurrentCustomerCollections;
 import org.mapstruct.*;
 
 import java.time.LocalDateTime;
@@ -31,6 +30,8 @@ import java.util.Set;
 public abstract class AccountMapper {
     @Context
     private SecurityContext securityContext;
+    @Inject
+    private CurrentCustomerCollections currentCustomerCollections;
     @Mappings(
 
             {
@@ -71,7 +72,7 @@ public abstract class AccountMapper {
     public void afterMapping(@MappingTarget AccountRespDto.AccountRespDtoBuilder accountRespDtoBuilder, Account account){
         accountRespDtoBuilder
                 .currentCustomerRegistered(
-                        CurrentUserFromContext
-                                .getCurrentUserFromContext(securityContext, account, Models.ACCOUNT));
+                        currentCustomerCollections
+                                .isPresentCollection(account, Models.ACCOUNT));
     }
 }

@@ -5,6 +5,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.SecurityContext;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ import java.util.Set;
 @Singleton
 @Slf4j
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
+@Transactional
 public class AssociationManager {
     private final PocketService pocketService;
     private final AccountService accountService;

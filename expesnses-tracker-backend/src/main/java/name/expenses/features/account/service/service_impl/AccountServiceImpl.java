@@ -2,6 +2,7 @@ package name.expenses.features.account.service.service_impl;
 
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import name.expenses.error.exception.ErrorCode;
@@ -37,7 +38,7 @@ import java.util.*;
 @Slf4j
 @Stateless
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
-//@Transactional
+@Transactional
 public class AccountServiceImpl implements AccountService {
     public static final String ACCOUNT = "Account";
     private final AccountDAO accountDAO;
@@ -226,6 +227,9 @@ public class AccountServiceImpl implements AccountService {
             return entityResponse;
         }
         AccountGetter accountsGetter = (AccountGetter) entity;
+        if (entityModel == Models.CUSTOMER){
+            accountDAO.refresh((Customer) entity);
+        }
         AssociationResponse associationResponse = new AssociationResponse();
         for (String refNo: refNos){
             Optional<Account> accountOptional = getEntity(refNo);

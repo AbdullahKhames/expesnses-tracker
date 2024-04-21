@@ -2,6 +2,7 @@ package name.expenses.features.expesnse.service.service_impl;
 
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import name.expenses.error.exception.ErrorCode;
@@ -37,6 +38,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Stateless
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
+@Transactional
 public class ExpenseServiceStatelessmpl implements ExpenseService {
     public static final String EXPENSE = "Expense";
     private final ExpenseDAO expenseDAO;

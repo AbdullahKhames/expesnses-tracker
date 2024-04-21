@@ -2,6 +2,7 @@ package name.expenses.features.category.mappers;
 
 
 
+import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.SecurityContext;
 import name.expenses.features.association.Models;
@@ -10,12 +11,10 @@ import name.expenses.features.category.dtos.request.CategoryUpdateDto;
 
 import name.expenses.features.category.dtos.response.CategoryRespDto;
 import name.expenses.features.category.models.Category;
-import name.expenses.features.expesnse.models.Expense;
 import name.expenses.features.sub_category.dtos.response.SubCategoryRespDto;
 import name.expenses.features.sub_category.mappers.SubCategoryMapper;
-import name.expenses.features.sub_category.models.SubCategory;
 import name.expenses.globals.Page;
-import name.expenses.utils.CurrentUserFromContext;
+import name.expenses.utils.CurrentCustomerCollections;
 import org.mapstruct.*;
 
 import java.time.LocalDateTime;
@@ -33,6 +32,8 @@ import java.util.Set;
 public abstract class CategoryMapper {
     @Context
     private SecurityContext securityContext;
+    @Inject
+    private CurrentCustomerCollections currentCustomerCollections;
     @Mappings(
 
             {
@@ -72,8 +73,8 @@ public abstract class CategoryMapper {
                                                 @MappingTarget CategoryRespDto.CategoryRespDtoBuilder categoryRespDtoBuilder) {
         categoryRespDtoBuilder
                 .currentCustomerRegistered(
-                        CurrentUserFromContext
-                                .getCurrentUserFromContext(securityContext, entity, Models.CATEGORY));
+                        currentCustomerCollections
+                                .isPresentCollection(entity, Models.CATEGORY));
         CategoryRespDto categoryRespDto = categoryRespDtoBuilder.build();
         categoryRespDto.setTotalSpent(
                 categoryRespDto.getSubCategories()

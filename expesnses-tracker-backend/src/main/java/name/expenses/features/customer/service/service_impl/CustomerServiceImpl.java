@@ -2,6 +2,7 @@ package name.expenses.features.customer.service.service_impl;
 
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.SecurityContext;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +45,7 @@ import java.util.*;
 @Slf4j
 @Stateless
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
-//@Transactional
+@Transactional
 public class CustomerServiceImpl implements CustomerService {
     public static final String CUSTOMER = "Customer";
     private final CustomerDAO customerDAO;

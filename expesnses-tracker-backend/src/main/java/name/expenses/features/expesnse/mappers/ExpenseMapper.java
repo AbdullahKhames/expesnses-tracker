@@ -1,18 +1,17 @@
 package name.expenses.features.expesnse.mappers;
 
 
-import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.SecurityContext;
 import name.expenses.features.association.Models;
-import name.expenses.features.customer.mappers.CustomerMapper;
 import name.expenses.features.expesnse.dtos.request.ExpenseReqDto;
 import name.expenses.features.expesnse.dtos.request.ExpenseUpdateDto;
 import name.expenses.features.expesnse.dtos.response.ExpenseRespDto;
 import name.expenses.features.expesnse.models.Expense;
 import name.expenses.features.sub_category.mappers.SubCategoryMapper;
 import name.expenses.globals.Page;
-import name.expenses.utils.CurrentUserFromContext;
+import name.expenses.utils.CurrentCustomerCollections;
 import org.mapstruct.*;
 
 import java.time.LocalDateTime;
@@ -30,6 +29,8 @@ import java.util.Set;
 public abstract class ExpenseMapper {
     @Context
     private SecurityContext securityContext;
+    @Inject
+    private CurrentCustomerCollections currentCustomerCollections;
     @Mappings(
 
             {
@@ -89,7 +90,7 @@ public abstract class ExpenseMapper {
     public void afterMapping(@MappingTarget ExpenseRespDto.ExpenseRespDtoBuilder expenseRespDtoBuilder, Expense expense){
         expenseRespDtoBuilder
                 .currentCustomerRegistered(
-                        CurrentUserFromContext
-                                .getCurrentUserFromContext(securityContext, expense, Models.EXPENSE));
+                        currentCustomerCollections
+                                .isPresentCollection(expense, Models.EXPENSE));
     }
 }

@@ -2,6 +2,7 @@ package name.expenses.features.pocket.service.service_impl;
 
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import name.expenses.error.exception.ErrorCode;
@@ -38,7 +39,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Stateless
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
-//@Transactional
+@Transactional
 public class PocketServiceImpl implements PocketService {
     public static final String POCKET = "Pocket";
     private final PocketDAO pocketDAO;

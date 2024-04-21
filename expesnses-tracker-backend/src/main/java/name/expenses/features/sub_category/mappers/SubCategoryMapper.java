@@ -2,21 +2,19 @@ package name.expenses.features.sub_category.mappers;
 
 
 
+import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.SecurityContext;
 import name.expenses.features.association.Models;
 import name.expenses.features.category.mappers.CategoryMapper;
-import name.expenses.features.customer.mappers.CustomerMapper;
 import name.expenses.features.expesnse.mappers.ExpenseMapper;
 import name.expenses.features.expesnse.models.Expense;
-import name.expenses.features.pocket.dtos.response.PocketRespDto;
-import name.expenses.features.pocket.models.Pocket;
 import name.expenses.features.sub_category.dtos.request.SubCategoryReqDto;
 import name.expenses.features.sub_category.dtos.request.SubCategoryUpdateDto;
 import name.expenses.features.sub_category.dtos.response.SubCategoryRespDto;
 import name.expenses.features.sub_category.models.SubCategory;
 import name.expenses.globals.Page;
-import name.expenses.utils.CurrentUserFromContext;
+import name.expenses.utils.CurrentCustomerCollections;
 import org.mapstruct.*;
 
 import java.time.LocalDateTime;
@@ -40,6 +38,8 @@ import java.util.UUID;
 public abstract class SubCategoryMapper {
     @Context
     private SecurityContext securityContext;
+    @Inject
+    private CurrentCustomerCollections currentCustomerCollections;
     @Mappings(
 
             {
@@ -105,7 +105,7 @@ public abstract class SubCategoryMapper {
     public void afterMapping(@MappingTarget SubCategoryRespDto.SubCategoryRespDtoBuilder subCategoryRespDtoBuilder, SubCategory subCategory){
         subCategoryRespDtoBuilder
                 .currentCustomerRegistered(
-                        CurrentUserFromContext
-                                .getCurrentUserFromContext(securityContext, subCategory, Models.SUB_CATEGORY));
+                        currentCustomerCollections
+                                .isPresentCollection(subCategory, Models.SUB_CATEGORY));
     }
 }

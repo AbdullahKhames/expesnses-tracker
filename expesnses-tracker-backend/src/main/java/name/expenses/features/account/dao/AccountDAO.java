@@ -2,6 +2,7 @@ package name.expenses.features.account.dao;
 
 import jakarta.ejb.Local;
 import name.expenses.features.account.models.Account;
+import name.expenses.features.customer.models.Customer;
 import name.expenses.globals.Page;
 import name.expenses.globals.SortDirection;
 
@@ -20,4 +21,6 @@ public interface AccountDAO {
     Set<Account> getEntities(Set<String> refNos);
 
     List<Account> getByName(String name);
+
+    void refresh(Customer entity);
 }

@@ -1,10 +1,10 @@
 package name.expenses.features.pocket.mappers;
 
 
+import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.SecurityContext;
 import name.expenses.features.account.mappers.AccountMapper;
-import name.expenses.features.account.models.Account;
 import name.expenses.features.association.Models;
 import name.expenses.features.customer.models.Customer;
 import name.expenses.features.pocket.dtos.request.PocketReqDto;
@@ -12,7 +12,7 @@ import name.expenses.features.pocket.dtos.request.PocketUpdateDto;
 import name.expenses.features.pocket.dtos.response.PocketRespDto;
 import name.expenses.features.pocket.models.Pocket;
 import name.expenses.globals.Page;
-import name.expenses.utils.CurrentUserFromContext;
+import name.expenses.utils.CurrentCustomerCollections;
 import org.mapstruct.*;
 
 import java.time.LocalDateTime;
@@ -30,6 +30,8 @@ import java.util.Set;
 public abstract class PocketMapper {
     @Context
     private SecurityContext securityContext;
+    @Inject
+    private CurrentCustomerCollections currentCustomerCollections;
     @Mappings(
 
             {
@@ -92,7 +94,7 @@ public abstract class PocketMapper {
     public void afterMapping(@MappingTarget PocketRespDto.PocketRespDtoBuilder pocketRespDtoBuilder, Pocket pocket){
         pocketRespDtoBuilder
                 .currentCustomerRegistered(
-                        CurrentUserFromContext
-                                .getCurrentUserFromContext(securityContext, pocket, Models.POCKET));
+                        currentCustomerCollections
+                                .isPresentCollection(pocket, Models.POCKET));
     }
 }

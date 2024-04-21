@@ -12,6 +12,7 @@ import name.expenses.config.advice.RepoAdvice;
 import name.expenses.error.exception.GeneralFailureException;
 import name.expenses.features.account.dao.AccountDAO;
 import name.expenses.features.account.models.Account;
+import name.expenses.features.customer.models.Customer;
 import name.expenses.features.expesnse.models.Expense;
 import name.expenses.globals.Page;
 import name.expenses.globals.SortDirection;
@@ -172,5 +173,10 @@ public class AccountDAOImpl implements AccountDAO {
                     Map.of("original error message", ex.getMessage(),
                             "error", String.format("there was an error with your request couldn't find object with reference number %s", name)));
         }
+    }
+
+    @Override
+    public void refresh(Customer entity) {
+        entityManager.refresh(entity);
     }
 }

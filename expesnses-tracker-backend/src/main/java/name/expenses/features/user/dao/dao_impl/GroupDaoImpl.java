@@ -7,7 +7,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import name.expenses.config.advice.RepoAdvice;
 import name.expenses.features.user.dao.GroupDao;
-import name.expenses.features.user.models.Group;
+import name.expenses.features.user.models.UserGroup;
 import name.expenses.features.user.models.Role;
 
 @Singleton
@@ -18,7 +18,7 @@ public class GroupDaoImpl implements GroupDao {
     private EntityManager entityManager;
 
     @Override
-    public Group save(Group group) {
+    public UserGroup save(UserGroup group) {
         if (group.getId() != null && entityManager.find(Role.class, group.getId()) != null) {
             return entityManager.merge(group);
         } else {

@@ -2,6 +2,7 @@ package name.expenses.features.expesnse.service.service_impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.ejb.Stateful;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -23,6 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @Stateful
+@Transactional
 public class ExpenseServiceStateFullStatefulImpl implements ExpenseServiceStateFull {
     private final ObjectMapper objectMapper = ObjectMapperConfig.getObjectMapper();
     private final Map<Long, Expense> expenseDB =

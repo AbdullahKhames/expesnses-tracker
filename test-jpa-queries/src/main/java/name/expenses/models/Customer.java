@@ -1,17 +1,7 @@
-package name.expenses.features.customer.models;
+package name.expenses.models;
 
-import jakarta.ejb.Local;
 import jakarta.persistence.*;
 import lombok.*;
-import name.expenses.features.account.models.Account;
-import name.expenses.features.category.models.Category;
-import name.expenses.features.expesnse.models.Expense;
-import name.expenses.features.pocket.models.Pocket;
-import name.expenses.features.pocket_transfer.models.PocketTransfer;
-import name.expenses.features.sub_category.models.SubCategory;
-import name.expenses.features.transaction.models.Transaction;
-import name.expenses.features.user.models.User;
-import name.expenses.utils.collection_getter.*;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.util.HashSet;
@@ -93,6 +83,6 @@ public class Customer implements
 
     @Override
     public String getRefNo() {
-        return user.getRefNo();
+        return "";
     }
 }
