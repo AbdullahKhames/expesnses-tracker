@@ -10,6 +10,7 @@ import name.expenses.error.exception_handler.models.ErrorCategory;
 import name.expenses.error.exception_handler.models.ResponseError;
 import name.expenses.features.association.AssociationResponse;
 import name.expenses.features.association.Models;
+import name.expenses.features.category.models.Category;
 import name.expenses.features.customer.dao.CustomerDAO;
 import name.expenses.features.customer.models.Customer;
 import name.expenses.features.expesnse.dao.ExpenseDAO;
@@ -30,10 +31,7 @@ import name.expenses.utils.ValidateInputUtils;
 import name.expenses.utils.collection_getter.ExpenseGetter;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -217,6 +215,42 @@ public class ExpenseServiceStatelessmpl implements ExpenseService {
     }
 
     @Override
+    public ResponseDto getAllEntitiesWithoutSubCategory(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
+        if (pageNumber < 1){
+            pageNumber = 1L;
+        }
+        if (pageSize < 1)
+        {
+            pageSize = 1L;
+        }
+        Page<Expense> expensePage = expenseDAO.findAllWithoutSubCategory(pageNumber, pageSize, sortBy, sortDirection);
+
+//        List<ExpenseRespDto> expenseDtos = expensePage.getContent().stream()
+//                .map(expenseMapper::entityToRespDto)
+//                .collect(Collectors.toList());
+        Page<ExpenseRespDto> expenseDtos = expenseMapper.entityToRespDto(expensePage);
+        return ResponseDtoBuilder.getFetchAllResponse(EXPENSE, expenseDtos);
+    }
+
+    @Override
+    public Set<ExpenseRespDto> entityToRespDto(Set<Expense> expenses) {
+        return expenseMapper.entityToRespDto(expenses);
+    }
+
+    @Override
+    public ResponseDto getExpenseByName(String name) {
+        if (name == null || name.isBlank()) {
+            return ResponseDtoBuilder.getErrorResponse(804, "name cannot be null");
+        }
+        List<Expense> expenses = expenseDAO.getByName(name);
+        if (!expenses.isEmpty()){
+            return ResponseDtoBuilder.getFetchAllResponse(EXPENSE, expenseMapper.entityToRespDto(expenses));
+        }else {
+            return ResponseDtoBuilder.getErrorResponse(804, "not found");
+        }
+    }
+
+    @Override
     public boolean addAssociation(SubCategory entity, Models entityModel, String refNo) {
         return false;
     }
@@ -294,7 +328,7 @@ public class ExpenseServiceStatelessmpl implements ExpenseService {
                 }
                 if (expensesGetter.getExpenses().contains(expense)){
                     associationResponse.getError().put(refNo, "this expensesGetter already contain this expense");
-                }else if (customerDAO.existByExpense(expense)) {
+                }else if (entityModel == Models.CUSTOMER && customerDAO.existByExpense(expense)) {
                     associationResponse.getError().put(refNo, "this expense already present on another customer");
                 } else {
                     expensesGetter.getExpenses().add(expense);

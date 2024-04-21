@@ -12,6 +12,7 @@ import name.expenses.config.advice.RepoAdvice;
 import name.expenses.error.exception.GeneralFailureException;
 import name.expenses.features.account.dao.AccountDAO;
 import name.expenses.features.account.models.Account;
+import name.expenses.features.expesnse.models.Expense;
 import name.expenses.globals.Page;
 import name.expenses.globals.SortDirection;
 import name.expenses.utils.FieldValidator;
@@ -153,5 +154,23 @@ public class AccountDAOImpl implements AccountDAO {
                 "SELECT a FROM Account a WHERE a.refNo IN :refNos", Account.class);
         query.setParameter("refNos", refNos);
         return new HashSet<>(query.getResultList());
+    }
+
+    @Override
+    public List<Account> getByName(String name) {
+        try {
+            TypedQuery<Account> categoryTypedQuery = entityManager.createQuery("SELECT e from Account e WHERE e.name like :name", Account.class);
+            categoryTypedQuery.setParameter("name", "%" + name + "%");
+            return categoryTypedQuery.getResultList();
+        }catch (NoResultException ex){
+            return Collections.emptyList();
+        }catch (NonUniqueResultException ex){
+            throw new GeneralFailureException(GeneralFailureException.NON_UNIQUE_IDENTIFIER,
+                    Map.of("error", String.format("the query didn't return a single result for reference number %s", name)));
+        }catch (Exception ex){
+            throw new GeneralFailureException(GeneralFailureException.OBJECT_NOT_FOUND,
+                    Map.of("original error message", ex.getMessage(),
+                            "error", String.format("there was an error with your request couldn't find object with reference number %s", name)));
+        }
     }
 }

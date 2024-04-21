@@ -1,16 +1,18 @@
 package name.expenses.features.pocket.mappers;
 
 
-
-
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.SecurityContext;
 import name.expenses.features.account.mappers.AccountMapper;
-import name.expenses.features.customer.mappers.CustomerMapper;
+import name.expenses.features.account.models.Account;
+import name.expenses.features.association.Models;
 import name.expenses.features.customer.models.Customer;
 import name.expenses.features.pocket.dtos.request.PocketReqDto;
 import name.expenses.features.pocket.dtos.request.PocketUpdateDto;
 import name.expenses.features.pocket.dtos.response.PocketRespDto;
 import name.expenses.features.pocket.models.Pocket;
 import name.expenses.globals.Page;
+import name.expenses.utils.CurrentUserFromContext;
 import org.mapstruct.*;
 
 import java.time.LocalDateTime;
@@ -25,7 +27,9 @@ import java.util.Set;
                 AccountMapper.class
         },
         imports = {LocalDateTime.class})
-public interface PocketMapper {
+public abstract class PocketMapper {
+    @Context
+    private SecurityContext securityContext;
     @Mappings(
 
             {
@@ -38,7 +42,7 @@ public interface PocketMapper {
             }
 
     )
-    Pocket reqDtoToEntity(PocketReqDto entityReqDto);
+    public abstract Pocket reqDtoToEntity(PocketReqDto entityReqDto);
     @Mappings(
 
             {
@@ -47,15 +51,15 @@ public interface PocketMapper {
             }
 
     )
-    PocketRespDto entityToRespDto(Pocket entity);
+    public abstract PocketRespDto entityToRespDto(Pocket entity);
 
     @Named("getCustomerName")
-    default String getCustomerName(Customer customer){
+    public String getCustomerName(Customer customer){
         return customer.getUser().getFullName();
     }
-    Set<PocketRespDto> entityToRespDto(Set<Pocket> entities);
-    List<PocketRespDto> entityToRespDto(List<Pocket> entities);
-    Page<PocketRespDto> entityToRespDto(Page<Pocket> entitiesPage);
+    public abstract Set<PocketRespDto> entityToRespDto(Set<Pocket> entities);
+    public abstract List<PocketRespDto> entityToRespDto(List<Pocket> entities);
+    public abstract Page<PocketRespDto> entityToRespDto(Page<Pocket> entitiesPage);
 
     @Mappings(
 
@@ -70,7 +74,7 @@ public interface PocketMapper {
             }
 
     )
-    void update(@MappingTarget Pocket entity, PocketUpdateDto entityUpdateDto);
+    public abstract void update(@MappingTarget Pocket entity, PocketUpdateDto entityUpdateDto);
     @Mappings(
 
             {
@@ -83,5 +87,12 @@ public interface PocketMapper {
             }
 
     )
-    Pocket reqEntityToEntity(PocketUpdateDto newPocket);
+    public abstract Pocket reqEntityToEntity(PocketUpdateDto newPocket);
+    @AfterMapping
+    public void afterMapping(@MappingTarget PocketRespDto.PocketRespDtoBuilder pocketRespDtoBuilder, Pocket pocket){
+        pocketRespDtoBuilder
+                .currentCustomerRegistered(
+                        CurrentUserFromContext
+                                .getCurrentUserFromContext(securityContext, pocket, Models.POCKET));
+    }
 }

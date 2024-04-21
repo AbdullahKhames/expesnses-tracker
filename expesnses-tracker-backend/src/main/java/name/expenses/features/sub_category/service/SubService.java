@@ -10,6 +10,8 @@ import name.expenses.globals.CrudService;
 import name.expenses.features.association.CollectionAdder;
 import name.expenses.features.association.CollectionRemover;
 import name.expenses.features.association.UpdateAssociation;
+import name.expenses.globals.SortDirection;
+import name.expenses.globals.responses.ResponseDto;
 
 @Local
 public interface SubService extends
@@ -20,4 +22,9 @@ public interface SubService extends
         UpdateAssociation<Category, CategoryUpdateDto>,
         CrudService<SubCategoryReqDto, SubCategoryUpdateDto, String, SubCategory> {
 
+    ResponseDto getAllEntitiesWithoutCategory(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
+
+    ResponseDto getSubCategoryExpenses(String refNo);
+
+    ResponseDto getSubCategoryByName(String name);
 }

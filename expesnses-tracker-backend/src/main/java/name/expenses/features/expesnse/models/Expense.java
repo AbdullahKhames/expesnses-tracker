@@ -32,6 +32,7 @@ public class Expense extends BaseModel {
     @JsonIgnore
     private Customer customer;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sub-category-id")
     @ToString.Exclude
     private SubCategory subCategory;
     @JsonIgnore

@@ -11,6 +11,7 @@ import jakarta.transaction.Transactional;
 import name.expenses.config.advice.RepoAdvice;
 import name.expenses.error.exception.GeneralFailureException;
 import name.expenses.features.account.models.Account;
+import name.expenses.features.expesnse.models.Expense;
 import name.expenses.features.pocket.dao.PocketDAO;
 import name.expenses.features.pocket.models.Pocket;
 import name.expenses.globals.Page;
@@ -100,7 +101,19 @@ public class PocketDAOImpl implements PocketDAO {
         }
 
     }
+    @Override
+    public Page<Pocket> findAllWithoutAccount(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
+        try {
+            TypedQuery<Pocket> typedQuery = entityManager.createQuery("SELECT p FROM Pocket p WHERE p.account is null", Pocket.class);
+            List<Pocket> pockets = typedQuery.getResultList();
+            return PageUtil.createPage(pageNumber, pageSize, pockets, pockets.size());
 
+        } catch (Exception exception) {
+            throw new GeneralFailureException(GeneralFailureException.ERROR_FETCH,
+                    Map.of("original message", exception.getMessage().substring(0, 15),
+                            "error", "there was an error with your request"));
+        }
+    }
     @Override
     public List<Pocket> get() {
         return entityManager.createQuery("SELECT e FROM Pocket e", Pocket.class).getResultList();
@@ -180,6 +193,25 @@ public class PocketDAOImpl implements PocketDAO {
                             "error", "there was an error with your request couldn't update entity"));
         }
     }
+
+    @Override
+    public List<Pocket> getByName(String name) {
+        try {
+            TypedQuery<Pocket> categoryTypedQuery = entityManager.createQuery("SELECT e from Pocket e WHERE e.name like :name", Pocket.class);
+            categoryTypedQuery.setParameter("name", "%" + name + "%");
+            return categoryTypedQuery.getResultList();
+        }catch (NoResultException ex){
+            return Collections.emptyList();
+        }catch (NonUniqueResultException ex){
+            throw new GeneralFailureException(GeneralFailureException.NON_UNIQUE_IDENTIFIER,
+                    Map.of("error", String.format("the query didn't return a single result for reference number %s", name)));
+        }catch (Exception ex){
+            throw new GeneralFailureException(GeneralFailureException.OBJECT_NOT_FOUND,
+                    Map.of("original error message", ex.getMessage(),
+                            "error", String.format("there was an error with your request couldn't find object with reference number %s", name)));
+        }
+    }
+
     @Override
     public Set<Pocket> updateAll(Set<Pocket> pockets) {
         return pockets

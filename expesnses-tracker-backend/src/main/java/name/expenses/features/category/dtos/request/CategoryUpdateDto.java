@@ -23,6 +23,6 @@ public class CategoryUpdateDto {
 
     private String refNo;
     @Builder.Default
-    @Valid
+//    @Valid
     private Set<SubCategoryUpdateDto> subCategories = new HashSet<>();
 }

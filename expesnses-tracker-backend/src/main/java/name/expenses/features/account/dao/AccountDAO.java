@@ -18,4 +18,6 @@ public interface AccountDAO {
     Account update(Account expense);
     String delete(String refNo);
     Set<Account> getEntities(Set<String> refNos);
+
+    List<Account> getByName(String name);
 }

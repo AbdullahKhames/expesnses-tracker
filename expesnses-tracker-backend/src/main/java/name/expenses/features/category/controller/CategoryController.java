@@ -32,10 +32,21 @@ public class CategoryController {
         }
     }
     @GET
-    @Path("/{refNo}")
+    @Path("/refNo/{refNo}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getCategory(@PathParam("refNo") String refNo) {
         ResponseDto responseDto = expenseService.get(refNo);
+        if (responseDto != null) {
+            return Response.ok(responseDto).build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+    }
+    @GET
+    @Path("/name/{name}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getCategoryByName(@PathParam("name") String name) {
+        ResponseDto responseDto = expenseService.getCategoryByName(name);
         if (responseDto != null) {
             return Response.ok(responseDto).build();
         } else {

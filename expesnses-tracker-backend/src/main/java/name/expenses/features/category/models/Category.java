@@ -28,7 +28,7 @@ public class Category extends BaseModel implements SubCategoryGetter {
     private String name;
     private String details;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     @ToString.Exclude
     @JsonIgnore
     @JoinColumn(name = "category_id", referencedColumnName = "id")

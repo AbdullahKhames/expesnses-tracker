@@ -14,6 +14,9 @@ public interface PocketDAO {
     Pocket create(Pocket expense);
     Optional<Pocket> get(String refNo);
     Page<Pocket> findAll(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
+
+    Page<Pocket> findAllWithoutAccount(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
+
     List<Pocket> get();
     String delete(String refNo);
 
@@ -24,4 +27,5 @@ public interface PocketDAO {
     Set<Pocket> updateAll(Set<Pocket> pockets);
     Pocket update(Pocket expense);
 
+    List<Pocket> getByName(String name);
 }

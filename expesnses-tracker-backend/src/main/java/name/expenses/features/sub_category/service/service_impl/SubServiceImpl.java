@@ -2,6 +2,7 @@ package name.expenses.features.sub_category.service.service_impl;
 
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
+import jakarta.persistence.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,7 @@ import name.expenses.features.association.AssociationResponse;
 import name.expenses.features.association.Models;
 import name.expenses.features.category.dtos.request.CategoryUpdateDto;
 import name.expenses.features.category.models.Category;
+import name.expenses.features.expesnse.models.Expense;
 import name.expenses.features.expesnse.service.ExpenseService;
 import name.expenses.features.sub_category.dao.SubCategoryDAO;
 import name.expenses.features.sub_category.dtos.request.SubCategoryReqDto;
@@ -36,6 +38,8 @@ import java.util.*;
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
 @Transactional
 public class SubServiceImpl implements SubService {
+    @PersistenceContext(name = "expenses-unit")
+    private EntityManager entityManager;
     public static final String SUBCATEGORY = "SubCategory";
     private final SubCategoryDAO subCategoryDAO;
     private final name.expenses.features.category.dao.CategoryDAO categoryDAO;
@@ -104,7 +108,7 @@ public class SubServiceImpl implements SubService {
             SubCategory subCategory = subCategoryOptional.get();
             log.info("fetched subCategory {}", subCategory);
             subCategoryMapper.update(subCategory, subCategoryUpdateDto);
-            expenseService.updateExpensesAssociation(subCategory, subCategoryUpdateDto);
+//            expenseService.updateExpensesAssociation(subCategory, subCategoryUpdateDto);
             log.info("updated subCategory {}", subCategory);
             subCategory.setUpdatedAt(LocalDateTime.now());
             return ResponseDtoBuilder.getUpdateResponse(SUBCATEGORY, subCategory.getRefNo(), subCategoryMapper.entityToRespDto(subCategoryDAO.update(subCategory)));
@@ -306,5 +310,43 @@ public class SubServiceImpl implements SubService {
 
     private SubCategory findExistingEntity (Set < SubCategory > existingSubCategories, String refNo){
         return existingSubCategories.stream().filter(subCategory -> subCategory.getRefNo().equals(refNo)).findFirst().orElse(null);
+    }
+
+    @Override
+    public ResponseDto getAllEntitiesWithoutCategory(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
+        if (pageNumber < 1) {
+            pageNumber = 1L;
+        }
+        if (pageSize < 1) {
+            pageSize = 1L;
+        }
+        Page<SubCategory> subCategoryPage = subCategoryDAO.findAllWithoutCategory(pageNumber, pageSize, sortBy, sortDirection);
+        Page<SubCategoryRespDto> subCategoryDtos = subCategoryMapper.entityToRespDto(subCategoryPage);
+        return ResponseDtoBuilder.getFetchAllResponse(SUBCATEGORY, subCategoryDtos);
+    }
+
+    @Override
+    public ResponseDto getSubCategoryExpenses(String refNo) {
+        Optional<SubCategory> subCategoryOptional = getEntity(refNo);
+        if (subCategoryOptional.isPresent()){
+            SubCategory subCategory = subCategoryOptional.get();
+            return ResponseDtoBuilder.getFetchResponse(SUBCATEGORY, subCategory.getRefNo(), expenseService.entityToRespDto(subCategory.getExpenses()));
+
+        }else {
+            return ResponseDtoBuilder.getErrorResponse(804, "no category found with given ref");
+        }
+    }
+
+    @Override
+    public ResponseDto getSubCategoryByName(String name) {
+        if (name == null || name.isBlank()) {
+            return ResponseDtoBuilder.getErrorResponse(804, "name cannot be null");
+        }
+        List<SubCategory> subCategories = subCategoryDAO.getByName(name);
+        if (!subCategories.isEmpty()){
+            return ResponseDtoBuilder.getFetchAllResponse(SUBCATEGORY, subCategoryMapper.entityToRespDto(subCategories));
+        }else {
+            return ResponseDtoBuilder.getErrorResponse(804, "not found");
+        }
     }
 }

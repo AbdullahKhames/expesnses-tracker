@@ -3,6 +3,8 @@ package name.expenses.utils;
 import name.expenses.globals.Page;
 import name.expenses.globals.responses.ResponseDto;
 
+import java.util.List;
+
 public class ResponseDtoBuilder {
     public static ResponseDto getCreateResponse(String resourceName, String refNo, Object data){
         return createResponse(
@@ -45,6 +47,13 @@ public class ResponseDtoBuilder {
                 true,
                 800,
                 entityPage);
+    }
+    public static ResponseDto getFetchAllResponse(String resourceName, List<?> entities){
+        return createResponse(
+                String.format("list of %s resources was fetched successfully ", resourceName),
+                true,
+                800,
+                entities);
     }
 
     public static ResponseDto createResponse(String message, boolean status, int code, Object data){

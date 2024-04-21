@@ -27,6 +27,7 @@ export default function Login() {
         
         localStorage.setItem("access_token", response.data.data.accessToken);
         localStorage.setItem("refresh_token", response.data.data.refreshToken);
+        localStorage.setItem("deviceId", DeviceIdHolder.getDeviceId());
         await handleSaveUserData(response);
         setisLoading(false);
         // if (response.data.data.role === 1) {

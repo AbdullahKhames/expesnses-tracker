@@ -15,6 +15,7 @@ import name.expenses.features.association.AssociationResponse;
 import name.expenses.features.association.Models;
 import name.expenses.features.customer.dao.CustomerDAO;
 import name.expenses.features.customer.models.Customer;
+import name.expenses.features.expesnse.models.Expense;
 import name.expenses.features.pocket.dao.PocketDAO;
 import name.expenses.features.pocket.dtos.request.PocketReqDto;
 import name.expenses.features.pocket.dtos.request.PocketUpdateDto;
@@ -178,6 +179,38 @@ public class PocketServiceImpl implements PocketService {
     }
 
     @Override
+    public ResponseDto getAllEntitiesWithoutAccount(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
+        if (pageNumber < 1){
+            pageNumber = 1L;
+        }
+        if (pageSize < 1)
+        {
+            pageSize = 1L;
+        }
+        Page<Pocket> pocketPage = pocketDAO.findAllWithoutAccount(pageNumber, pageSize, sortBy, sortDirection);
+        Page<PocketRespDto> pocketDtos = pocketMapper.entityToRespDto(pocketPage);
+        return ResponseDtoBuilder.getFetchAllResponse(POCKET, pocketDtos);
+    }
+
+    @Override
+    public Set<PocketRespDto> entityToRespDto(Set<Pocket> pockets) {
+        return pocketMapper.entityToRespDto(pockets);
+    }
+
+    @Override
+    public ResponseDto getPocketByName(String name) {
+        if (name == null || name.isBlank()) {
+            return ResponseDtoBuilder.getErrorResponse(804, "name cannot be null");
+        }
+        List<Pocket> pockets = pocketDAO.getByName(name);
+        if (!pockets.isEmpty()){
+            return ResponseDtoBuilder.getFetchAllResponse(POCKET, pocketMapper.entityToRespDto(pockets));
+        }else {
+            return ResponseDtoBuilder.getErrorResponse(804, "not found");
+        }
+    }
+
+    @Override
     public Set<Pocket> getEntities(Set<String> refNos) {
         return pocketDAO.getEntities(refNos);
     }
@@ -225,7 +258,7 @@ public class PocketServiceImpl implements PocketService {
                 }
                 if (pocketGetter.getPockets().contains(pocket)){
                     associationResponse.getError().put(refNo, "this pocketGetter already contain this pocket");
-                } else if (customerDAO.existByPocket(pocket)) {
+                } else if (entityModel == Models.CUSTOMER && customerDAO.existByPocket(pocket)) {
                     associationResponse.getError().put(refNo, "this pocket already present on another customer");
                 } else {
                     pocketGetter.getPockets().add(pocketOptional.get());

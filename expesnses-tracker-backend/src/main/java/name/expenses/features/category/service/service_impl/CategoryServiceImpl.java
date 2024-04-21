@@ -33,10 +33,7 @@ import name.expenses.utils.category_association_manager.UpdateCategoryServiceImp
 import name.expenses.utils.collection_getter.CategoryGetter;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @Stateless
@@ -100,7 +97,7 @@ public class CategoryServiceImpl implements CategoryService {
             Category category = categoryOptional.get();
             log.info("fetched category {}", category);
             categoryMapper.update(category, categoryUpdateDto);
-            updateCategoryService.updateCategoryAssociations(category, categoryUpdateDto);
+//            updateCategoryService.updateCategoryAssociations(category, categoryUpdateDto);
             log.info("updated category {}", category);
             category.setUpdatedAt(LocalDateTime.now());
             return ResponseDtoBuilder.getUpdateResponse(CATEGORY, category.getRefNo(), categoryMapper.entityToRespDto(categoryDAO.update(category)));
@@ -165,6 +162,19 @@ public class CategoryServiceImpl implements CategoryService {
         Page<SubCategory> subCategoryPage = categoryDAO.getSubcategories(refNo, pageNumber, pageSize, sortBy, sortDirection);
         Page<SubCategoryRespDto> subCategoryDtos = subCategoryMapper.entityToRespDto(subCategoryPage);
         return ResponseDtoBuilder.getFetchAllResponse(CATEGORY, subCategoryDtos);
+    }
+
+    @Override
+    public ResponseDto getCategoryByName(String name) {
+        if (name == null || name.isBlank()) {
+            return ResponseDtoBuilder.getErrorResponse(804, "name cannot be null");
+        }
+        List<Category> categories = categoryDAO.getByName(name);
+        if (!categories.isEmpty()){
+            return ResponseDtoBuilder.getFetchAllResponse(CATEGORY, categoryMapper.entityToRespDto(categories));
+        }else {
+            return ResponseDtoBuilder.getErrorResponse(804, "not found");
+        }
     }
 
     @Override

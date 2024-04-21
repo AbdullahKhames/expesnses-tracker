@@ -207,4 +207,22 @@ public class CategoryDAOImpl implements CategoryDAO {
                             "error", "there was an error with your request"));
         }
     }
+
+    @Override
+    public List<Category> getByName(String name) {
+        try {
+            TypedQuery<Category> categoryTypedQuery = entityManager.createQuery("SELECT e from Category e WHERE e.name like :name", Category.class);
+            categoryTypedQuery.setParameter("name", "%" + name + "%");
+            return categoryTypedQuery.getResultList();
+        }catch (NoResultException ex){
+            return Collections.emptyList();
+        }catch (NonUniqueResultException ex){
+            throw new GeneralFailureException(GeneralFailureException.NON_UNIQUE_IDENTIFIER,
+                    Map.of("error", String.format("the query didn't return a single result for reference number %s", name)));
+        }catch (Exception ex){
+            throw new GeneralFailureException(GeneralFailureException.OBJECT_NOT_FOUND,
+                    Map.of("original error message", ex.getMessage(),
+                            "error", String.format("there was an error with your request couldn't find object with reference number %s", name)));
+        }
+    }
 }

@@ -2,6 +2,9 @@ package name.expenses.features.category.mappers;
 
 
 
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.SecurityContext;
+import name.expenses.features.association.Models;
 import name.expenses.features.category.dtos.request.CategoryReqDto;
 import name.expenses.features.category.dtos.request.CategoryUpdateDto;
 
@@ -12,6 +15,7 @@ import name.expenses.features.sub_category.dtos.response.SubCategoryRespDto;
 import name.expenses.features.sub_category.mappers.SubCategoryMapper;
 import name.expenses.features.sub_category.models.SubCategory;
 import name.expenses.globals.Page;
+import name.expenses.utils.CurrentUserFromContext;
 import org.mapstruct.*;
 
 import java.time.LocalDateTime;
@@ -26,7 +30,9 @@ import java.util.Set;
             SubCategoryMapper.class
         },
         imports = {LocalDateTime.class})
-public interface CategoryMapper {
+public abstract class CategoryMapper {
+    @Context
+    private SecurityContext securityContext;
     @Mappings(
 
             {
@@ -40,11 +46,11 @@ public interface CategoryMapper {
             }
 
     )
-    Category reqDtoToEntity(CategoryReqDto entityReqDto);
-    CategoryRespDto entityToRespDto(Category entity);
-    Set<CategoryRespDto> entityToRespDto(Set<Category> entities);
-    List<CategoryRespDto> entityToRespDto(List<Category> entities);
-    Page<CategoryRespDto> entityToRespDto(Page<Category> entitiesPage);
+    public abstract Category reqDtoToEntity(CategoryReqDto entityReqDto);
+    public abstract CategoryRespDto entityToRespDto(Category entity);
+    public abstract Set<CategoryRespDto> entityToRespDto(Set<Category> entities);
+    public abstract List<CategoryRespDto> entityToRespDto(List<Category> entities);
+    public abstract Page<CategoryRespDto> entityToRespDto(Page<Category> entitiesPage);
 
     @Mappings(
 
@@ -60,9 +66,14 @@ public interface CategoryMapper {
             }
 
     )
-    void update(@MappingTarget Category entity, CategoryUpdateDto entityUpdateDto);
+    public abstract void update(@MappingTarget Category entity, CategoryUpdateDto entityUpdateDto);
     @AfterMapping
-    default CategoryRespDto afterEntityToRespDto(Category entity, @MappingTarget CategoryRespDto.CategoryRespDtoBuilder categoryRespDtoBuilder) {
+    public CategoryRespDto afterEntityToRespDto(Category entity,
+                                                @MappingTarget CategoryRespDto.CategoryRespDtoBuilder categoryRespDtoBuilder) {
+        categoryRespDtoBuilder
+                .currentCustomerRegistered(
+                        CurrentUserFromContext
+                                .getCurrentUserFromContext(securityContext, entity, Models.CATEGORY));
         CategoryRespDto categoryRespDto = categoryRespDtoBuilder.build();
         categoryRespDto.setTotalSpent(
                 categoryRespDto.getSubCategories()

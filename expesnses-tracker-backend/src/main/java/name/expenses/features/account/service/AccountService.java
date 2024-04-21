@@ -21,4 +21,8 @@ public interface AccountService extends CrudService<AccountReqDto, AccountUpdate
     ResponseDto addAssociation(String accountRefNo, String pocketRefNo);
 
     ResponseDto removeAssociation(String accountRefNo, String pocketRefNo);
+
+    ResponseDto getAccountPOckets(String refNo);
+
+    ResponseDto getAccountByName(String name);
 }

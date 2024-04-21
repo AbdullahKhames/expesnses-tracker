@@ -21,4 +21,8 @@ public interface SubCategoryDAO {
 
     Long checkCategoryAssociation(SubCategory subCategory);
     Set<SubCategory> getEntities(Set<String> refNos);
+
+    Page<SubCategory> findAllWithoutCategory(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
+
+    List<SubCategory> getByName(String name);
 }

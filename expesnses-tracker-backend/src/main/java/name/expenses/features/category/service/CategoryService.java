@@ -22,4 +22,6 @@ public interface CategoryService extends CrudService<CategoryReqDto, CategoryUpd
     ResponseDto removeAssociation(String categoryRefNo, String subCategoryRefNo);
 
     ResponseDto getSubcategories(String refNo, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
+
+    ResponseDto getCategoryByName(String name);
 }

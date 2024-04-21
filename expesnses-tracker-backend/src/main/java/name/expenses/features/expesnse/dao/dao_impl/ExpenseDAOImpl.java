@@ -10,6 +10,7 @@ import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Transactional;
 import name.expenses.config.advice.RepoAdvice;
 import name.expenses.error.exception.GeneralFailureException;
+import name.expenses.features.category.models.Category;
 import name.expenses.features.expesnse.dao.ExpenseDAO;
 import name.expenses.features.expesnse.models.Expense;
 import name.expenses.globals.Page;
@@ -184,6 +185,39 @@ public class ExpenseDAOImpl implements ExpenseDAO {
             throw new GeneralFailureException(GeneralFailureException.ERROR_UPDATE,
                     Map.of("original error message", ex.getMessage().substring(0, 15),
                             "error", "there was an error with your request couldn't update entity"));
+        }
+    }
+
+    @Override
+    public Page<Expense> findAllWithoutSubCategory(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
+        try {
+            TypedQuery<Expense> typedQuery = entityManager.createQuery("SELECT e FROM Expense e WHERE e.subCategory is null", Expense.class);
+            List<Expense> expenses = typedQuery.getResultList();
+            return PageUtil.createPage(pageNumber, pageSize, expenses, expenses.size());
+
+        }catch (Exception ex){
+            entityManager.getTransaction().rollback();
+            throw new GeneralFailureException(GeneralFailureException.ERROR_UPDATE,
+                    Map.of("original error message", ex.getMessage().substring(0, 15),
+                            "error", "there was an error with your request couldn't update entity"));
+        }
+    }
+
+    @Override
+    public List<Expense> getByName(String name) {
+        try {
+            TypedQuery<Expense> categoryTypedQuery = entityManager.createQuery("SELECT e from Expense e WHERE e.name like :name", Expense.class);
+            categoryTypedQuery.setParameter("name", "%" + name + "%");
+            return categoryTypedQuery.getResultList();
+        }catch (NoResultException ex){
+            return Collections.emptyList();
+        }catch (NonUniqueResultException ex){
+            throw new GeneralFailureException(GeneralFailureException.NON_UNIQUE_IDENTIFIER,
+                    Map.of("error", String.format("the query didn't return a single result for reference number %s", name)));
+        }catch (Exception ex){
+            throw new GeneralFailureException(GeneralFailureException.OBJECT_NOT_FOUND,
+                    Map.of("original error message", ex.getMessage(),
+                            "error", String.format("there was an error with your request couldn't find object with reference number %s", name)));
         }
     }
 }

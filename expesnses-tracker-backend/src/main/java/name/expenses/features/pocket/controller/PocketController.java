@@ -41,10 +41,21 @@ public class PocketController {
         }
     }
     @GET
-    @Path("/{refNo}")
+    @Path("/refNo/{refNo}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPocket(@PathParam("refNo") String refNo) {
         ResponseDto responseDto = pocketService.get(refNo);
+        if (responseDto != null) {
+            return Response.ok(responseDto).build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+    }
+    @GET
+    @Path("/name/{name}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getPocketByName(@PathParam("name") String name) {
+        ResponseDto responseDto = pocketService.getPocketByName(name);
         if (responseDto != null) {
             return Response.ok(responseDto).build();
         } else {
@@ -102,6 +113,35 @@ public class PocketController {
             sortDirection = SortDirection.ASC;
         }
         ResponseDto responseDto = pocketService.getAllEntities(pageNumber, pageSize, sortBy, sortDirection);
+        return Response.ok(responseDto).build();
+
+    }
+    @GET
+    @Path("/noAccount")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllEntitiesWithoutAccount(
+            @QueryParam("page") Long pageNumber,
+            @QueryParam("per_page") Long pageSize,
+            @QueryParam("sortBy") String sortBy,
+            @QueryParam("sortDirection") String direction) {
+        if (pageNumber == null) {
+            pageNumber = 1L;
+        }
+        if (pageSize == null) {
+            pageSize = 10L;
+        }
+        if (sortBy == null) {
+            sortBy = "id";
+        }
+        SortDirection sortDirection;
+        if (direction == null || direction.isBlank() || direction.equalsIgnoreCase("ASC")) {
+            sortDirection = SortDirection.ASC;
+        }else if (direction.equalsIgnoreCase("DESC")){
+            sortDirection = SortDirection.DESC;
+        }else {
+            sortDirection = SortDirection.ASC;
+        }
+        ResponseDto responseDto = pocketService.getAllEntitiesWithoutAccount(pageNumber, pageSize, sortBy, sortDirection);
         return Response.ok(responseDto).build();
 
     }

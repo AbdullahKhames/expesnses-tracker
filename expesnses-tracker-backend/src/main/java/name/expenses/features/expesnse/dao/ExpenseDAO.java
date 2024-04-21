@@ -22,4 +22,8 @@ public interface ExpenseDAO {
     Set<Expense> saveAll(Set<Expense> expenses);
     Set<Expense> updateAll(Set<Expense> expenses);
     Expense update(Expense expense);
+
+    Page<Expense> findAllWithoutSubCategory(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
+
+    List<Expense> getByName(String name);
 }

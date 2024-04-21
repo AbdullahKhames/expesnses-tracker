@@ -33,10 +33,33 @@ public class AccountController {
         }
     }
     @GET
-    @Path("/{refNo}")
+    @Path("/refNo/{refNo}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAccount(@PathParam("refNo") String refNo) {
         ResponseDto responseDto = accountService.get(refNo);
+        if (responseDto != null) {
+            return Response.ok(responseDto).build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+    }
+    @GET
+    @Path("/name/{name}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAccountByName(@PathParam("name") String name) {
+        ResponseDto responseDto = accountService.getAccountByName(name);
+        if (responseDto != null) {
+            return Response.ok(responseDto).build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+    }
+
+    @GET
+    @Path("/{refNo}/pockets")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAccountPockets(@PathParam("refNo") String refNo) {
+        ResponseDto responseDto = accountService.getAccountPOckets(refNo);
         if (responseDto != null) {
             return Response.ok(responseDto).build();
         } else {

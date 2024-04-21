@@ -3,15 +3,13 @@ package name.expenses.features.sub_category.dao.dao_impl;
 import jakarta.ejb.Stateless;
 import jakarta.interceptor.Interceptors;
 import jakarta.persistence.*;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Path;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
 
 import jakarta.transaction.Transactional;
 import name.expenses.config.advice.RepoAdvice;
 import name.expenses.error.exception.GeneralFailureException;
 import name.expenses.features.category.models.Category;
+import name.expenses.features.expesnse.models.Expense;
 import name.expenses.features.sub_category.dao.SubCategoryDAO;
 import name.expenses.features.sub_category.models.SubCategory;
 import name.expenses.globals.Page;
@@ -99,6 +97,37 @@ public class SubCategoryDAOImpl implements SubCategoryDAO {
                             "error", "there was an error with your request"));
         }
 
+    }
+    @Override
+    public Page<SubCategory> findAllWithoutCategory(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
+        try {
+            TypedQuery<SubCategory> typedQuery = entityManager.createQuery("SELECT s FROM SubCategory s WHERE s.category is null", SubCategory.class);
+            List<SubCategory> subCategorys = typedQuery.getResultList();
+            return PageUtil.createPage(pageNumber, pageSize, subCategorys, subCategorys.size());
+
+        } catch (Exception exception) {
+            throw new GeneralFailureException(GeneralFailureException.ERROR_FETCH,
+                    Map.of("original message", exception.getMessage().substring(0, 15),
+                            "error", "there was an error with your request"));
+        }
+    }
+
+    @Override
+    public List<SubCategory> getByName(String name) {
+        try {
+            TypedQuery<SubCategory> categoryTypedQuery = entityManager.createQuery("SELECT e from SubCategory e WHERE e.name like :name", SubCategory.class);
+            categoryTypedQuery.setParameter("name", "%" + name + "%");
+            return categoryTypedQuery.getResultList();
+        }catch (NoResultException ex){
+            return Collections.emptyList();
+        }catch (NonUniqueResultException ex){
+            throw new GeneralFailureException(GeneralFailureException.NON_UNIQUE_IDENTIFIER,
+                    Map.of("error", String.format("the query didn't return a single result for reference number %s", name)));
+        }catch (Exception ex){
+            throw new GeneralFailureException(GeneralFailureException.OBJECT_NOT_FOUND,
+                    Map.of("original error message", ex.getMessage(),
+                            "error", String.format("there was an error with your request couldn't find object with reference number %s", name)));
+        }
     }
 
     @Override

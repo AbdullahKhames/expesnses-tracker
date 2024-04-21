@@ -21,4 +21,6 @@ public interface CategoryDAO {
     Set<Category> getEntities(Set<String> refNos);
 
     Page<SubCategory> getSubcategories(String refNo, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
+
+    List<Category> getByName(String name);
 }

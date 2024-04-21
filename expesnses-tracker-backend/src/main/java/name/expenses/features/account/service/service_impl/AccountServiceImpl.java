@@ -18,6 +18,8 @@ import name.expenses.features.account.service.AccountService;
 import name.expenses.features.association.AssociationResponse;
 import name.expenses.features.customer.models.Customer;
 import name.expenses.features.expesnse.models.Expense;
+import name.expenses.features.pocket.service.PocketService;
+import name.expenses.features.sub_category.models.SubCategory;
 import name.expenses.globals.Page;
 import name.expenses.globals.SortDirection;
 import name.expenses.features.association.Models;
@@ -30,10 +32,7 @@ import name.expenses.utils.collection_getter.AccountGetter;
 import name.expenses.utils.collection_getter.ExpenseGetter;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @Stateless
@@ -45,6 +44,7 @@ public class AccountServiceImpl implements AccountService {
     private final AccountMapper accountMapper;
     private final AccountAssociationManager accountAssociationManager;
     private final UpdateAccountServiceImpl updateAccountService;
+    private final PocketService pocketService;
 
 
     @Override
@@ -95,7 +95,7 @@ public class AccountServiceImpl implements AccountService {
             Account account = accountOptional.get();
             log.info("fetched account {}", account);
             accountMapper.update(account, accountUpdateDto);
-            updateAccountService.updateCategoryAssociations(account, accountUpdateDto);
+//            updateAccountService.updateCategoryAssociations(account, accountUpdateDto);
             log.info("updated account {}", account);
             account.setUpdatedAt(LocalDateTime.now());
             return ResponseDtoBuilder.getUpdateResponse(ACCOUNT, account.getRefNo(), accountMapper.entityToRespDto(accountDAO.update(account)));
@@ -168,6 +168,31 @@ public class AccountServiceImpl implements AccountService {
         responseError.setErrorCode(ErrorCode.OBJECT_NOT_FOUND.getErrorCode());
         responseError.setErrorMessage(String.format("account with the ref number %s was not found", accountRefNo));
         return ResponseDtoBuilder.getErrorResponse(804, responseError);
+    }
+
+    @Override
+    public ResponseDto getAccountPOckets(String refNo) {
+        Optional<Account> accountOptional = getEntity(refNo);
+        if (accountOptional.isPresent()){
+            Account account = accountOptional.get();
+            return ResponseDtoBuilder.getFetchResponse(ACCOUNT, account.getRefNo(), pocketService.entityToRespDto(account.getPockets()));
+
+        }else {
+            return ResponseDtoBuilder.getErrorResponse(804, "no account found with given ref");
+        }
+    }
+
+    @Override
+    public ResponseDto getAccountByName(String name) {
+        if (name == null || name.isBlank()) {
+            return ResponseDtoBuilder.getErrorResponse(804, "name cannot be null");
+        }
+        List<Account> accounts = accountDAO.getByName(name);
+        if (!accounts.isEmpty()){
+            return ResponseDtoBuilder.getFetchAllResponse(ACCOUNT, accountMapper.entityToRespDto(accounts));
+        }else {
+            return ResponseDtoBuilder.getErrorResponse(804, "not found");
+        }
     }
 
     @Override

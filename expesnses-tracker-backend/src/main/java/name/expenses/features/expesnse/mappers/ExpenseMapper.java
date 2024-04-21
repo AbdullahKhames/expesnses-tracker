@@ -2,6 +2,9 @@ package name.expenses.features.expesnse.mappers;
 
 
 import jakarta.ejb.Stateless;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.SecurityContext;
+import name.expenses.features.association.Models;
 import name.expenses.features.customer.mappers.CustomerMapper;
 import name.expenses.features.expesnse.dtos.request.ExpenseReqDto;
 import name.expenses.features.expesnse.dtos.request.ExpenseUpdateDto;
@@ -9,6 +12,7 @@ import name.expenses.features.expesnse.dtos.response.ExpenseRespDto;
 import name.expenses.features.expesnse.models.Expense;
 import name.expenses.features.sub_category.mappers.SubCategoryMapper;
 import name.expenses.globals.Page;
+import name.expenses.utils.CurrentUserFromContext;
 import org.mapstruct.*;
 
 import java.time.LocalDateTime;
@@ -23,7 +27,9 @@ import java.util.Set;
                 SubCategoryMapper.class
         },
         imports = {LocalDateTime.class})
-public interface ExpenseMapper {
+public abstract class ExpenseMapper {
+    @Context
+    private SecurityContext securityContext;
     @Mappings(
 
             {
@@ -37,7 +43,7 @@ public interface ExpenseMapper {
             }
 
     )
-    Expense reqDtoToEntity(ExpenseReqDto entityReqDto);
+    public abstract Expense reqDtoToEntity(ExpenseReqDto entityReqDto);
     @Mappings(
 
             {
@@ -45,10 +51,10 @@ public interface ExpenseMapper {
             }
 
     )
-    ExpenseRespDto entityToRespDto(Expense entity);
-    Set<ExpenseRespDto> entityToRespDto(Set<Expense> entities);
-    List<ExpenseRespDto> entityToRespDto(List<Expense> entities);
-    Page<ExpenseRespDto> entityToRespDto(Page<Expense> expensePage);
+    public abstract ExpenseRespDto entityToRespDto(Expense entity);
+    public abstract Set<ExpenseRespDto> entityToRespDto(Set<Expense> entities);
+    public abstract List<ExpenseRespDto> entityToRespDto(List<Expense> entities);
+    public abstract Page<ExpenseRespDto> entityToRespDto(Page<Expense> expensePage);
 
     @Mappings(
 
@@ -63,7 +69,7 @@ public interface ExpenseMapper {
             }
 
     )
-    void update(@MappingTarget Expense entity, ExpenseUpdateDto entityUpdateDto);
+    public abstract void update(@MappingTarget Expense entity, ExpenseUpdateDto entityUpdateDto);
     @Mappings(
 
             {
@@ -78,5 +84,12 @@ public interface ExpenseMapper {
             }
 
     )
-    Expense reqEntityToEntity(ExpenseUpdateDto newExpense);
+    public abstract Expense reqEntityToEntity(ExpenseUpdateDto newExpense);
+    @AfterMapping
+    public void afterMapping(@MappingTarget ExpenseRespDto.ExpenseRespDtoBuilder expenseRespDtoBuilder, Expense expense){
+        expenseRespDtoBuilder
+                .currentCustomerRegistered(
+                        CurrentUserFromContext
+                                .getCurrentUserFromContext(securityContext, expense, Models.EXPENSE));
+    }
 }

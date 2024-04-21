@@ -35,35 +35,35 @@ public class Customer implements
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private User user;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "Customer_accounts",
                 joinColumns = @JoinColumn(name = "customer_id", nullable = false),
                 inverseJoinColumns = @JoinColumn(name = "account_id", nullable = false))
     private Set<Account> accounts = new HashSet<>();
-    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "customer_id")
     private Set<Pocket> pockets = new HashSet<>();
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "Customer_categories",
             joinColumns = @JoinColumn(name = "customer_id", nullable = false),
             inverseJoinColumns = @JoinColumn(name = "category_id", nullable = false))
     private Set<Category> categories = new HashSet<>();
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "Customer_sub_categories",
             joinColumns = @JoinColumn(name = "customer_id", nullable = false),
             inverseJoinColumns = @JoinColumn(name = "sub_category_id", nullable = false))
     private Set<SubCategory> subCategories = new HashSet<>();
-    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "customer_id")
     private Set<Expense> expenses = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "customer_id")
     private Set<Transaction> transactions = new HashSet<>();
-    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "customer_id")
     private Set<PocketTransfer> pocketTransfers = new HashSet<>();
 

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import name.expenses.features.pocket.dtos.response.PocketRespDto;
+import name.expenses.globals.CurrentUserReg;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -14,12 +15,13 @@ import java.util.Set;
 @NoArgsConstructor
 @Data
 @Builder
-public class AccountRespDto {
+public class AccountRespDto implements CurrentUserReg {
     private String name;
     private String details;
     @Builder.Default
     private Set<PocketRespDto> pockets = new HashSet<>();
     private String refNo;
+    private boolean currentCustomerRegistered;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
