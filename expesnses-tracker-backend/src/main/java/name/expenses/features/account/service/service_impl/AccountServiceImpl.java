@@ -25,6 +25,7 @@ import name.expenses.globals.Page;
 import name.expenses.globals.SortDirection;
 import name.expenses.features.association.Models;
 import name.expenses.globals.responses.ResponseDto;
+import name.expenses.utils.PageUtil;
 import name.expenses.utils.ResponseDtoBuilder;
 import name.expenses.utils.ValidateInputUtils;
 import name.expenses.utils.account_association_manager.AccountAssociationManager;
@@ -190,7 +191,9 @@ public class AccountServiceImpl implements AccountService {
         }
         List<Account> accounts = accountDAO.getByName(name);
         if (!accounts.isEmpty()){
-            return ResponseDtoBuilder.getFetchAllResponse(ACCOUNT, accountMapper.entityToRespDto(accounts));
+            return ResponseDtoBuilder.getFetchAllResponse(ACCOUNT, accountMapper.entityToRespDto(
+                    PageUtil.createPage(1L, (long) accounts.size(), accounts, accounts.size())
+            ));
         }else {
             return ResponseDtoBuilder.getErrorResponse(804, "not found");
         }

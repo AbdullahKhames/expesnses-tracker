@@ -26,6 +26,7 @@ import name.expenses.globals.Page;
 import name.expenses.globals.SortDirection;
 import name.expenses.features.association.Models;
 import name.expenses.globals.responses.ResponseDto;
+import name.expenses.utils.PageUtil;
 import name.expenses.utils.ResponseDtoBuilder;
 import name.expenses.utils.ValidateInputUtils;
 import name.expenses.utils.category_association_manager.CategoryAssociationManager;
@@ -171,7 +172,9 @@ public class CategoryServiceImpl implements CategoryService {
         }
         List<Category> categories = categoryDAO.getByName(name);
         if (!categories.isEmpty()){
-            return ResponseDtoBuilder.getFetchAllResponse(CATEGORY, categoryMapper.entityToRespDto(categories));
+            return ResponseDtoBuilder.getFetchAllResponse(CATEGORY, categoryMapper.entityToRespDto(
+                    PageUtil.createPage(1L, (long) categories.size(), categories, categories.size())
+            ));
         }else {
             return ResponseDtoBuilder.getErrorResponse(804, "not found");
         }

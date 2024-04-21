@@ -26,6 +26,7 @@ import name.expenses.features.sub_category.service.SubService;
 import name.expenses.globals.Page;
 import name.expenses.globals.SortDirection;
 import name.expenses.globals.responses.ResponseDto;
+import name.expenses.utils.PageUtil;
 import name.expenses.utils.ResponseDtoBuilder;
 import name.expenses.utils.ValidateInputUtils;
 import name.expenses.utils.collection_getter.SubCategoryGetter;
@@ -344,7 +345,12 @@ public class SubServiceImpl implements SubService {
         }
         List<SubCategory> subCategories = subCategoryDAO.getByName(name);
         if (!subCategories.isEmpty()){
-            return ResponseDtoBuilder.getFetchAllResponse(SUBCATEGORY, subCategoryMapper.entityToRespDto(subCategories));
+            return ResponseDtoBuilder.getFetchAllResponse(SUBCATEGORY,
+                    subCategoryMapper.entityToRespDto(
+                            PageUtil.createPage(1L, (long) subCategories.size(), subCategories, subCategories.size()
+                            )
+                    )
+            );
         }else {
             return ResponseDtoBuilder.getErrorResponse(804, "not found");
         }

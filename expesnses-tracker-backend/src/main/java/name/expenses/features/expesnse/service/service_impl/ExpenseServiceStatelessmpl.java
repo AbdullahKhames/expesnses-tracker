@@ -27,6 +27,7 @@ import name.expenses.features.sub_category.models.SubCategory;
 import name.expenses.globals.Page;
 import name.expenses.globals.SortDirection;
 import name.expenses.globals.responses.ResponseDto;
+import name.expenses.utils.PageUtil;
 import name.expenses.utils.ResponseDtoBuilder;
 import name.expenses.utils.ValidateInputUtils;
 import name.expenses.utils.collection_getter.ExpenseGetter;
@@ -246,7 +247,9 @@ public class ExpenseServiceStatelessmpl implements ExpenseService {
         }
         List<Expense> expenses = expenseDAO.getByName(name);
         if (!expenses.isEmpty()){
-            return ResponseDtoBuilder.getFetchAllResponse(EXPENSE, expenseMapper.entityToRespDto(expenses));
+            return ResponseDtoBuilder.getFetchAllResponse(EXPENSE, expenseMapper.entityToRespDto(
+                    PageUtil.createPage(1L, (long) expenses.size(), expenses, expenses.size())
+            ));
         }else {
             return ResponseDtoBuilder.getErrorResponse(804, "not found");
         }

@@ -28,6 +28,7 @@ import name.expenses.features.pocket.service.PocketService;
 import name.expenses.globals.Page;
 import name.expenses.globals.SortDirection;
 import name.expenses.globals.responses.ResponseDto;
+import name.expenses.utils.PageUtil;
 import name.expenses.utils.ResponseDtoBuilder;
 import name.expenses.utils.ValidateInputUtils;
 import name.expenses.utils.collection_getter.PocketGetter;
@@ -205,7 +206,9 @@ public class PocketServiceImpl implements PocketService {
         }
         List<Pocket> pockets = pocketDAO.getByName(name);
         if (!pockets.isEmpty()){
-            return ResponseDtoBuilder.getFetchAllResponse(POCKET, pocketMapper.entityToRespDto(pockets));
+            return ResponseDtoBuilder.getFetchAllResponse(POCKET, pocketMapper.entityToRespDto(
+                    PageUtil.createPage(1L, (long) pockets.size(), pockets, pockets.size())
+            ));
         }else {
             return ResponseDtoBuilder.getErrorResponse(804, "not found");
         }
