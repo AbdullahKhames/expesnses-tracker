@@ -12,11 +12,14 @@ import name.expenses.error.exception.ErrorCode;
 import name.expenses.error.exception.GeneralFailureException;
 import name.expenses.error.exception_handler.models.ErrorCategory;
 import name.expenses.error.exception_handler.models.ResponseError;
+import name.expenses.features.account.dtos.response.AccountRespDto;
 import name.expenses.features.account.mappers.AccountMapper;
 import name.expenses.features.account.models.Account;
 import name.expenses.features.account.service.AccountService;
 import name.expenses.features.association.Models;
+import name.expenses.features.category.dtos.response.CategoryRespDto;
 import name.expenses.features.category.mappers.CategoryMapper;
+import name.expenses.features.category.models.Category;
 import name.expenses.features.category.service.CategoryService;
 import name.expenses.features.customer.dao.CustomerDAO;
 import name.expenses.features.customer.dtos.request.CustomerReqDto;
@@ -25,13 +28,24 @@ import name.expenses.features.customer.dtos.response.CustomerRespDto;
 import name.expenses.features.customer.mappers.CustomerMapper;
 import name.expenses.features.customer.models.Customer;
 import name.expenses.features.customer.service.CustomerService;
+import name.expenses.features.expesnse.dtos.response.ExpenseRespDto;
 import name.expenses.features.expesnse.mappers.ExpenseMapper;
+import name.expenses.features.expesnse.models.Expense;
 import name.expenses.features.expesnse.service.ExpenseService;
+import name.expenses.features.pocket.dtos.response.PocketRespDto;
 import name.expenses.features.pocket.mappers.PocketMapper;
+import name.expenses.features.pocket.models.Pocket;
 import name.expenses.features.pocket.service.PocketService;
+import name.expenses.features.pocket_transfer.dtos.response.PocketTransferRespDto;
+import name.expenses.features.pocket_transfer.mappers.PocketTransferMapper;
+import name.expenses.features.pocket_transfer.models.PocketTransfer;
+import name.expenses.features.sub_category.dtos.response.SubCategoryRespDto;
 import name.expenses.features.sub_category.mappers.SubCategoryMapper;
+import name.expenses.features.sub_category.models.SubCategory;
 import name.expenses.features.sub_category.service.SubService;
+import name.expenses.features.transaction.dtos.response.TransactionRespDto;
 import name.expenses.features.transaction.mappers.TransactionMapper;
+import name.expenses.features.transaction.models.Transaction;
 import name.expenses.features.user.models.User;
 import name.expenses.features.user.service.service_impl.AuthService;
 import name.expenses.globals.Page;
@@ -55,6 +69,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final CategoryMapper categoryMapper;
     private final SubCategoryMapper subCategoryMapper;
     private final TransactionMapper transactionMapper;
+    private final PocketTransferMapper pocketTransferMapper;
     private final ExpenseMapper expenseMapper;
     private final AccountService accountService;
     private final PocketService pocketService;
@@ -176,6 +191,13 @@ public class CustomerServiceImpl implements CustomerService {
         }
     }
 
+    private Long getCurrentCustomerId(){
+        Customer customer = getCustomer();
+        if (customer == null) {
+            throw new APIException(ErrorCode.CST_IS_NOT_FOUND.getErrorCode());
+        }
+        return customer.getId();
+    }
     @Override
     public ResponseDto getCustomerAssociation(Models models) {
         Customer customer = getCustomer();
@@ -197,5 +219,103 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerRespDto create(Customer customer) {
         return customerMapper.entityToRespDto(customerDAO.create(customer));
+    }
+
+    @Override
+    public ResponseDto getAllCustomerExpenses(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
+        if (pageNumber < 1){
+            pageNumber = 1L;
+        }
+        if (pageSize < 1)
+        {
+            pageSize = 1L;
+        }
+        Page<Expense> customerPage = customerDAO.getAllCustomerExpenses(getCurrentCustomerId(), pageNumber, pageSize, sortBy, sortDirection);
+        Page<ExpenseRespDto> customerDtos = expenseMapper.entityToRespDto(customerPage);
+        return ResponseDtoBuilder.getFetchAllResponse(CUSTOMER, customerDtos);
+    }
+
+    @Override
+    public ResponseDto getAllCustomerSubCategories(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
+        if (pageNumber < 1){
+            pageNumber = 1L;
+        }
+        if (pageSize < 1)
+        {
+            pageSize = 1L;
+        }
+        Page<SubCategory> customerPage = customerDAO.getAllCustomerSubCategories(getCurrentCustomerId(), pageNumber, pageSize, sortBy, sortDirection);
+        Page<SubCategoryRespDto> customerDtos = subCategoryMapper.entityToRespDto(customerPage);
+        return ResponseDtoBuilder.getFetchAllResponse(CUSTOMER, customerDtos);
+    }
+
+    @Override
+    public ResponseDto getAllCustomerPockets(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
+        if (pageNumber < 1){
+            pageNumber = 1L;
+        }
+        if (pageSize < 1)
+        {
+            pageSize = 1L;
+        }
+        Page<Pocket> customerPage = customerDAO.getAllCustomerPockets(getCurrentCustomerId(), pageNumber, pageSize, sortBy, sortDirection);
+        Page<PocketRespDto> customerDtos = pocketMapper.entityToRespDto(customerPage);
+        return ResponseDtoBuilder.getFetchAllResponse(CUSTOMER, customerDtos);
+    }
+
+    @Override
+    public ResponseDto getAllCustomerCategories(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
+        if (pageNumber < 1){
+            pageNumber = 1L;
+        }
+        if (pageSize < 1)
+        {
+            pageSize = 1L;
+        }
+        Page<Category> customerPage = customerDAO.getAllCustomerCategories(getCurrentCustomerId(), pageNumber, pageSize, sortBy, sortDirection);
+        Page<CategoryRespDto> customerDtos = categoryMapper.entityToRespDto(customerPage);
+        return ResponseDtoBuilder.getFetchAllResponse(CUSTOMER, customerDtos);
+    }
+
+    @Override
+    public ResponseDto getAllCustomerAccounts(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
+        if (pageNumber < 1){
+            pageNumber = 1L;
+        }
+        if (pageSize < 1)
+        {
+            pageSize = 1L;
+        }
+        Page<Account> customerPage = customerDAO.getAllCustomerAccounts(getCurrentCustomerId(), pageNumber, pageSize, sortBy, sortDirection);
+        Page<AccountRespDto> customerDtos = accountMapper.entityToRespDto(customerPage);
+        return ResponseDtoBuilder.getFetchAllResponse(CUSTOMER, customerDtos);
+    }
+
+    @Override
+    public ResponseDto getAllCustomerPocketTransfers(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
+        if (pageNumber < 1){
+            pageNumber = 1L;
+        }
+        if (pageSize < 1)
+        {
+            pageSize = 1L;
+        }
+        Page<PocketTransfer> customerPage = customerDAO.getAllCustomerPocketTransfers(getCurrentCustomerId(), pageNumber, pageSize, sortBy, sortDirection);
+        Page<PocketTransferRespDto> customerDtos = pocketTransferMapper.entityToRespDto(customerPage);
+        return ResponseDtoBuilder.getFetchAllResponse(CUSTOMER, customerDtos);
+    }
+
+    @Override
+    public ResponseDto getAllCustomerTransactions(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
+        if (pageNumber < 1){
+            pageNumber = 1L;
+        }
+        if (pageSize < 1)
+        {
+            pageSize = 1L;
+        }
+        Page<Transaction> customerPage = customerDAO.getAllCustomerTransactions(getCurrentCustomerId(), pageNumber, pageSize, sortBy, sortDirection);
+        Page<TransactionRespDto> customerDtos = transactionMapper.entityToRespDto(customerPage);
+        return ResponseDtoBuilder.getFetchAllResponse(CUSTOMER, customerDtos);
     }
 }

@@ -9,6 +9,7 @@ import name.expenses.features.customer.dtos.response.CustomerRespDto;
 import name.expenses.features.customer.models.Customer;
 import name.expenses.globals.CrudService;
 import name.expenses.features.association.UpdateAssociation;
+import name.expenses.globals.SortDirection;
 import name.expenses.globals.responses.ResponseDto;
 
 @Local
@@ -22,4 +23,18 @@ public interface CustomerService extends
     ResponseDto getCustomerAssociation(Models models);
 
     CustomerRespDto create(Customer customer);
+
+    ResponseDto getAllCustomerExpenses(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
+
+    ResponseDto getAllCustomerSubCategories(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
+
+    ResponseDto getAllCustomerPockets(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
+
+    ResponseDto getAllCustomerCategories(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
+
+    ResponseDto getAllCustomerAccounts(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
+
+    ResponseDto getAllCustomerPocketTransfers(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
+
+    ResponseDto getAllCustomerTransactions(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
 }

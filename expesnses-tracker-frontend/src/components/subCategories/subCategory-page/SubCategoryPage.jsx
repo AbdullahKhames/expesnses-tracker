@@ -13,6 +13,7 @@ import NotFound from "./../../basics/not-found/NotFound";
 // import NotApproved from "../../basics/not_approved/not_approved";
 // import EnrollCard from "./EnrollCard";
 // import SubCategoryContent from "./Content";
+import SubCategoryContent from './SubCategoryContent';
 
 function SubCategoryPage() {
   const userContext = useContext(UserDataContext);
@@ -122,7 +123,7 @@ function SubCategoryPage() {
             <br />
             <Row>
               <Col>
-                {/* <SubCategoryContent user={userData} SubCategory={SubCategory} /> */}
+                <SubCategoryContent user={userData} SubCategory={SubCategory} />
               </Col>
             </Row>
           </Container>
