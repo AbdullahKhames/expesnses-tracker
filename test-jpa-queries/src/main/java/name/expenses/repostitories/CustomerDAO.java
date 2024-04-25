@@ -1,22 +1,14 @@
-package name.expenses.features.customer.dao;
+package name.expenses.repostitories;
 
-import jakarta.ejb.Local;
-import name.expenses.features.account.models.Account;
-import name.expenses.features.category.models.Category;
-import name.expenses.features.customer.models.Customer;
-import name.expenses.features.expesnse.models.Expense;
-import name.expenses.features.pocket.models.Pocket;
-import name.expenses.features.pocket_transfer.models.PocketTransfer;
-import name.expenses.features.sub_category.models.SubCategory;
-import name.expenses.features.transaction.models.Transaction;
-import name.expenses.globals.Page;
-import name.expenses.globals.SortDirection;
+
+
+import name.expenses.models.*;
+
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-@Local
 public interface CustomerDAO {
     Customer create(Customer expense);
     Optional<Customer> get(String refNo);

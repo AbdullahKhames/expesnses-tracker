@@ -36,6 +36,7 @@ import CategoryPage from './components/categories/categoryPage';
 import SubCategories from './components/subCategories/SubCategories';
 import SubCategoryPage from './components/subCategories/subCategory-page/SubCategoryPage';
 import SubCategoryFilter from './components/subCategories/SubCategoryFilter';
+import AccountPage from './components/accounts/AccountPage/AccountPage';
 
 function App() {
   let routers = createBrowserRouter([
@@ -65,11 +66,25 @@ function App() {
         { path: "not_approved", element: <NotApproved /> },
         {
           path: "accounts",
-          element: (
-            <ProtectedRoute>
-              <ViewAccounts />
-            </ProtectedRoute>
-          ),
+          // element: (
+          //   <ProtectedRoute>
+          //     <ViewAccounts />
+          //   </ProtectedRoute>
+          // ),
+          children: [
+            {
+              index: true,
+              element: (
+                <ProtectedRoute>
+                  <ViewAccounts />
+                </ProtectedRoute>
+              ),
+            },
+            {
+              path: "/accounts/:refNo",
+              element:(<AccountPage />)
+            }
+          ]
         },
         {
           path: "categories",

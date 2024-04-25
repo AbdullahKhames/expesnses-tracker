@@ -37,4 +37,10 @@ public interface CustomerService extends
     ResponseDto getAllCustomerPocketTransfers(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
 
     ResponseDto getAllCustomerTransactions(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
+
+    ResponseDto getAllCustomerSubCategoryExpenses(String subCategoryRef, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
+
+    ResponseDto getAllCustomerCategorySubCategories(String categoryRef, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
+
+    ResponseDto getAllCustomerAccountPockets(String accountRef, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
 }

@@ -318,4 +318,46 @@ public class CustomerServiceImpl implements CustomerService {
         Page<TransactionRespDto> customerDtos = transactionMapper.entityToRespDto(customerPage);
         return ResponseDtoBuilder.getFetchAllResponse(CUSTOMER, customerDtos);
     }
+
+    @Override
+    public ResponseDto getAllCustomerSubCategoryExpenses(String subCategoryRef, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
+                if (pageNumber < 1){
+            pageNumber = 1L;
+        }
+        if (pageSize < 1)
+        {
+            pageSize = 1L;
+        }
+        Page<Expense> customerPage = customerDAO.getAllCustomerSubCategoryExpenses(getCurrentCustomerId(), subCategoryRef, pageNumber, pageSize, sortBy, sortDirection);
+        Page<ExpenseRespDto> customerDtos = expenseMapper.entityToRespDto(customerPage);
+        return ResponseDtoBuilder.getFetchAllResponse(CUSTOMER, customerDtos);
+    }
+
+    @Override
+    public ResponseDto getAllCustomerCategorySubCategories(String categoryRef, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
+                if (pageNumber < 1){
+            pageNumber = 1L;
+        }
+        if (pageSize < 1)
+        {
+            pageSize = 1L;
+        }
+        Page<SubCategory> customerPage = customerDAO.getAllCustomerCategorySubCategories(getCurrentCustomerId(), categoryRef, pageNumber, pageSize, sortBy, sortDirection);
+        Page<SubCategoryRespDto> customerDtos = subCategoryMapper.entityToRespDto(customerPage);
+        return ResponseDtoBuilder.getFetchAllResponse(CUSTOMER, customerDtos);
+    }
+
+    @Override
+    public ResponseDto getAllCustomerAccountPockets(String accountRef, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
+                if (pageNumber < 1){
+            pageNumber = 1L;
+        }
+        if (pageSize < 1)
+        {
+            pageSize = 1L;
+        }
+        Page<Pocket> customerPage = customerDAO.getAllCustomerAccountPockets(getCurrentCustomerId(), accountRef, pageNumber, pageSize, sortBy, sortDirection);
+        Page<PocketRespDto> customerDtos = pocketMapper.entityToRespDto(customerPage);
+        return ResponseDtoBuilder.getFetchAllResponse(CUSTOMER, customerDtos);
+    }
 }

@@ -207,7 +207,7 @@ public class CustomerDAOImpl implements CustomerDAO {
             return false;
         }
     }
-    public <T> Page<T> getAllEntitiesForCustomer(Class<T> entityClass, Long customerId, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
+    public <T, J> Page<T> getAllEntitiesForCustomer(Class<T> entityClass, Class<J> otherEntityClass, Optional<String> optionalRef, Long customerId, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
 
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
@@ -228,19 +228,29 @@ public class CustomerDAOImpl implements CustomerDAO {
             cq.orderBy(cb.desc(sortByPath));
         }
 
-        // Handle different types of relationships with customers
-        Predicate predicate = null;
+        Predicate[] predicate = new Predicate[2];
 
         if (hasManyToOneRelationship(entityClass)) {
-            predicate = cb.equal(root.get("customer").get("id"), customerId);
+            predicate[0] = cb.equal(root.get("customer").get("id"), customerId);
         } else if (hasManyToManyRelationship(entityClass)) {
-            Join<T, Customer> customerJoin = root.join("customers", JoinType.LEFT); // Use appropriate JoinType
-            predicate = cb.equal(customerJoin.get("id"), customerId);
+            Join<T, Customer> customerJoin = root.join("customers", JoinType.LEFT);
+            predicate[0] = cb.equal(customerJoin.get("id"), customerId);
+        }
+        optionalRef.ifPresent(ref -> {
+            if (otherEntityClass != null){
+                String className = getClassName(otherEntityClass);
+                predicate[1] = cb.equal(root.get(className).get("refNo"), ref);
+            }
+        });
+
+        if (predicate[0] != null && predicate[1] != null) {
+            cq.where(predicate);
+        } else if (predicate[0] != null) {
+            cq.where(predicate[0]);
+        } else if (predicate[1] != null) {
+            cq.where(predicate[1]);
         }
 
-        if (predicate != null) {
-            cq.where(predicate);
-        }
 
         List<T> resultList = entityManager.createQuery(cq)
                 .setFirstResult((int) ((pageNumber - 1) * pageSize))
@@ -250,22 +260,36 @@ public class CustomerDAOImpl implements CustomerDAO {
         CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
         Root<T> countRoot = countQuery.from(entityClass);
         countQuery.select(cb.count(countRoot));
-        Predicate countPredicate = null;
+        Predicate[] countPredicate = new Predicate[2];
 
         if (hasManyToOneRelationship(entityClass)) {
-            countPredicate = cb.equal(countRoot.get("customer").get("id"), customerId);
+            countPredicate[0] = cb.equal(countRoot.get("customer").get("id"), customerId);
         } else if (hasManyToManyRelationship(entityClass)) {
             Join<T, Customer> customerJoin = countRoot.join("customers", JoinType.LEFT);
-            countPredicate = cb.equal(customerJoin.get("id"), customerId);
+            countPredicate[0] = cb.equal(customerJoin.get("id"), customerId);
         }
-
-        if (countPredicate != null) {
+        optionalRef.ifPresent(ref -> {
+            if (otherEntityClass != null){
+                String className = getClassName(otherEntityClass);
+                countPredicate[1] = cb.equal(countRoot.get(className).get("refNo"), ref);
+            }
+        });
+        if (countPredicate[0] != null && countPredicate[1] != null) {
             countQuery.where(countPredicate);
+        } else if (countPredicate[0] != null) {
+            countQuery.where(countPredicate[0]);
+        } else if (countPredicate[1] != null) {
+            countQuery.where(countPredicate[1]);
         }
 
         Long count = entityManager.createQuery(countQuery).getSingleResult();
 
         return PageUtil.createPage(pageNumber, pageSize, resultList, count);
+    }
+
+    private static <J> String getClassName(Class<J> otherEntityClass) {
+        String s = otherEntityClass.getSimpleName();
+        return s.replace(s.charAt(0), Character.toLowerCase(s.charAt(0)));
     }
     private <T> boolean hasManyToOneRelationship(Class<T> entityClass) {
         List<Class<?>> classes = new ArrayList<>(Arrays.asList(Expense.class, Pocket.class, PocketTransfer.class, Transaction.class));
@@ -278,31 +302,46 @@ public class CustomerDAOImpl implements CustomerDAO {
     }
     @Override
     public Page<Account> getAllCustomerAccounts(Long customerId, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
-        return getAllEntitiesForCustomer(Account.class, customerId, pageNumber, pageSize, sortBy, sortDirection);
+        return getAllEntitiesForCustomer(Account.class, null, Optional.empty(), customerId, pageNumber, pageSize, sortBy, sortDirection);
     }
 
     @Override
     public Page<Category> getAllCustomerCategories(Long customerId, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
-        return getAllEntitiesForCustomer(Category.class, customerId, pageNumber, pageSize, sortBy, sortDirection);
+        return getAllEntitiesForCustomer(Category.class, null, Optional.empty(), customerId, pageNumber, pageSize, sortBy, sortDirection);
     }
 
     @Override
     public Page<Expense> getAllCustomerExpenses(Long customerId, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
-        return getAllEntitiesForCustomer(Expense.class, customerId, pageNumber, pageSize, sortBy, sortDirection);    }
+        return getAllEntitiesForCustomer(Expense.class, null, Optional.empty(), customerId, pageNumber, pageSize, sortBy, sortDirection);    }
 
     @Override
     public Page<SubCategory> getAllCustomerSubCategories(Long customerId, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
-        return getAllEntitiesForCustomer(SubCategory.class, customerId, pageNumber, pageSize, sortBy, sortDirection);    }
+        return getAllEntitiesForCustomer(SubCategory.class, null, Optional.empty(), customerId, pageNumber, pageSize, sortBy, sortDirection);    }
 
     @Override
     public Page<Pocket> getAllCustomerPockets(Long customerId, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
-        return getAllEntitiesForCustomer(Pocket.class, customerId, pageNumber, pageSize, sortBy, sortDirection);    }
+        return getAllEntitiesForCustomer(Pocket.class, null, Optional.empty(), customerId, pageNumber, pageSize, sortBy, sortDirection);    }
 
     @Override
     public Page<PocketTransfer> getAllCustomerPocketTransfers(Long customerId, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
-        return getAllEntitiesForCustomer(PocketTransfer.class, customerId, pageNumber, pageSize, sortBy, sortDirection);    }
+        return getAllEntitiesForCustomer(PocketTransfer.class, null, Optional.empty(), customerId, pageNumber, pageSize, sortBy, sortDirection);    }
 
     @Override
     public Page<Transaction> getAllCustomerTransactions(Long customerId, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
-        return getAllEntitiesForCustomer(Transaction.class, customerId, pageNumber, pageSize, sortBy, sortDirection);    }
+        return getAllEntitiesForCustomer(Transaction.class, null, Optional.empty(), customerId, pageNumber, pageSize, sortBy, sortDirection);    }
+
+    @Override
+    public Page<Expense> getAllCustomerSubCategoryExpenses(Long currentCustomerId, String subCategoryRef, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
+        return getAllEntitiesForCustomer(Expense.class, SubCategory.class, Optional.of(subCategoryRef), currentCustomerId, pageNumber, pageSize, sortBy, sortDirection);
+    }
+
+    @Override
+    public Page<SubCategory> getAllCustomerCategorySubCategories(Long currentCustomerId, String categoryRef, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
+        return getAllEntitiesForCustomer(SubCategory.class, Category.class, Optional.of(categoryRef), currentCustomerId, pageNumber, pageSize, sortBy, sortDirection);
+    }
+
+    @Override
+    public Page<Pocket> getAllCustomerAccountPockets(Long currentCustomerId, String accountRef, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
+        return getAllEntitiesForCustomer(Pocket.class, Account.class, Optional.of(accountRef), currentCustomerId, pageNumber, pageSize, sortBy, sortDirection);
+    }
 }

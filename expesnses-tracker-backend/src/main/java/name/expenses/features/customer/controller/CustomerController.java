@@ -127,6 +127,37 @@ public class CustomerController {
 
     }
     @GET
+    @Path("/accounts/{accountRef}/pockets")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllCustomerAccountPockets(
+            @PathParam("accountRef") String accountRef,
+            @QueryParam("page") Long pageNumber,
+            @QueryParam("per_page") Long pageSize,
+            @QueryParam("sortBy") String sortBy,
+            @QueryParam("sortDirection") String direction) {
+        if (pageNumber == null) {
+            pageNumber = 1L;
+        }
+        if (pageSize == null) {
+            pageSize = 10L;
+        }
+        if (sortBy == null) {
+            sortBy = "id";
+        }
+        SortDirection sortDirection;
+        if (direction == null || direction.isBlank() || direction.equalsIgnoreCase("ASC")) {
+            sortDirection = SortDirection.ASC;
+        }else if (direction.equalsIgnoreCase("DESC")){
+            sortDirection = SortDirection.DESC;
+        }else {
+            sortDirection = SortDirection.ASC;
+        }
+        ResponseDto responseDto = customerService.getAllCustomerAccountPockets(accountRef, pageNumber, pageSize, sortBy, sortDirection);
+        return Response.ok(responseDto).build();
+
+    }
+
+    @GET
     @Path("/categories")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllCustomerCategories(
@@ -156,9 +187,10 @@ public class CustomerController {
 
     }
     @GET
-    @Path("/pockets")
+    @Path("/categories/{categoryRef}/sub-categories")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllCustomerPockets(
+    public Response getAllCustomerCategorySubCategories(
+            @PathParam("categoryRef") String categoryRef,
             @QueryParam("page") Long pageNumber,
             @QueryParam("per_page") Long pageSize,
             @QueryParam("sortBy") String sortBy,
@@ -180,10 +212,10 @@ public class CustomerController {
         }else {
             sortDirection = SortDirection.ASC;
         }
-        ResponseDto responseDto = customerService.getAllCustomerPockets(pageNumber, pageSize, sortBy, sortDirection);
+        ResponseDto responseDto = customerService.getAllCustomerCategorySubCategories(categoryRef, pageNumber, pageSize, sortBy, sortDirection);
         return Response.ok(responseDto).build();
-
     }
+
     @GET
     @Path("/sub-categories")
     @Produces(MediaType.APPLICATION_JSON)
@@ -210,6 +242,65 @@ public class CustomerController {
             sortDirection = SortDirection.ASC;
         }
         ResponseDto responseDto = customerService.getAllCustomerSubCategories(pageNumber, pageSize, sortBy, sortDirection);
+        return Response.ok(responseDto).build();
+
+    }
+    @GET
+    @Path("/sub-categories/{subCategoryRef}/expenses")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllCustomerSubCategoryExpenses(
+            @PathParam("subCategoryRef") String subCategoryRef,
+            @QueryParam("page") Long pageNumber,
+            @QueryParam("per_page") Long pageSize,
+            @QueryParam("sortBy") String sortBy,
+            @QueryParam("sortDirection") String direction) {
+        if (pageNumber == null) {
+            pageNumber = 1L;
+        }
+        if (pageSize == null) {
+            pageSize = 10L;
+        }
+        if (sortBy == null) {
+            sortBy = "id";
+        }
+        SortDirection sortDirection;
+        if (direction == null || direction.isBlank() || direction.equalsIgnoreCase("ASC")) {
+            sortDirection = SortDirection.ASC;
+        }else if (direction.equalsIgnoreCase("DESC")){
+            sortDirection = SortDirection.DESC;
+        }else {
+            sortDirection = SortDirection.ASC;
+        }
+        ResponseDto responseDto = customerService.getAllCustomerSubCategoryExpenses(subCategoryRef, pageNumber, pageSize, sortBy, sortDirection);
+        return Response.ok(responseDto).build();
+    }
+
+    @GET
+    @Path("/pockets")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllCustomerPockets(
+            @QueryParam("page") Long pageNumber,
+            @QueryParam("per_page") Long pageSize,
+            @QueryParam("sortBy") String sortBy,
+            @QueryParam("sortDirection") String direction) {
+        if (pageNumber == null) {
+            pageNumber = 1L;
+        }
+        if (pageSize == null) {
+            pageSize = 10L;
+        }
+        if (sortBy == null) {
+            sortBy = "id";
+        }
+        SortDirection sortDirection;
+        if (direction == null || direction.isBlank() || direction.equalsIgnoreCase("ASC")) {
+            sortDirection = SortDirection.ASC;
+        }else if (direction.equalsIgnoreCase("DESC")){
+            sortDirection = SortDirection.DESC;
+        }else {
+            sortDirection = SortDirection.ASC;
+        }
+        ResponseDto responseDto = customerService.getAllCustomerPockets(pageNumber, pageSize, sortBy, sortDirection);
         return Response.ok(responseDto).build();
 
     }

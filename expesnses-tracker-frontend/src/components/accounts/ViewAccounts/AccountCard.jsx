@@ -7,9 +7,11 @@ import config from "./../../config";
 import { toast } from "react-hot-toast";
 import { Toaster } from "react-hot-toast";
 import { useState } from 'react';
+import deaultimage from "../../../assets/defaultImages/account.jpg";
+import { useNavigate } from "react-router-dom";
 
 const AccountCard = ({ account }) => {
-    
+    const nav = useNavigate()
     const [registered, setRegistered] = useState(account.currentCustomerRegistered)
     useEffect(() => {
       console.log(account);
@@ -60,8 +62,10 @@ const AccountCard = ({ account }) => {
         <h5 className="card-title">{account.name}</h5>
         <p className="card-text">Details: {account.details}</p>
         <p className="card-text">Created At: {account.createdAt}</p>
-        <p className="card-text">Updated At: {account.updatedAt}</p>
+        {/* <p className="card-text">Updated At: {account.updatedAt}</p> */}
         <p className="card-text total-balance">Total Balance: {totalBalance}</p>
+        <img src={deaultimage} width={250} alt="account" />
+        <button className="btn btn-primary" onClick={() => nav(`/accounts/${account.refNo}`)}>account details</button>
         {!registered ? (
           <>
             <button
