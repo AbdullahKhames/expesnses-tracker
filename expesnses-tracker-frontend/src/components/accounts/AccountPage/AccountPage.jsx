@@ -13,8 +13,6 @@ export default function AccountPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    console.log(location.state);
-    console.log(accountData);
     if (!accountData) {
       getAccount();
     } else {
