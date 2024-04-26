@@ -31,7 +31,7 @@ public class ResponseDtoBuilder {
         return createResponse(
                 String.format("%s resource with reference number : %s was deleted successfully ", resourceName, refNo),
                 true,
-                804,
+                805,
                 null);
     }
     public static ResponseDto getFetchResponse(String resourceName, String refNo, Object data){

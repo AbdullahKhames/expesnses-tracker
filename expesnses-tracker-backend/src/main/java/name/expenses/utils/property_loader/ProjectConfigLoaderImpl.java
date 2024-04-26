@@ -1,11 +1,15 @@
 package name.expenses.utils.property_loader;
 
 import jakarta.inject.Singleton;
+import jakarta.servlet.ServletContext;
+import jakarta.ws.rs.core.Context;
 
 import java.io.File;
 
 @Singleton
 public class ProjectConfigLoaderImpl implements ProjectConfigLoader {
+	@Context
+	private ServletContext servletContext;
 	
 	public String getProjectName() {
             return System.getenv("PROJECT");
@@ -23,6 +27,12 @@ public class ProjectConfigLoaderImpl implements ProjectConfigLoader {
 
 		// Set projectHome to the project root path
 		return projectRoot.getAbsolutePath();
+	}
+	@Override
+	public StringBuilder getResourcesPath() {
+		String webInfPath = servletContext.getRealPath("/WEB-INF");
+		String expensesConfigPath = webInfPath + File.separator + "classes";
+        return new StringBuilder(expensesConfigPath);
 	}
 
 	public String getUserHome() {

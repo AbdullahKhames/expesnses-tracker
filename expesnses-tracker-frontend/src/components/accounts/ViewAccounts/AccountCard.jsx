@@ -9,6 +9,8 @@ import { Toaster } from "react-hot-toast";
 import { useState } from 'react';
 import deaultimage from "../../../assets/defaultImages/account.jpg";
 import { useNavigate } from "react-router-dom";
+import { Link } from 'react-router-dom';
+import AccountPage from './../AccountPage/AccountPage';
 
 const AccountCard = ({ account }) => {
     const nav = useNavigate()
@@ -65,7 +67,12 @@ const AccountCard = ({ account }) => {
         {/* <p className="card-text">Updated At: {account.updatedAt}</p> */}
         <p className="card-text total-balance">Total Balance: {totalBalance}</p>
         <img src={deaultimage} width={250} alt="account" />
-        <button className="btn btn-primary" onClick={() => nav(`/accounts/${account.refNo}`)}>account details</button>
+        <Link to={{
+          pathname: `/accounts/${account.refNo}`,
+          state: { accountData: account }
+        }}>
+          <button className="btn btn-primary">Account Details</button>
+        </Link>
         {!registered ? (
           <>
             <button

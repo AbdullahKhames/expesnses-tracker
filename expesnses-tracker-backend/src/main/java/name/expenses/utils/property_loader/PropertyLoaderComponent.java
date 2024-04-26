@@ -16,8 +16,9 @@ import java.util.Map;
 public class PropertyLoaderComponent {
 
     static Map<String, ConfigFile> configFileMap = new HashMap<String, ConfigFile>();
-    String userHome = "";
+//    String userHome = "";
     String project = "";
+    String resourcesHome = "";
 
     private final ProjectConfigLoader projectConfigLoader;
 
@@ -104,9 +105,7 @@ public class PropertyLoaderComponent {
     }
 
     private String load(String property) {
-        String applicationName = "application";
-        // environment.getProperty("spring.application.name").trim();
-        return loadFromFile(property, applicationName, "application");
+        return loadFromFile(property, "application", "application");
     }
 
     /*
@@ -124,9 +123,12 @@ public class PropertyLoaderComponent {
      * fileName.properties from the class path
      */
     private boolean isProjectConfigFileExist(String folderName, String fileName) {
-        userHome = projectConfigLoader.getUserHome();
+//        userHome = projectConfigLoader.getUserHome();
+        resourcesHome = projectConfigLoader.getResourcesPath().toString();
         project = projectConfigLoader.getProjectName();
-        StringBuilder filePath = new StringBuilder(userHome + File.separator + (project + "-config") + File.separator);
+//        StringBuilder filePath = new StringBuilder(userHome + File.separator + (project + "-config") + File.separator);
+        StringBuilder filePath = new StringBuilder(resourcesHome + File.separator + (project + "-config") + File.separator);
+//        StringBuilder filePath = projectConfigLoader.getResourcesPath();
         filePath.append(folderName).append(File.separator);
         filePath.append(fileName).append(".properties");
         File currentFile = new File(filePath.toString());
@@ -142,8 +144,11 @@ public class PropertyLoaderComponent {
 
                 configFolder = project + "-config";
             }
-            StringBuilder configDir = new StringBuilder(projectConfigLoader.getUserHome())
-                    .append(File.separator + configFolder);
+//            StringBuilder configDir = new StringBuilder(projectConfigLoader.getUserHome())
+            StringBuilder configDir = new StringBuilder(projectConfigLoader.getResourcesPath().toString());
+            if (!configFolder.isEmpty()){
+                configDir.append(File.separator + configFolder);
+            }
             configDir.append(File.separator + folderName).append(File.separator);
             configDir.append(fileName).append(".properties");
             filePath = configDir.toString();
