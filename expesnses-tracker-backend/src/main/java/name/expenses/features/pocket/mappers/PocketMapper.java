@@ -50,6 +50,8 @@ public abstract class PocketMapper {
             {
 //                    @Mapping(target = "customer", ignore = true),
                     @Mapping(target = "customerName", source = "customer", qualifiedByName = "getCustomerName"),
+                    @Mapping(target = "accountName", source = "account.name"),
+                    @Mapping(target = "accountRefNo", source = "account.refNo"),
             }
 
     )

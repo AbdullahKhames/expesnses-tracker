@@ -37,6 +37,8 @@ import SubCategories from './components/subCategories/SubCategories';
 import SubCategoryPage from './components/subCategories/subCategory-page/SubCategoryPage';
 import SubCategoryFilter from './components/subCategories/SubCategoryFilter';
 import AccountPage from './components/accounts/AccountPage/AccountPage';
+import PocketList from './components/pockets/PocketList';
+import PocketPage from './components/pockets/PocketPage';
 
 function App() {
   let routers = createBrowserRouter([
@@ -121,6 +123,22 @@ function App() {
 
             { path: ":refNo", element: <SubCategoryPage /> },
             { path: "filter", element: <SubCategoryFilter /> },
+          ],
+        },
+        {
+          path: "pockets",
+          children: [
+            {
+              index: true,
+              element: (
+                <ProtectedRoute>
+                  <PocketList />
+                </ProtectedRoute>
+              ),
+            },
+
+            { path: ":refNo", element: <PocketPage /> },
+            // { path: "filter", element: <PocketFilter /> },
           ],
         },
       ],

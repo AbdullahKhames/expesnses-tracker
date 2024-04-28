@@ -8,6 +8,7 @@ import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import name.expenses.config.advice.RepoAdvice;
+import name.expenses.error.exception.GeneralFailureException;
 import name.expenses.error.exception.UsernameNotFoundException;
 import name.expenses.features.user.dao.UserDao;
 import name.expenses.features.user.dao.UserRepo;
@@ -126,5 +127,19 @@ public class UserDaoImpl implements UserDao, UserRepo {
     public User update(User user) {
         entityManager.merge(user);
         return user;
+    }
+
+    @Override
+    public boolean existByIdAndDeviceId(Long id, String deviceId) {
+        try {
+            TypedQuery<Long> query = entityManager.createQuery(
+                    "SELECT COUNT(u) FROM User u WHERE u.id = :id AND u.deviceId = :deviceId", Long.class);
+            query.setParameter("id", id);
+            query.setParameter("deviceId", deviceId);
+            Long count = query.getSingleResult();
+            return count > 0;
+        }catch (Exception ex){
+            throw new GeneralFailureException("error occurred please try again later");
+        }
     }
 }

@@ -65,7 +65,7 @@ const AccountCard = ({ account }) => {
         <p className="card-text">Details: {account.details}</p>
         <p className="card-text">Created At: {account.createdAt}</p>
         {/* <p className="card-text">Updated At: {account.updatedAt}</p> */}
-        <p className="card-text total-balance">Total Balance: {totalBalance}</p>
+        {/* <p className="card-text total-balance">Total Balance: {totalBalance}</p> */}
         <img src={deaultimage} width={250} alt="account" />
         <button className="btn btn-primary"
                 onClick={() => nav(`/accounts/${account.refNo}`, { state: { accountData: account } })}

@@ -1,11 +1,11 @@
 package name.expenses.features.pocket.models;
 
 public enum PocketType {
-    SERVICE,
-    REPO,
-    BAQA,
-    WEEKLY,
+    ENTERTAINMENT,
+    SAVINGS,
+    BILLS,
+    ALLOWANCE,
     MOM,
     MISC,
-    DONATION
+    DONATION,
 }

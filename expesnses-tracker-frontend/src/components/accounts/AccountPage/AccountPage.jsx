@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import api from './../../api';
-import config from './../../config';
-import Loading from './../../basics/Loading/loading';
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
+import api from "./../../api";
+import config from "./../../config";
+import Loading from "./../../basics/Loading/loading";
+import PocketList from "./../../pockets/PocketList";
 
 export default function AccountPage() {
   const nav = useNavigate();
@@ -10,7 +11,7 @@ export default function AccountPage() {
   const location = useLocation();
   const accountData = location.state ? location.state.accountData : null;
   const [account, setAccount] = useState(null);
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!accountData) {
@@ -29,20 +30,21 @@ export default function AccountPage() {
         setAccount(response.data.data);
         setLoading(false);
       } else {
-        nav('/not-found');
+        nav("/not-found");
       }
     } catch (error) {
       console.error("Error fetching account:", error);
-      nav('/not-found');
+      nav("/not-found");
     }
   }
   if (loading) {
-    return <Loading/>;
-  }else{
+    return <Loading />;
+  } else {
     return (
-      <div>Account Name : {account.name}</div>
+      <>
+        <div>Account Name : {account.name}</div>
+        <PocketList filter={account} />
+      </>
     );
   }
-
-
 }

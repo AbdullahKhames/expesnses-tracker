@@ -313,7 +313,11 @@ public class AuthService {
             throw new GeneralFailureException(ErrorCode.USER_IS_NOT_FOUND.getErrorCode(),
                     Map.of("error ", " user is not found with given email"));
         }
-
+        boolean existByDeviceId = userRepo.existByIdAndDeviceId(user.getId(), loginRequest.getDeviceId());
+        if (existByDeviceId){
+            throw new GeneralFailureException(ErrorCode.USER_IS_NOT_FOUND.getErrorCode(),
+                    Map.of("error ", " someone is already logged in to this device please logout first"));
+        }
         if (!verified(loginRequest.getEmail(), loginRequest.getToken() , Type.LOGIN)) {
             return ResponseDto.builder()
                     .status(false)
@@ -321,12 +325,25 @@ public class AuthService {
                     .code(403)
                     .build();
         }
-        String token = loginRequest.getToken();
-        revokeToken(token);
+        if (user.isLoggedIn() && user.getDeviceId() != null ){
+            if (user.getDeviceId().equals(loginRequest.getDeviceId())){
+                return performUserLogin(loginRequest, user, status);
+            }else {
+                throw new GeneralFailureException(ErrorCode.USER_IS_NOT_FOUND.getErrorCode(),
+                        Map.of("error ", " user already logged in in another device"));
+            }
+        }
 
         user.setLoggedIn(true);
         user.setDeviceId(loginRequest.getDeviceId());
 
+        return performUserLogin(loginRequest, user, status);
+    }
+
+    private ResponseDto performUserLogin(LoginRequest loginRequest, User user, boolean status) {
+        String message;
+        String token = loginRequest.getToken();
+        revokeToken(token);
         var savedUSer = userRepo.update(user);
 
         var jwtToken = jwtService.generateToken(savedUSer);

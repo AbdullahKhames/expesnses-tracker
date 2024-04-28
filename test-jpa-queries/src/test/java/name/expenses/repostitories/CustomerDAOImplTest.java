@@ -98,4 +98,12 @@ class CustomerDAOImplTest {
 
         assertEquals(8, pocketPage.getTotalElements());
     }
+
+    @Test
+    void getAllCustomerAccountPockets() {
+        Page<Pocket> pocketPage = customerDAO.getAllCustomerAccountPockets(2L, "ff810458-ad48-48be-abab-0d40aa4d528f", 1L, 10L, "id", SortDirection.ASC);
+        System.out.println(pocketPage);
+
+        assertEquals(1, pocketPage.getTotalElements());
+    }
 }

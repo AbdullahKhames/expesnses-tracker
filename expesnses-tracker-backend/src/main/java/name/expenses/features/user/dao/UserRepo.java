@@ -29,4 +29,6 @@ public interface UserRepo {
     User save(User user);
 
     User update(User user);
+
+    boolean existByIdAndDeviceId(Long id, String deviceId);
 }

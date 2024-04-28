@@ -164,11 +164,16 @@ export default function NavBar(props) {
                   Accounts
                 </Link>
               </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/pockets">
+                  Pockets
+                </Link>
+              </li>
               {userData && userData.roles.includes('ROLE_CUSTOMER') ? (
                 <>
                   <li className="nav-item">
                     <Link className="nav-link" to="/customers">
-                      Instructor
+                    customers
                     </Link>
                   </li>
                 </>

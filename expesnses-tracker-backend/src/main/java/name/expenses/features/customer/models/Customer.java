@@ -45,7 +45,7 @@ public class Customer implements
                 inverseJoinColumns = @JoinColumn(name = "account_id", nullable = false))
     @ToString.Exclude
     private Set<Account> accounts = new HashSet<>();
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     @JoinColumn(name = "customer_id")
     @ToString.Exclude
     private Set<Pocket> pockets = new HashSet<>();
@@ -61,16 +61,16 @@ public class Customer implements
             inverseJoinColumns = @JoinColumn(name = "sub_category_id", nullable = false))
     @ToString.Exclude
     private Set<SubCategory> subCategories = new HashSet<>();
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     @JoinColumn(name = "customer_id")
     @ToString.Exclude
     private Set<Expense> expenses = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     @JoinColumn(name = "customer_id")
     @ToString.Exclude
     private Set<Transaction> transactions = new HashSet<>();
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     @JoinColumn(name = "customer_id")
     @ToString.Exclude
     private Set<PocketTransfer> pocketTransfers = new HashSet<>();
