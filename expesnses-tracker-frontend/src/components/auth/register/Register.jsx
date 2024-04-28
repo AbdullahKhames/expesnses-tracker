@@ -48,7 +48,7 @@ function Register() {
     role: yup.string().required(),
     age: yup.number().min(16).max(60),
     deviceId: yup.string().notRequired(),
-    verificationToken: yup.string().required(),
+    // verificationToken: yup.string().required(),
   });
   
   let formik = useFormik({
@@ -60,7 +60,7 @@ function Register() {
       role: '',
       age: '',
       deviceId: DeviceIdHolder.getDeviceId(),
-      verificationToken:'',
+      // verificationToken:'',
     },
     validationSchema: validShceme,
     onSubmit: handleRegister,
@@ -85,10 +85,10 @@ function Register() {
 
   return (
     <>
-      <div classname="registration-container">
+      <div className="registration-container">
         <h3>Register Now</h3>
         {errorMessage.length > 0 ? (
-          <div classname="alert alert-danger">{errorMessage}</div>
+          <div className="alert alert-danger">{errorMessage}</div>
         ) : null}
         <form onSubmit={formik.handleSubmit}>
           <label htmlFor="email">Email:</label>
@@ -102,7 +102,7 @@ function Register() {
             required
           />
           {formik.errors.email && formik.touched.email ? (
-            <div classname="alert alert-danger">{formik.errors.email}</div>
+            <div className="alert alert-danger">{formik.errors.email}</div>
           ) : null}
 
           <label htmlFor="fullName">fullName:</label>
@@ -116,7 +116,7 @@ function Register() {
             required
           />
           {formik.errors.fullName && formik.touched.fullName ? (
-            <div classname="alert alert-danger">{formik.errors.fullName}</div>
+            <div className="alert alert-danger">{formik.errors.fullName}</div>
           ) : null}
 
           <label htmlFor="password">Password:</label>
@@ -129,7 +129,7 @@ function Register() {
             required
           />
           {formik.errors.password && formik.touched.password ? (
-            <div classname="alert alert-danger">{formik.errors.password}</div>
+            <div className="alert alert-danger">{formik.errors.password}</div>
           ) : null}
 
           <label htmlFor="confirmPassword">Confirm Password:</label>
@@ -143,9 +143,9 @@ function Register() {
             required
           />
           {formik.errors.confirmPassword && formik.touched.confirmPassword ? (
-            <div classname="alert alert-danger">{formik.errors.confirmPassword}</div>
+            <div className="alert alert-danger">{formik.errors.confirmPassword}</div>
           ) : null}
-          <label htmlFor="verificationToken">verificationToken:</label>
+          {/* <label htmlFor="verificationToken">verificationToken:</label>
           <input
             type="text"
             name="verificationToken"
@@ -156,8 +156,8 @@ function Register() {
             required
           />
           {formik.errors.verificationToken && formik.touched.verificationToken ? (
-            <div classname="alert alert-danger">{formik.errors.verificationToken}</div>
-          ) : null}
+            <div className="alert alert-danger">{formik.errors.verificationToken}</div>
+          ) : null} */}
 
           <label htmlFor="age">Age:</label>
           <input
@@ -171,7 +171,7 @@ function Register() {
             onBlur={formik.handleBlur}
           />
           {formik.errors.age && formik.touched.age ? (
-            <div classname="alert alert-danger">{formik.errors.age}</div>
+            <div className="alert alert-danger">{formik.errors.age}</div>
           ) : null}
 
           <label htmlFor="role">Register As:</label>
@@ -196,7 +196,7 @@ function Register() {
             ))}
           </select>
           {formik.errors.role && formik.touched.role ? (
-            <div classname="alert alert-danger">{formik.errors.role}</div>
+            <div className="alert alert-danger">{formik.errors.role}</div>
           ) : null}
 
           {/* {formik.values.role === '2' && (
@@ -221,19 +221,19 @@ function Register() {
                 )}
               </select>
               {formik.errors.interestedIn && formik.touched.interestedIn ? (
-                <div classname="alert alert-danger">{formik.errors.interestedIn}</div>
+                <div className="alert alert-danger">{formik.errors.interestedIn}</div>
               ) : null}
             </div>
           )} */}
 
-          <div classname="container">
+          <div className="container">
             {isLoading ? (
-              <button type="button" classname="register-button">
+              <button type="button" className="register-button">
                 <i claname="fas fa-spinner fa-spin"></i>
               </button>
             ) : (
               <button
-                classname="register-button"
+                className="register-button"
                 disabled={!formik.dirty && formik.isValid}
                 type="submit"
                 name={handleRegister}
@@ -243,10 +243,10 @@ function Register() {
             )}
           </div>
         </form>
-        <div classname="container">
+        <div className="container">
           Already Have An Account? <Link to="/login">Login Here</Link>
         </div>
-        {/* <div classname="container">
+        {/* <div className="container">
           want to activate your email?<Link to="/activate"> Activate Here</Link>
         </div> */}
         <Toaster />

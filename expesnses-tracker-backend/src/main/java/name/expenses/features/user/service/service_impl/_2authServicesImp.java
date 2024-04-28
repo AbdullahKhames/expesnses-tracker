@@ -118,7 +118,8 @@ public class _2authServicesImp implements _2authServices {
         log.info("authDto {} ",authDto);
 
 //        _2auth auth = authRepo.findByEmailAndOtp(authDto.getEmail(),authDto.getOtp());
-        _2auth auth = authRepo.findByEmailAndOtpAndRfeNoAndExpiredFalse(authDto.getEmail(),authDto.getOtp(),authDto.getRefNo());
+//        _2auth auth = authRepo.findByEmailAndOtpAndRfeNoAndExpiredFalse(authDto.getEmail(),authDto.getOtp(),authDto.getRefNo());
+        _2auth auth = authRepo.findByEmailAndOtpAndExpiredFalse(authDto.getEmail(),authDto.getOtp());
         if(auth != null){
             if(DateIsExpired(auth.getCreatedAt())){
                 expireOtp(auth);

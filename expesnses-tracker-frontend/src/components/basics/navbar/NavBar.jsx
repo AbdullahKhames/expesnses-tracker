@@ -49,7 +49,7 @@ export default function NavBar(props) {
         console.error(error);
       });
     
-  }, [url_api_subCategories]);
+  }, [userData, url_api_subCategories]);
 
   useEffect(() => {
     console.log("userData changed");

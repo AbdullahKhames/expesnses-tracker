@@ -30,8 +30,11 @@ const api = axios.create({
     },
     async function (error) {
       const originalRequest = error.config;
-      if (error.response.status === 401 && !originalRequest._retry) {
-        originalRequest._retry = true;
+      if (!originalRequest._retryCount) {
+        originalRequest._retryCount = 0;
+      }
+      if (error.response.status === 401 && originalRequest._retryCount < 3) {
+        originalRequest._retryCount += 1;
         try {
           const access_token = await refreshAccessToken();
           if (originalRequest.headers) {
@@ -53,7 +56,7 @@ const api = axios.create({
             localStorage.removeItem('access_token');
             localStorage.removeItem('refresh_token');    
             localStorage.removeItem('deviceId');    
-            window.location.href = '/login';
+            // window.location.href = '/login';
           }
           return Promise.reject(retryError);
         }
@@ -66,7 +69,10 @@ const api = axios.create({
     try {
       const refresh_token = localStorage.getItem('refresh_token');
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + refresh_token;
-      const response = await axios.post('http://localhost:8000/api/users/refreshToken', localStorage.getItem('access_token'));
+      axios.defaults.headers.common['Accept'] = 'application/json';
+      axios.defaults.headers.common['Content-Type'] = 'application/json';
+      axios.defaults.headers.common['Device-ID'] = DeviceIdHolder.getDeviceId();
+      const response = await axios.post('http://localhost:8080/expenses-tracker/api/users/refreshToken', localStorage.getItem('access_token'));
 
       if (response.status === 200) {
         localStorage.setItem('access_token', response.data.data.accessToken);

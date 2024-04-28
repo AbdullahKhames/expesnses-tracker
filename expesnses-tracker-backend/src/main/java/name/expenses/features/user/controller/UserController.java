@@ -45,7 +45,7 @@ public class UserController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response Register(UserReqDto userRegistrationDto) {
-        return Response.ok(authService.registerWithOtp(userRegistrationDto)).build();
+        return Response.ok(authService.register(userRegistrationDto, false)).build();
     }
 
 
@@ -60,13 +60,12 @@ public class UserController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public void refreshToken(
+    public Response refreshToken(
             @Context HttpServletRequest request,
-            @Context HttpServletResponse response,
              AccessToken accessToken
     ) throws IOException {
 
-         authService.refreshToken(request,response , accessToken.token);
+         return Response.ok(authService.refreshToken(request , accessToken.token)).build();
     }
 
     @Path("/resetAccount")

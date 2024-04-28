@@ -27,6 +27,7 @@ import name.expenses.features.user.dtos.response.AuthResponse;
 import name.expenses.features.user.mappers.UserMapper;
 import name.expenses.features.user.models.*;
 import name.expenses.globals.responses.ResponseDto;
+import name.expenses.utils.ResponseDtoBuilder;
 import name.expenses.utils.hashing.Hashing;
 
 import java.io.IOException;
@@ -48,21 +49,34 @@ public class AuthService {
     private final CustomerService customerService;
     @Context
     SecurityContext securityContext;
-    public boolean verified(String phone, String token, Type type) {
-        if (phone == null || token == null ||  type == null) {
+    public boolean verified(String email, String token, Type type) {
+        if (email == null || token == null ||  type == null) {
             return false;
         }
-        var isTokenValid = tokenRepo.findByToken(token)
-                .map(t -> !t.isExpired() && !t.isRevoked())
-                .orElse(false);
+        Token savedToken = tokenRepo.findByToken(token).orElseThrow(() -> new ObjectNotFoundException("Token not found"));
+        boolean isTokenValid = !savedToken.isExpired() && !savedToken.isRevoked();
         log.info("isTokenValid :{}", isTokenValid);
 
         try{
+            User user = userRepo.findUserByEmailAndDeletedIsFalse(email).orElseThrow(() -> new ObjectNotFoundException("User Not Found"));
+            if (!user.getTokens().contains(savedToken)){
+                throw new GeneralFailureException(ErrorCode.INVALID_ACCOUNTNUMBER.getErrorCode(),
+                        Map.of("error", "invalid token for user"));
+            }
             Claims claims = jwtService.extractAllClaims(token);
-            String otpRef = claims.get("ref").toString();
             String deviceId = claims.get("deviceId").toString();
-            boolean exists = authRepo.existsByPhoneAndTokenAndRfeNoAndDeviceId(phone, token, otpRef, deviceId);
+            _2auth auth = authRepo.findByEmailAndTokenAndExpiredFalse(email, token);
+            boolean exists = auth != null;
+            if (exists && !Objects.equals(deviceId, auth.getDeviceId())){
+                throw new GeneralFailureException(ErrorCode.INVALID_ACCOUNTNUMBER.getErrorCode(),
+                        Map.of("error", "invalid device id for token"));
+            }
             String type1 = claims.get("type").toString();
+            if (!type1.equals(type.toString())){
+                throw new GeneralFailureException(ErrorCode.INVALID_ACCOUNTNUMBER.getErrorCode(),
+                        Map.of("error", "invalid token type"));
+            }
+            revokeToken(token);
             return exists && isTokenValid && (type1.equals(type.toString()));
         }catch (Exception exception){
             throw new GeneralFailureException(ErrorCode.INVALID_VERIFICATION_TOKEN.getErrorCode(),
@@ -210,9 +224,8 @@ public class AuthService {
                 .build();
 
     }
-    public void refreshToken(
+    public ResponseDto refreshToken(
             HttpServletRequest request,
-            HttpServletResponse response,
             String token) throws IOException {
 
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
@@ -221,7 +234,7 @@ public class AuthService {
 
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return;
+            return ResponseDtoBuilder.getErrorResponse(810, "auth header cannot be null");
         }
 //       extract jwt token "Bearer "-> 7 chars
         refreshToken = authHeader.substring(7);
@@ -235,7 +248,6 @@ public class AuthService {
                 .code(2040)
                 .status(false)
                 .build();
-        response.setContentType("application/json");
 
         if (username != null) {
             var user = userRepo.findUserByEmailAndDeletedIsFalse(username).orElseThrow(() -> new ObjectNotFoundException("User Not Found"));
@@ -265,13 +277,12 @@ public class AuthService {
                             .code(200)
                             .status(true)
                             .build();
-                    new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
+                    return authResponse;
                 }
             }
 
         }
-        new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
-
+        return authResponse;
     }
 
     public ResponseDto resetAccount(LoginRequest loginRequest) {
@@ -302,6 +313,16 @@ public class AuthService {
             throw new GeneralFailureException(ErrorCode.USER_IS_NOT_FOUND.getErrorCode(),
                     Map.of("error ", " user is not found with given email"));
         }
+
+        if (!verified(loginRequest.getEmail(), loginRequest.getToken() , Type.LOGIN)) {
+            return ResponseDto.builder()
+                    .status(false)
+                    .message("not Verified")
+                    .code(403)
+                    .build();
+        }
+        String token = loginRequest.getToken();
+        revokeToken(token);
 
         user.setLoggedIn(true);
         user.setDeviceId(loginRequest.getDeviceId());

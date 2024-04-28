@@ -1,10 +1,10 @@
-package name.expenses.features.user.dao;
+package name.expenses.repostitories;
 
-import jakarta.ejb.Local;
-import name.expenses.features.user.models._2auth;
+
+
+import name.expenses.models._2auth;
 
 import java.util.Optional;
-@Local
 public interface _2authRepo {
 
     Optional<_2auth> findByPhoneAndExpiredFalse(String phone);

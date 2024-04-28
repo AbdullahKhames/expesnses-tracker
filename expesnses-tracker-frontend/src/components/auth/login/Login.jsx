@@ -135,7 +135,7 @@ export default function Login() {
             required
           />
           {formik.errors.token && formik.touched.token ? (
-            <div classname="alert alert-danger">{formik.errors.token}</div>
+            <div className="alert alert-danger">{formik.errors.token}</div>
           ) : null}
 
           <p></p>

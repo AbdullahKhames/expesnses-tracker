@@ -89,7 +89,7 @@ public class BasicSecurityFilter implements ContainerRequestFilter {
             requestContext.setSecurityContext(userSecurityContext);
 
             try {
-                if (!deviceIdValidator.validateDeviceId(requestContext, DEVICE_ID_HEADER_KEY, user)){
+                if ( user != null && !deviceIdValidator.validateDeviceId(requestContext, DEVICE_ID_HEADER_KEY, user)){
                     response = errorResponse(new IllegalArgumentException("device id provided in header doesn't match device id"));
                     requestContext.abortWith(response);
                 }
@@ -104,7 +104,10 @@ public class BasicSecurityFilter implements ContainerRequestFilter {
             if (response == null) {
                 return;
             }
-
+            if (user == null){
+                response = errorResponse(new RuntimeException("user is invalid provided credentials doesn't match"));
+                requestContext.abortWith(response);
+            }
             requestContext.abortWith(response);
         }
         // here it means it is in white list

@@ -1,31 +1,27 @@
-package name.expenses.features.user.dao.dao_impl;
+package name.expenses.repostitories;
 
-import com.google.protobuf.MapEntry;
-import jakarta.inject.Singleton;
-import jakarta.interceptor.Interceptors;
+
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Transactional;
-import name.expenses.config.advice.RepoAdvice;
-import name.expenses.error.exception.GeneralFailureException;
-import name.expenses.features.user.dao._2authRepo;
+
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import name.expenses.features.user.models.Type;
-import name.expenses.features.user.models._2auth;
+import lombok.Data;
+import name.expenses.exceptions.GeneralFailureException;
+import name.expenses.models._2auth;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@Singleton
-@Interceptors(RepoAdvice.class)
+
 @Transactional
+@Data
 public class _2authRepoImpl implements _2authRepo {
 
     @PersistenceContext(unitName = "expenses-unit")
@@ -154,11 +150,11 @@ public class _2authRepoImpl implements _2authRepo {
 //        }catch (Exception ex){
 //            throw new GeneralFailureException("there was an error with your request",
 //                    Map.of("error", ex.getMessage()));
-            Map<String, Object> objectMap = new HashMap<>();
-            objectMap.put("email", email);
-            objectMap.put("otp", otp);
-            return findByPredicates(objectMap);
-        }
+        Map<String, Object> objectMap = new HashMap<>();
+        objectMap.put("email", email);
+        objectMap.put("otp", otp);
+        return findByPredicates(objectMap);
+    }
 
     @Override
     public _2auth findByEmailAndTokenAndExpiredFalse(String email, String token) {
@@ -188,6 +184,7 @@ public class _2authRepoImpl implements _2authRepo {
         Predicate[] predicates = new Predicate[size];
         int i = 0;
         for (Map.Entry<String, Object> entry: objectMap.entrySet()){
+            // need to handle operator and handle nested objects !
             predicates[i] = criteriaBuilder.equal(root.get(entry.getKey()), entry.getValue());
             i++;
         }

@@ -19,14 +19,14 @@ export default function Activation() {
   const validScheme = yup.object({
     email: yup.string().email().required(),
     otp: yup.string().required(),
-    refNo: yup.string().required(),
+    // refNo: yup.string().required(),
   });
 
   const activationFormik = useFormik({
     initialValues: {
       email: "",
       otp: "",
-      refNo: "",
+      // refNo: "",
       deviceId: DeviceIdHolder.getDeviceId(),
     },
     validationSchema: validScheme,
@@ -175,7 +175,7 @@ export default function Activation() {
               {activationFormik.errors.otp}
             </div>
           ) : null}
-          <label htmlFor="refNo">refNo :</label>
+          {/* <label htmlFor="refNo">refNo :</label>
           <input
             type="text"
             name="refNo"
@@ -189,7 +189,7 @@ export default function Activation() {
             <div className="alert alert-danger">
               {activationFormik.errors.refNo}
             </div>
-          ) : null}
+          ) : null} */}
 
           <p></p>
           {isLoading ? (
