@@ -12,7 +12,11 @@ public class ProjectConfigLoaderImpl implements ProjectConfigLoader {
 	private ServletContext servletContext;
 	
 	public String getProjectName() {
-            return System.getenv("PROJECT");
+		String project = System.getenv("PROJECT");
+		if (project == null || project.isBlank()) {
+			return "expenses";
+		}
+		return project;
 	}
 	@Override
 	public String getConfigProjectName() {
@@ -35,8 +39,20 @@ public class ProjectConfigLoaderImpl implements ProjectConfigLoader {
         return new StringBuilder(expensesConfigPath);
 	}
 
+
 	public String getUserHome() {
 		return System.getenv("EXPENSES_APIS_CONFIG");
+	}
+	public String getProjectResourcesHome() {
+		return System.getenv("EXPENSES_RESOURCES");
+	}
+	@Override
+	public StringBuilder getConfigHome() {
+		String projectResources = getProjectResourcesHome();
+		if (projectResources == null || projectResources.isBlank()) {
+			return getResourcesPath();
+		}
+		return new StringBuilder(projectResources);
 	}
 
 	public String getActiveMQBrokerURL() {

@@ -29,11 +29,13 @@ public class PocketTransfer extends BaseModel {
     @ToString.Exclude
     @JsonIgnore
     private Customer customer;
-    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @Column(columnDefinition = "boolean default false")
+    private boolean lending = false;
+    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     @JoinColumn(name = "sender_pocket_amount_id")
     private PocketAmount senderPocketAmount;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     @JoinColumn(name = "pocket_transfer_id")
     @ToString.Exclude
     private Set<PocketAmount> receiverPocketAmounts = new HashSet<>();

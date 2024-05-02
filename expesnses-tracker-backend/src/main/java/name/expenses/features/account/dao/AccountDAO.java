@@ -23,4 +23,6 @@ public interface AccountDAO {
     List<Account> getByName(String name);
 
     void refresh(Customer entity);
+
+    Account getDefaultAccount();
 }

@@ -12,6 +12,9 @@ ProjectConfigLoader {
 	StringBuilder getResourcesPath();
 
 	public String getUserHome();
+
+	StringBuilder getConfigHome();
+
 	public String getActiveMQBrokerURL();
 	public String getActiveMQBrokerReceiveTimeout();
 	public String getActiveMQBrokerReceiveTimeToLive();

@@ -24,7 +24,7 @@ public class PocketUpdateDto {
     private String refNo;
     private String details;
     @NotNull
-    @EnumNamePattern(regexp = "SERVICE|REPO|BAQA|WEEKLY|MOM|MISC|DONATION")
+    @EnumNamePattern(regexp = "ENTERTAINMENT|SAVINGS|BILLS|ALLOWANCE|MOM|MISC|DONATION|EXTERNAL")
     private PocketType pocketType;
     @NotNull
     private Double amount;

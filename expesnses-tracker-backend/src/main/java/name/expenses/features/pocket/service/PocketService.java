@@ -36,6 +36,8 @@ public interface PocketService extends
 
     ResponseDto update(String refNo, PocketUpdateDto expense);
 
+    Pocket createDefaultPocket();
+
     ResponseDto delete(String refNo);
 
     ResponseDto getAllEntities(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
@@ -46,4 +48,6 @@ public interface PocketService extends
     Set<PocketRespDto> entityToRespDto(Set<Pocket> pockets);
 
     ResponseDto getPocketByName(String name);
+
+    Pocket update(Pocket oldPocket);
 }

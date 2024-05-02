@@ -37,7 +37,7 @@ public abstract class ExpenseMapper {
                     @Mapping(target = "id", ignore = true),
                     @Mapping(target = "deleted", ignore = true),
                     @Mapping(target = "refNo", ignore = true),
-                    @Mapping(target = "createdAt", ignore = true),
+//                    @Mapping(target = "createdAt", ignore = true),
                     @Mapping(target = "updatedAt", ignore = true),
                     @Mapping(target = "customer", ignore = true),
 
@@ -49,6 +49,7 @@ public abstract class ExpenseMapper {
 
             {
                     @Mapping(target = "customer", ignore = true),
+                    @Mapping(target = "subCategoryRefNo", source = "subCategory.refNo")
             }
 
     )
@@ -63,7 +64,7 @@ public abstract class ExpenseMapper {
                     @Mapping(target = "id", ignore = true),
                     @Mapping(target = "deleted", ignore = true),
                     @Mapping(target = "refNo", ignore = true),
-                    @Mapping(target = "createdAt", ignore = true),
+//                    @Mapping(target = "createdAt", ignore = true),
                     @Mapping(target = "updatedAt", expression = "java(LocalDateTime.now())"),
                     @Mapping(target = "customer", ignore = true),
 
@@ -77,7 +78,7 @@ public abstract class ExpenseMapper {
                     @Mapping(target = "id", ignore = true),
                     @Mapping(target = "deleted", ignore = true),
                     @Mapping(target = "refNo", ignore = true),
-                    @Mapping(target = "createdAt", ignore = true),
+//                    @Mapping(target = "createdAt", ignore = true),
                     @Mapping(target = "updatedAt", ignore = true),
                     @Mapping(target = "customer", ignore = true),
 

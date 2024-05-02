@@ -28,7 +28,7 @@ public class PocketReqDto {
     @NotNull
     private Double amount;
     @NotNull
-    @EnumNamePattern(regexp = "ENTERTAINMENT|SAVINGS|BILLS|ALLOWANCE|MOM|MISC|DONATION")
+    @EnumNamePattern(regexp = "ENTERTAINMENT|SAVINGS|BILLS|ALLOWANCE|MOM|MISC|DONATION|EXTERNAL")
     private PocketType pocketType;
     @NotNull
     private Long customerId;

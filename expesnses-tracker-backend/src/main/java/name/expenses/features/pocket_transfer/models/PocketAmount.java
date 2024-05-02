@@ -29,4 +29,7 @@ public class PocketAmount extends BaseModel {
     @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
     private Transaction transaction;
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "VARCHAR(55) default 'DEBIT'")
+    private AmountType amountType = AmountType.DEBIT;
 }

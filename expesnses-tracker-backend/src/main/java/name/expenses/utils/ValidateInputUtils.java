@@ -13,8 +13,9 @@ public class ValidateInputUtils {
     }
     public static void isValidInput(Object ...objects){
         if (objects == null) {
-            throw new GeneralFailureException(ErrorCode.MISSING_PASSWORD.getErrorCode(),
-                    Map.of("error", "the parameter must not be null"));
+//            throw new GeneralFailureException(ErrorCode.MISSING_PASSWORD.getErrorCode(),
+//                    Map.of("error", "the parameter must not be null"));
+            return;
         }
         for (Object obj: objects){
             if (obj == null) {

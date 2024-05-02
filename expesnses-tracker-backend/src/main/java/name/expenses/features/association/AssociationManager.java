@@ -18,7 +18,9 @@ import name.expenses.features.customer.service.CustomerService;
 import name.expenses.features.expesnse.dtos.request.ExpenseReqDto;
 import name.expenses.features.expesnse.service.ExpenseService;
 import name.expenses.features.pocket.service.PocketService;
+import name.expenses.features.pocket_transfer.service.PocketTransferService;
 import name.expenses.features.sub_category.service.SubService;
+import name.expenses.features.transaction.service.TransactionService;
 import name.expenses.features.user.models.User;
 import name.expenses.globals.CrudService;
 import name.expenses.globals.responses.ResponseDto;
@@ -38,6 +40,8 @@ public class AssociationManager {
     private final SubService subService;
     private final ExpenseService expenseService;
     private final CustomerService customerService;
+    private final PocketTransferService pocketTransferService;
+    private final TransactionService transactionService;
     private final ResponseExceptionBuilder responseExceptionBuilder;
     @Context
     private SecurityContext securityContext;
@@ -66,6 +70,7 @@ public class AssociationManager {
 
     private final Map<Models, CollectionAdder<?>> adderHandler = new HashMap<>();
     private final Map<Models, CollectionRemover<?>> removerHandler = new HashMap<>();
+    private final Map<Models, UpdateAssociation<?, ?>> updaterHandler = new HashMap<>();
 
     @PostConstruct
     public void init(){
@@ -81,6 +86,12 @@ public class AssociationManager {
         removerHandler.put(Models.ACCOUNT, accountService);
         removerHandler.put(Models.CATEGORY, categoryService);
         removerHandler.put(Models.EXPENSE, expenseService);
+
+        updaterHandler.put(Models.CUSTOMER, customerService);
+        updaterHandler.put(Models.POCKET, pocketService);
+        updaterHandler.put(Models.SUB_CATEGORY, subService);
+        updaterHandler.put(Models.TRANSACTION, transactionService);
+        updaterHandler.put(Models.POCKET_TRANSFER, pocketTransferService);
     }
 
     public  CollectionAdder<?> getCollectionAdder(Models models){
@@ -111,12 +122,12 @@ public class AssociationManager {
         try{
 
             Optional<?> optional = getOptionalObject(entityRefNo, entityModels);
-            System.out.println(optional);
+            log.info("{}", optional);
             if (optional.isPresent()){
                 CollectionAdder<?> collectionAdder = getCollectionAdder(associationModels);
                 Object entity = optional.get();
-                System.out.println(entity);
-                System.out.println(collectionAdder);
+                log.info("{}", entity);
+                log.info("{}", collectionAdder);
                 ResponseDto responseDto = collectionAdder.addAssociation(entity, entityModels, associationRefNos);
                 CrudService crudService = getService(entityModels);
                 crudService.update(entity, entityManager);
@@ -135,7 +146,7 @@ public class AssociationManager {
             entityRefNo = ((User)securityContext.getUserPrincipal()).getRefNo();
         }
         CrudService crudService = getService(entityModels);
-        System.out.println(crudService);
+        log.info("{}", crudService);
         if (crudService == null) {
             throw new GeneralFailureException(GeneralFailureException.GENERAL_ERROR,
                     Map.of("error", "service not found for given enum"));
@@ -146,12 +157,12 @@ public class AssociationManager {
     public ResponseDto removeAssociation(String entityRefNo, Models entityModels, Set<String> associationRefNos, /*Set<?> associationUpdateDto,*/ Models associationModels){
         try{
             Optional<?> optional = getOptionalObject(entityRefNo, entityModels);
-            System.out.println(optional);
+            log.info("{}", optional);
             if (optional.isPresent()){
                 CollectionRemover<?> collectionRemover = getCollectionRemover(associationModels);
                 Object entity = optional.get();
-                System.out.println(entity);
-                System.out.println(collectionRemover);
+                log.info("{}", entity);
+                log.info("{}", collectionRemover);
                 ResponseDto responseDto = collectionRemover.removeAssociation(entity, entityModels, associationRefNos);
                 CrudService crudService = getService(entityModels);
                 crudService.update(entity, entityManager);
@@ -169,12 +180,12 @@ public class AssociationManager {
         try{
 
             Optional<?> optional = getOptionalObject(entityRefNo, entityModels);
-            System.out.println(optional);
+            log.info("{}", optional);
             if (optional.isPresent()){
                 CollectionAdder<?> collectionAdder = getCollectionAdder(associationModels);
                 Object entity = optional.get();
-                System.out.println(entity);
-                System.out.println(collectionAdder);
+                log.info("{}", entity);
+                log.info("{}", collectionAdder);
                 ResponseDto responseDto = collectionAdder.addDtoAssociation(entity, entityModels, associationReqDtos);
                 CrudService crudService = getService(entityModels);
                 crudService.update(entity, entityManager);

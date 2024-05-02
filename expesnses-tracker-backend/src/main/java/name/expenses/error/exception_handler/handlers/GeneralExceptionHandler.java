@@ -30,6 +30,8 @@ public class GeneralExceptionHandler implements ExceptionHandlerStrategy {
             ex= (GeneralFailureException) e.getCause();
         }else if ( (e.getCause() != null && e.getCause().getCause() != null && e.getCause().getCause() instanceof GeneralFailureException)){
             ex= (GeneralFailureException) e.getCause().getCause();
+        }else if ( (e.getCause().getCause() != null && e.getCause().getCause().getCause() != null && e.getCause().getCause().getCause() instanceof GeneralFailureException)){
+            ex= (GeneralFailureException) e.getCause().getCause();
         }
 
         if(ex!= null){

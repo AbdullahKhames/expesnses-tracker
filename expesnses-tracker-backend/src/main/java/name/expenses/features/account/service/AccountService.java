@@ -25,4 +25,6 @@ public interface AccountService extends CrudService<AccountReqDto, AccountUpdate
     ResponseDto getAccountPOckets(String refNo);
 
     ResponseDto getAccountByName(String name);
+
+    Account getDefaultAccount();
 }

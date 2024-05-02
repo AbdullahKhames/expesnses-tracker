@@ -16,13 +16,13 @@ import name.expenses.features.association.AssociationResponse;
 import name.expenses.features.association.Models;
 import name.expenses.features.customer.dao.CustomerDAO;
 import name.expenses.features.customer.models.Customer;
-import name.expenses.features.expesnse.models.Expense;
 import name.expenses.features.pocket.dao.PocketDAO;
 import name.expenses.features.pocket.dtos.request.PocketReqDto;
 import name.expenses.features.pocket.dtos.request.PocketUpdateDto;
 import name.expenses.features.pocket.dtos.response.PocketRespDto;
 import name.expenses.features.pocket.mappers.PocketMapper;
 import name.expenses.features.pocket.models.Pocket;
+import name.expenses.features.pocket.models.PocketType;
 import name.expenses.features.pocket.service.PocketService;
 
 import name.expenses.globals.Page;
@@ -155,7 +155,16 @@ public class PocketServiceImpl implements PocketService {
         return ResponseDtoBuilder.getErrorResponse(804, responseError);
 
     }
-
+    @Override
+    public Pocket createDefaultPocket(){
+        Pocket pocket = new Pocket();
+        pocket.setName("default pocket");
+        pocket.setDetails("default customer pocket");
+        pocket.setPocketType(PocketType.DEFAULT);
+        pocket.setDefaultSender(true);
+        pocket.setDefaultReceiver(true);
+        return pocket;
+    }
     @Override
     public ResponseDto delete(String refNo) {
         return ResponseDtoBuilder.getDeleteResponse(POCKET,pocketDAO.delete(refNo));
@@ -212,6 +221,11 @@ public class PocketServiceImpl implements PocketService {
         }else {
             return ResponseDtoBuilder.getErrorResponse(804, "not found");
         }
+    }
+
+    @Override
+    public Pocket update(Pocket oldPocket) {
+        return pocketDAO.update(oldPocket);
     }
 
     @Override

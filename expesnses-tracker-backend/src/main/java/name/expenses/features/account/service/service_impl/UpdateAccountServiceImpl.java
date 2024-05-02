@@ -1,4 +1,4 @@
-package name.expenses.utils.account_association_manager;
+package name.expenses.features.account.service.service_impl;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;

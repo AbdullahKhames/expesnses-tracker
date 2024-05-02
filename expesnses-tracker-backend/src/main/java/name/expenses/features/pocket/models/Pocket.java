@@ -26,9 +26,10 @@ public class Pocket extends BaseModel {
     private Double amount;
     @Enumerated(EnumType.STRING)
     private PocketType pocketType;
-    @Transient
-    @JsonIgnore
-    private boolean newObj = false;
+    @Column(columnDefinition = "boolean default false")
+    private boolean defaultReceiver = false;
+    @Column(columnDefinition = "boolean default false")
+    private boolean defaultSender = false;
     @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
     @JsonIgnore

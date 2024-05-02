@@ -8,4 +8,5 @@ public enum PocketType {
     MOM,
     MISC,
     DONATION,
+    EXTERNAL, DEFAULT,
 }

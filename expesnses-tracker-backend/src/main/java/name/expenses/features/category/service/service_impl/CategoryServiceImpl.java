@@ -29,8 +29,6 @@ import name.expenses.globals.responses.ResponseDto;
 import name.expenses.utils.PageUtil;
 import name.expenses.utils.ResponseDtoBuilder;
 import name.expenses.utils.ValidateInputUtils;
-import name.expenses.utils.category_association_manager.CategoryAssociationManager;
-import name.expenses.utils.category_association_manager.UpdateCategoryServiceImpl;
 import name.expenses.utils.collection_getter.CategoryGetter;
 
 import java.time.LocalDateTime;

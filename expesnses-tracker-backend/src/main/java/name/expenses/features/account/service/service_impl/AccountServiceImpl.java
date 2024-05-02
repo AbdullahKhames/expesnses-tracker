@@ -18,9 +18,7 @@ import name.expenses.features.account.models.Account;
 import name.expenses.features.account.service.AccountService;
 import name.expenses.features.association.AssociationResponse;
 import name.expenses.features.customer.models.Customer;
-import name.expenses.features.expesnse.models.Expense;
 import name.expenses.features.pocket.service.PocketService;
-import name.expenses.features.sub_category.models.SubCategory;
 import name.expenses.globals.Page;
 import name.expenses.globals.SortDirection;
 import name.expenses.features.association.Models;
@@ -28,10 +26,7 @@ import name.expenses.globals.responses.ResponseDto;
 import name.expenses.utils.PageUtil;
 import name.expenses.utils.ResponseDtoBuilder;
 import name.expenses.utils.ValidateInputUtils;
-import name.expenses.utils.account_association_manager.AccountAssociationManager;
-import name.expenses.utils.account_association_manager.UpdateAccountServiceImpl;
 import name.expenses.utils.collection_getter.AccountGetter;
-import name.expenses.utils.collection_getter.ExpenseGetter;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -197,6 +192,19 @@ public class AccountServiceImpl implements AccountService {
         }else {
             return ResponseDtoBuilder.getErrorResponse(804, "not found");
         }
+    }
+
+    @Override
+    public Account getDefaultAccount() {
+        Account defaultAccount = accountDAO.getDefaultAccount();
+
+        if (defaultAccount == null) {
+            defaultAccount = new Account();
+            defaultAccount.setName("default account");
+            defaultAccount.setDetails("default account for all customers");
+            accountDAO.create(defaultAccount);
+        }
+        return defaultAccount;
     }
 
     @Override

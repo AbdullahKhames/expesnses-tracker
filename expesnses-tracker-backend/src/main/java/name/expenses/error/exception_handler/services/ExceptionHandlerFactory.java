@@ -35,21 +35,25 @@ public class ExceptionHandlerFactory {
 
     public ExceptionHandlerStrategy getExceptionHandler(Throwable throwable) {
         try{
-            InitialContext context = new InitialContext();
-            if (throwable instanceof ApiValidationException) {
-                log.info("got from context{}", apiValidationExceptionHandler);
-                return apiValidationExceptionHandler;
-            } else if (throwable instanceof CustomException) {
-                log.info("got from context{}", customExceptionHandler);
-                return customExceptionHandler;
-            }else if (throwable instanceof ConstraintViolationException) {
-                log.info("got from context{}", constraintViolationExceptionHandler);
-                return constraintViolationExceptionHandler;
-            } else {
-                return generalExceptionHandler;
+            switch (throwable) {
+
+                case ApiValidationException apiValidationException -> {
+                    return apiValidationExceptionHandler;
+                }
+                case CustomException customException -> {
+                    return customExceptionHandler;
+                }
+                case ConstraintViolationException constraintViolationException -> {
+                    return constraintViolationExceptionHandler;
+                }
+                case null, default -> {
+                    return generalExceptionHandler;
+                }
+
             }
+
         }catch (Exception ex){
-            return new GeneralExceptionHandler();
+            return generalExceptionHandler;
         }
     }
 }

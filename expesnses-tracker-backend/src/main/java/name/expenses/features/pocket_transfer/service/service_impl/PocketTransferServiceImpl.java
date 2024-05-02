@@ -15,6 +15,7 @@ import name.expenses.error.exception_handler.models.ResponseError;
 import name.expenses.features.customer.models.Customer;
 import name.expenses.features.customer.service.CustomerService;
 import name.expenses.features.pocket.models.Pocket;
+import name.expenses.features.pocket.models.PocketType;
 import name.expenses.features.pocket.service.PocketService;
 import name.expenses.features.pocket_transfer.dao.PocketTransferDAO;
 import name.expenses.features.pocket_transfer.dtos.request.PocketTransferReqDto;
@@ -22,6 +23,7 @@ import name.expenses.features.pocket_transfer.dtos.request.PocketTransferUpdateD
 import name.expenses.features.pocket_transfer.dtos.response.PocketTransferRespDto;
 import name.expenses.features.pocket_transfer.mappers.PocketAmountMapper;
 import name.expenses.features.pocket_transfer.mappers.PocketTransferMapper;
+import name.expenses.features.pocket_transfer.models.AmountType;
 import name.expenses.features.pocket_transfer.models.PocketAmount;
 import name.expenses.features.pocket_transfer.models.PocketTransfer;
 import name.expenses.features.pocket_transfer.service.PocketTransferService;
@@ -76,15 +78,18 @@ public class PocketTransferServiceImpl implements PocketTransferService {
                     Map.of("error", "pocket not found with given refNo!"));
         }
         Pocket senderPocket = senderPocketOptional.get();
-        if (!Objects.equals(senderPocket.getCustomer(), customer)){
+        if ((senderPocket.getPocketType() == PocketType.EXTERNAL)){
+            sentPocketTransfer.setLending(true);
+        }else if (!Objects.equals(senderPocket.getCustomer(), customer)){
             throw new GeneralFailureException(ErrorCode.OBJECT_NOT_FOUND.getErrorCode(),
                     Map.of("error", "sender pocket customer is not the same as current customer please use your pocket!"));
         }
         PocketAmount senderPocketAmount = pocketAmountMapper.reqDtoToEntity(pocketTransferReqDto.getSenderPocketAmountReqDto());
         senderPocketAmount.setPocket(senderPocket);
         senderPocketAmount.setTrans(true);
+        senderPocketAmount.setAmountType(AmountType.DEBIT);
 
-        if (senderPocketAmount.getAmount() > senderPocket.getAmount()){
+        if (senderPocketAmount.getAmount() > senderPocket.getAmount() && !(senderPocket.getPocketType() == PocketType.EXTERNAL)){
             throw new GeneralFailureException(GeneralFailureException.GENERAL_ERROR,
                     Map.of("error", String.format("Amount to send by sender %s is greater that already in wallet %s",
                             senderPocketAmount.getAmount(), senderPocket.getAmount())));
@@ -102,12 +107,16 @@ public class PocketTransferServiceImpl implements PocketTransferService {
                             throw new GeneralFailureException(ErrorCode.OBJECT_NOT_FOUND.getErrorCode(),
                                     Map.of("error", "the sender pocket cannot be one of the receivers"));
                         }
+                        if ((pocket.getPocketType() == PocketType.EXTERNAL)){
+                            sentPocketTransfer.setLending(true);
+                        }
 //                        if (!Objects.equals(pocket.getCustomer(), customer)){
 //                            throw new GeneralFailureException(ErrorCode.OBJECT_NOT_FOUND.getErrorCode(),
 //                                    Map.of("error", "pocket customer the same as current customer please use your pocket!"));
 //                        }
                         pocketAmount.setPocket(pocket);
                         pocketAmount.setTrans(true);
+                        pocketAmount.setAmountType(AmountType.CREDIT);
                         pocket.setAmount(pocket.getAmount() + pocketAmount.getAmount());
                         pockets.add(pocket);
                     }else {
@@ -182,8 +191,8 @@ public class PocketTransferServiceImpl implements PocketTransferService {
         if (pocketTransferOptional.isPresent()){
             PocketTransfer pocketTransfer = pocketTransferOptional.get();
             log.info("fetched pocketTransfer {}", pocketTransfer);
-            pocketTransferMapper.update(pocketTransfer, pocketTransferUpdateDto);
-//            updatePocketTransferService.updateCategoryAssociations(pocketTransfer, pocketTransferUpdateDto);
+//            pocketTransferMapper.update(pocketTransfer, pocketTransferUpdateDto);
+            updateAssociation(pocketTransfer, pocketTransferUpdateDto);
             log.info("updated pocketTransfer {}", pocketTransfer);
             pocketTransfer.setUpdatedAt(LocalDateTime.now());
             return ResponseDtoBuilder.getUpdateResponse(TRANSACTION, pocketTransfer.getRefNo(), pocketTransferMapper.entityToRespDto(pocketTransferDAO.update(pocketTransfer)));
@@ -224,4 +233,9 @@ public class PocketTransferServiceImpl implements PocketTransferService {
     }
 
 
+    @Override
+    public void updateAssociation(PocketTransfer entity, PocketTransferUpdateDto entityUpdateDto) {
+        pocketTransferMapper.update(entity, entityUpdateDto);
+
+    }
 }

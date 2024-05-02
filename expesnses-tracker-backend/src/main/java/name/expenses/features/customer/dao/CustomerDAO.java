@@ -21,6 +21,9 @@ public interface CustomerDAO {
     Customer create(Customer expense);
     Optional<Customer> get(String refNo);
     Optional<Customer> get(Long id);
+
+    Customer getCustomerWithSubCategories(Long customerId);
+
     Page<Customer> findAll(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
     List<Customer> get();
     Customer update(Customer expense);

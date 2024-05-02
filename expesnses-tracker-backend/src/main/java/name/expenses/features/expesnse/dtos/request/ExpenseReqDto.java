@@ -1,6 +1,11 @@
 package name.expenses.features.expesnse.dtos.request;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -9,6 +14,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,6 +29,8 @@ public class ExpenseReqDto {
     @NotNull
     @Min(value = 1, message = "amount cannot be less than 1")
     private Double amount;
+    private LocalDateTime createdAt = LocalDateTime.now();
+    private String receiptBase64;
     @NotNull
     private Long customerId;
     @NotNull

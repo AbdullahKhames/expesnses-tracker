@@ -18,8 +18,11 @@ import name.expenses.features.expesnse.models.Expense;
 import name.expenses.features.expesnse.service.ExpenseService;
 import name.expenses.features.pocket.models.Pocket;
 import name.expenses.features.pocket.service.PocketService;
+import name.expenses.features.pocket_transfer.dtos.request.PocketAmountUpdateDto;
 import name.expenses.features.pocket_transfer.mappers.PocketAmountMapper;
+import name.expenses.features.pocket_transfer.models.AmountType;
 import name.expenses.features.pocket_transfer.models.PocketAmount;
+import name.expenses.features.pocket_transfer.service.PocketAmountService;
 import name.expenses.features.sub_category.service.SubService;
 import name.expenses.features.transaction.dao.TransactionDAO;
 import name.expenses.features.transaction.dtos.request.TransactionReqDto;
@@ -51,6 +54,7 @@ public class TransactionServiceImpl implements TransactionService {
     private final PocketService pocketService;
     private final ExpenseService expenseService;
     private final SubService subService;
+    private final PocketAmountService pocketAmountService;
 
     @Context
     private SecurityContext securityContext;
@@ -102,6 +106,7 @@ public class TransactionServiceImpl implements TransactionService {
                                     Map.of("error", "pocket customer is not the same as current customer please use your pocket!"));
                         }
                         pocketAmount.setPocket(pocket);
+                        pocketAmount.setAmountType(AmountType.DEBIT);
                         pocket.setAmount(pocket.getAmount() - pocketAmount.getAmount());
                         pockets.add(pocket);
                     }else {
@@ -178,11 +183,17 @@ public class TransactionServiceImpl implements TransactionService {
         if (transactionOptional.isPresent()){
             Transaction transaction = transactionOptional.get();
             log.info("fetched transaction {}", transaction);
+            updateAssociation(transaction, transactionUpdateDto);
             transactionMapper.update(transaction, transactionUpdateDto);
-//            updateTransactionService.updateCategoryAssociations(transaction, transactionUpdateDto);
-            log.info("updated transaction {}", transaction);
-            transaction.setUpdatedAt(LocalDateTime.now());
-            return ResponseDtoBuilder.getUpdateResponse(TRANSACTION, transaction.getRefNo(), transactionMapper.entityToRespDto(transactionDAO.update(transaction)));
+
+            if (transaction.getAmount() != transaction.getExpense().getAmount()){
+                throw new APIException(ErrorCode.AMOUNT_NOT_EQUAL.getErrorCode());
+            }
+
+            Transaction savedTransaction = transactionDAO.update(transaction);
+
+            log.info("updated transaction {}", savedTransaction);
+            return ResponseDtoBuilder.getUpdateResponse(TRANSACTION, savedTransaction.getRefNo(), transactionMapper.entityToRespDto(savedTransaction));
         }
         ResponseError responseError = new ResponseError();
         responseError.setErrorCategory(ErrorCategory.DATABASE_Error);
@@ -220,4 +231,71 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
 
+    @Override
+    public void updateAssociation(Transaction entity, TransactionUpdateDto entityUpdateDto) {
+        Set<PocketAmount> transactionPocketAmounts = entity.getPocketAmounts();
+        Set<PocketAmountUpdateDto> pocketAmountUpdateDtos = entityUpdateDto.getPocketAmountUpdateDtos();
+        if (pocketAmountUpdateDtos == null) {
+            throw new APIException(ErrorCode.OBJECT_NOT_FOUND.getErrorCode());
+        }
+        Set<Pocket> pockets = new HashSet<>();
+        Set<PocketAmount> newPocketAmounts = pocketAmountUpdateDtos
+                .stream()
+                .map(updateDto -> {
+                    PocketAmount pocketAmount;
+                    if (updateDto.getRefNo() == null){
+                        //create the new pocket amount
+                        pocketAmount = pocketAmountMapper.updateDtoToEntity(updateDto);
+                        Optional<Pocket> pocketOptional = pocketService.getEntity(updateDto.getPocketRefNo());
+                        if (pocketOptional.isPresent()){
+                            Pocket pocket = pocketOptional.get();
+                            if (!Objects.equals(pocket.getCustomer(), getCustomer())){
+                                throw new GeneralFailureException(ErrorCode.OBJECT_NOT_FOUND.getErrorCode(),
+                                        Map.of("error", "pocket customer is not the same as current customer please use your pocket!"));
+                            }
+                            pocketAmount.setPocket(pocket);
+                            pocketAmount.setAmountType(AmountType.DEBIT);
+                            pocket.setAmount(pocket.getAmount() - pocketAmount.getAmount());
+                            pockets.add(pocket);
+                        }else {
+                            return null;
+                        }
+
+                    }else {
+                        // let the pocket amount service update it
+                        pocketAmount = transactionPocketAmounts.stream()
+                                .filter(pocketAmount1 -> pocketAmount1.getRefNo().equals(updateDto.getRefNo()))
+                                .findFirst()
+                                .orElse(null);
+                        // ignore if sent refNo from update dto not present in the pocket amounts in the transaction
+                        if (pocketAmount == null) {
+                            return null;
+                        }
+                        pocketAmountService.updateAssociation(pocketAmount, updateDto);
+                    }
+                    return pocketAmount;
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        if (newPocketAmounts.isEmpty()){
+            throw new APIException(ErrorCode.OBJECT_NOT_FOUND.getErrorCode());
+        }
+
+//        entity.setPocketAmounts(newPocketAmounts);
+        entity.setAmount(newPocketAmounts
+                .stream()
+                .map(PocketAmount::getAmount)
+                .reduce(0.0, (x, y) -> x + y)
+        );
+        pocketService.updateAll(pockets);
+
+        Set<PocketAmount> removedPocketAmounts = new HashSet<>(transactionPocketAmounts);
+        removedPocketAmounts.removeAll(newPocketAmounts);
+        removedPocketAmounts.forEach(pocketAmount -> {
+            pocketAmountService.updateOrResetAmount(pocketAmount, pocketAmount.getPocket(), true, pocketAmount.getAmount());
+        });
+        entity.getPocketAmounts().removeAll(removedPocketAmounts);
+        entity.getPocketAmounts().addAll(newPocketAmounts);
+    }
 }

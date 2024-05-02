@@ -160,7 +160,7 @@ public class BasicSecurityFilter implements ContainerRequestFilter {
         responseError.setErrorCode(ErrorCode.CST_IS_NOT_FOUND.getErrorCode());
 
         return Response
-                .status(Response.Status.UNAUTHORIZED)
+                .status(Response.Status.BAD_REQUEST)
                 .entity(ResponseDtoBuilder.getErrorResponse(810, responseError))
                 .build();
     }

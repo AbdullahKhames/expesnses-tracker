@@ -82,6 +82,18 @@ public class CustomerDAOImpl implements CustomerDAO {
                             "error", String.format("there was an error with your request couldn't find object with reference number %s", id)));
         }
     }
+    @Override
+    public Customer getCustomerWithSubCategories(Long customerId) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Customer> cq = cb.createQuery(Customer.class);
+
+        Root<Customer> customer = cq.from(Customer.class);
+        customer.fetch("subCategories", JoinType.LEFT);
+
+        cq.select(customer).where(cb.equal(customer.get("id"), customerId));
+
+        return entityManager.createQuery(cq).getSingleResult();
+    }
 
     @Override
     public Page<Customer> findAll(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {

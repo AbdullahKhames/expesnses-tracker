@@ -36,7 +36,7 @@ public class Category extends BaseModel implements SubCategoryGetter {
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "categories")
     @ToString.Exclude
     @JsonIgnore
-    private Set<Customer> customers;
+    private Set<Customer> customers = new HashSet<>();
     @PreUpdate
     protected void onUpdate() {
         this.setUpdatedAt(LocalDateTime.now());

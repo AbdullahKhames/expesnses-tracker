@@ -1,4 +1,4 @@
-package name.expenses.utils.account_association_manager;
+package name.expenses.features.account.service.service_impl;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
@@ -6,7 +6,6 @@ import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import name.expenses.features.account.models.Account;
-import name.expenses.features.pocket.dtos.request.PocketUpdateDto;
 import name.expenses.features.pocket.service.PocketService;
 import name.expenses.features.association.CollectionAdder;
 import name.expenses.features.association.Models;
@@ -14,7 +13,6 @@ import name.expenses.features.association.CollectionRemover;
 
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Singleton

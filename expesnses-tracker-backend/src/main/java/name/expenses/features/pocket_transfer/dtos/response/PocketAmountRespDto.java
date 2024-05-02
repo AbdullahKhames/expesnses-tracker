@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import name.expenses.features.pocket.dtos.response.PocketRespDto;
+import name.expenses.features.pocket_transfer.models.AmountType;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,4 +16,5 @@ import name.expenses.features.pocket.dtos.response.PocketRespDto;
 public class PocketAmountRespDto {
     private PocketRespDto pocket;
     private Double amount;
+    private AmountType amountType;
 }

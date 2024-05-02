@@ -85,18 +85,8 @@ function SubCategoryContent({ user, course }) {
       navigate("/forbidden");
       return;
     }
-    if (userData.role === 0) {
-      setShown(true);
-      setLoading(false);
-    } else if (userData.role === 1) {
-      url_api = config.api + "/users/" + userData.id + "?all=true";
-      setLoading(true);
-      checkOwner(url_api, course);
-    } else if (userData.role === 2) {
-      url_api = config.api + "/enrollments/" + course.id + "/" + user.id;
-      setLoading(true);
-      checkEnroll(url_api);
-    }
+    url_api = config.api + "/customers/sub-categories/" + userData.id + "?all=true";
+    setLoading(true);
   }, [userData]);
 
   if (loading) {

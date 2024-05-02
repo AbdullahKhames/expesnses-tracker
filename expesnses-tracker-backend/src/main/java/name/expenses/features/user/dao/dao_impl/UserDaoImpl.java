@@ -133,7 +133,7 @@ public class UserDaoImpl implements UserDao, UserRepo {
     public boolean existByIdAndDeviceId(Long id, String deviceId) {
         try {
             TypedQuery<Long> query = entityManager.createQuery(
-                    "SELECT COUNT(u) FROM User u WHERE u.id = :id AND u.deviceId = :deviceId", Long.class);
+                    "SELECT COUNT(u) FROM User u WHERE u.id = :id AND u.deviceId = :deviceId AND u.loggedIn = true", Long.class);
             query.setParameter("id", id);
             query.setParameter("deviceId", deviceId);
             Long count = query.getSingleResult();

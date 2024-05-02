@@ -38,7 +38,7 @@ public class SubCategory extends BaseModel implements ExpenseGetter {
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "subCategories")
     @ToString.Exclude
     @JsonIgnore
-    private Set<Customer> customers;
+    private Set<Customer> customers = new HashSet<>();
     @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
     private Category category;

@@ -1,4 +1,4 @@
-package name.expenses.utils.category_association_manager;
+package name.expenses.features.category.service.service_impl;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
@@ -6,7 +6,6 @@ import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import name.expenses.features.category.models.Category;
-import name.expenses.features.sub_category.dtos.request.SubCategoryUpdateDto;
 import name.expenses.features.sub_category.service.SubService;
 import name.expenses.features.association.CollectionAdder;
 import name.expenses.features.association.Models;

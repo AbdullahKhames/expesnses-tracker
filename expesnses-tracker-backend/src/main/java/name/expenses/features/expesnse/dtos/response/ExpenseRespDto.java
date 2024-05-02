@@ -20,7 +20,7 @@ public class ExpenseRespDto implements CurrentUserReg {
     private String details;
     private CustomerRespDto customer;
     private boolean currentCustomerRegistered;
-
+    private String subCategoryRefNo;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

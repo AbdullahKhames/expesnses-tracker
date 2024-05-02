@@ -30,14 +30,14 @@ public class Transaction extends BaseModel {
     private String name;
     private String details;
     private Double amount;
-    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     @JoinColumn(name = "transaction_id")
     private Set<PocketAmount> pocketAmounts = new HashSet<>();
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @ToString.Exclude
     @JsonIgnore
     private Customer customer;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false, orphanRemoval = true)
     @JoinColumn(referencedColumnName = "id", name = "expense_id")
     private Expense expense;
     @PreUpdate

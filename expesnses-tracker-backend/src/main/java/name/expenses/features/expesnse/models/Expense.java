@@ -25,6 +25,8 @@ public class Expense extends BaseModel {
     private String name;
     private String details;
     private double amount;
+    @Column(columnDefinition = "TEXT")
+    private String receipt;
     @Transient
     private boolean newObj = false;
     @ManyToOne(fetch = FetchType.LAZY)

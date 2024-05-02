@@ -10,7 +10,7 @@ import Loading from "./../basics/Loading/loading";
 import config from "../config";
 import api from "./../api";
 
-function PocketsCard({ pocketData, admin, pockets, setPockets }) {
+function PocketsCard({ pocketData, admin, pockets, setPockets, pocketTypes }) {
   const { refNo } = useParams();
   const userContext = useContext(UserDataContext);
   const userData = userContext.userData;
@@ -87,7 +87,7 @@ function PocketsCard({ pocketData, admin, pockets, setPockets }) {
 
   function handlepocketDataPage(pocketData) {
     navigate(`/pockets/${pocketData.refNo}`, {
-      state: { pocketData: pocket },
+      state: { pocketData: pocket, pocketTypes:pocketTypes },
     });
   }
 

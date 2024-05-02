@@ -1,5 +1,10 @@
 package name.expenses.features.pocket_transfer.dtos.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -9,6 +14,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import name.expenses.features.expesnse.dtos.request.ExpenseUpdateDto;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,6 +27,7 @@ public class PocketTransferUpdateDto {
     private String name;
     private String details;
     private String refNo;
+    private LocalDateTime createdAt = LocalDateTime.now();
     @Min(value = 0)
     private Double amount;
     @Valid

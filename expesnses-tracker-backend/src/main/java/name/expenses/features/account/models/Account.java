@@ -32,7 +32,7 @@ public class Account extends BaseModel implements PocketGetter {
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "accounts")
     @ToString.Exclude
     @JsonIgnore
-    private Set<Customer> customers;
+    private Set<Customer> customers = new HashSet<>();
     @PreUpdate
     protected void onUpdate() {
         this.setUpdatedAt(LocalDateTime.now());

@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import name.expenses.features.expesnse.dtos.request.ExpenseUpdateDto;
 import name.expenses.features.pocket_transfer.dtos.request.PocketAmountReqDto;
+import name.expenses.features.pocket_transfer.dtos.request.PocketAmountUpdateDto;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -25,7 +26,7 @@ public class TransactionUpdateDto {
     private Double amount;
     @Valid
     @Builder.Default
-    private Set<PocketAmountReqDto> pocketAmountReqDtos = new HashSet<>();
+    private Set<PocketAmountUpdateDto> pocketAmountUpdateDtos = new HashSet<>();
     @Valid
     private ExpenseUpdateDto expense;
 }

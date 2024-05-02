@@ -10,9 +10,9 @@ export default function CustomerDashboard(props) {
   const userData = userContext.userData;
   const [loading, setLoading] = useState(true);
   const [optionsVisibility, setOptionsVisibility] = useState({
-    categories: false,
-    subCategories: false,
-    accounts: false,
+    expenses: false,
+    transactions: false,
+    transfers: false,
   });
 
   const toggleOptions = (sectionId) => {
@@ -51,29 +51,29 @@ export default function CustomerDashboard(props) {
           <div style={{ flex: 1 }}>
             <div className="dashboard">
               <div className="sidebar">
-                {/* categories section ! */}
-                <div className="dash-section" id="categories">
+                {/* expenses section ! */}
+                <div className="dash-section" id="expenses">
                   <div
                     className="dash-section-title"
-                    onClick={() => toggleOptions("categories")}
+                    onClick={() => toggleOptions("expenses")}
                   >
-                    categories
+                    expenses
                   </div>
-                  {optionsVisibility.categories && (
+                  {optionsVisibility.expenses && (
                     <div className="options">
                       <>
-                        <Link className="nav-link" to="addCategory">
+                        <Link className="nav-link" to="addExpense">
                           <div className="option">
                             <span className="icon">+</span> Add
                           </div>
                         </Link>
 
-                        <Link className="nav-link" to="showCategories">
+                        <Link className="nav-link" to="showExpenses">
                           <div className="option">
                             <span className="icon"></span> Show
                           </div>
                         </Link>
-                        <Link className="nav-link" to="SearchCategory">
+                        <Link className="nav-link" to="SearchExpense">
                           <div className="option">
                             <span className="icon">+</span> search
                           </div>
@@ -91,28 +91,28 @@ export default function CustomerDashboard(props) {
                 </div>
 
                 {/* sub categories section */}
-                <div className="dash-section" id="subCategories">
+                <div className="dash-section" id="transactions">
                   <div
                     className="dash-section-title"
-                    onClick={() => toggleOptions("subCategories")}
+                    onClick={() => toggleOptions("transactions")}
                   >
-                    subCategories
+                    transactions
                   </div>
-                  {optionsVisibility.subCategories && (
+                  {optionsVisibility.transactions && (
                     <div className="options">
                       <>
-                        <Link className="nav-link" to="addSubCategory">
+                        <Link className="nav-link" to="addTransaction">
                           <div className="option">
                             <span className="icon">+</span> Add
                           </div>
                         </Link>
 
-                        <Link className="nav-link" to="showSubCategories">
+                        <Link className="nav-link" to="showTransactions">
                           <div className="option">
                             <span className="icon"></span> Show
                           </div>
                         </Link>
-                        <Link className="nav-link" to="SearchSubCategories">
+                        <Link className="nav-link" to="SearchTransactions">
                           <div className="option">
                             <span className="icon">+</span> search
                           </div>
@@ -129,41 +129,41 @@ export default function CustomerDashboard(props) {
                   )}
                 </div>
 
-                {/* accounts section */}
+                {/* transfers section */}
                 <>
-                  <div className="dash-section" id="accounts">
+                  <div className="dash-section" id="transfers">
                     <div
                       className="dash-section-title"
-                      onClick={() => toggleOptions("accounts")}
+                      onClick={() => toggleOptions("transfers")}
                     >
-                      Accounts
+                      transfers
                     </div>
-                    {optionsVisibility.accounts && (
+                    {optionsVisibility.transfers && (
                       <div className="options">
-                        <Link className="nav-link" to="addAccount">
+                        <Link className="nav-link" to="addTransfer">
                           <div className="option">
                             <span className="icon">+</span> Add
                           </div>
                         </Link>
-                        <Link className="nav-link" to="showAccounts">
+                        <Link className="nav-link" to="showTransfers">
                           <div className="option">
-                            <span className="icon"></span> show accounts
+                            <span className="icon"></span> show transfers
                           </div>
                         </Link>
-                        <Link className="nav-link" to="SearchAccounts">
+                        <Link className="nav-link" to="SearchTransfers">
                           <div className="option">
                             <span className="icon">+</span> Search
                           </div>
                         </Link>
 
-                        {/* <Link className="nav-link" to='updateAccounts'>
+                        {/* <Link className="nav-link" to='updatetransfers'>
                   <div className="option">
                     <span className="icon">✎</span> Update
                   </div>
                   </Link>
 
 
-                  <Link className="nav-link" to='deleteAccounts'>
+                  <Link className="nav-link" to='deletetransfers'>
                   <div className="option">
                     <span className="icon">✖</span> Delete
                   </div>

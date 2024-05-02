@@ -20,11 +20,11 @@ public class CustomExceptionHandler implements ExceptionHandlerStrategy {
 
     @Override
     public ResponseDto handleException(Throwable throwable) {
-        CustomException e = (CustomException) throwable;
-        e.printStackTrace();
-        String errorCode = e.getErrorCode();
         ResponseDto responseDto = ResponseDtoBuilder.getErrorResponse(810, null);
         try {
+            CustomException e = (CustomException) throwable;
+            e.printStackTrace();
+            String errorCode = e.getErrorCode();
             APIError apiError = cachableApiError.getExpensesAPIError(errorCode);
             ResponseError responseError = new ResponseError();
 

@@ -35,6 +35,7 @@ import name.expenses.features.expesnse.service.ExpenseService;
 import name.expenses.features.pocket.dtos.response.PocketRespDto;
 import name.expenses.features.pocket.mappers.PocketMapper;
 import name.expenses.features.pocket.models.Pocket;
+import name.expenses.features.pocket.models.PocketType;
 import name.expenses.features.pocket.service.PocketService;
 import name.expenses.features.pocket_transfer.dtos.response.PocketTransferRespDto;
 import name.expenses.features.pocket_transfer.mappers.PocketTransferMapper;
@@ -93,6 +94,12 @@ public class CustomerServiceImpl implements CustomerService {
         if (!response.isStatus())
             return response;
         sentCustomer.setUser((User) response.getData());
+        Account account = accountService.getDefaultAccount();
+        Pocket pocket = pocketService.createDefaultPocket();
+        pocket.setAccount(account);
+        pocket.setCustomer(sentCustomer);
+        sentCustomer.getAccounts().add(account);
+        sentCustomer.getPockets().add(pocket);
         Customer savedCustomer = customerDAO.create(sentCustomer);
         log.info("created customer {}", savedCustomer);
         return ResponseDtoBuilder.getCreateResponse(CUSTOMER, savedCustomer.getUser().getRefNo(), customerMapper.entityToRespDto(savedCustomer));
@@ -218,6 +225,12 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public CustomerRespDto create(Customer customer) {
+        Account account = accountService.getDefaultAccount();
+        Pocket pocket = pocketService.createDefaultPocket();
+        pocket.setAccount(account);
+        pocket.setCustomer(customer);
+        customer.getAccounts().add(account);
+        customer.getPockets().add(pocket);
         return customerMapper.entityToRespDto(customerDAO.create(customer));
     }
 

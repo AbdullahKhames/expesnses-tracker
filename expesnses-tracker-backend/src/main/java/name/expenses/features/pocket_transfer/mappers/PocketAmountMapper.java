@@ -4,6 +4,7 @@ package name.expenses.features.pocket_transfer.mappers;
 import name.expenses.features.pocket.mappers.PocketMapper;
 
 import name.expenses.features.pocket_transfer.dtos.request.PocketAmountReqDto;
+import name.expenses.features.pocket_transfer.dtos.request.PocketAmountUpdateDto;
 import name.expenses.features.pocket_transfer.dtos.response.PocketAmountRespDto;
 import name.expenses.features.pocket_transfer.models.PocketAmount;
 import name.expenses.globals.Page;
@@ -52,5 +53,19 @@ public interface PocketAmountMapper {
             }
 
     )
-    void update(@MappingTarget PocketAmount entity, PocketAmountReqDto entityUpdateDto);
+    void update(@MappingTarget PocketAmount entity, PocketAmountUpdateDto entityUpdateDto);
+    @Mappings(
+
+            {
+                    @Mapping(target = "id", ignore = true),
+                    @Mapping(target = "deleted", ignore = true),
+                    @Mapping(target = "refNo", ignore = true),
+                    @Mapping(target = "createdAt", ignore = true),
+                    @Mapping(target = "updatedAt", ignore = true),
+                    @Mapping(target = "pocket", ignore = true),
+                    @Mapping(target = "transaction", ignore = true),
+            }
+
+    )
+    PocketAmount updateDtoToEntity(PocketAmountUpdateDto updateDto);
 }

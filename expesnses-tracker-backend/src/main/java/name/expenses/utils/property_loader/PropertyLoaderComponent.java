@@ -124,7 +124,7 @@ public class PropertyLoaderComponent {
      */
     private boolean isProjectConfigFileExist(String folderName, String fileName) {
 //        userHome = projectConfigLoader.getUserHome();
-        resourcesHome = projectConfigLoader.getResourcesPath().toString();
+        resourcesHome = projectConfigLoader.getConfigHome().toString();
         project = projectConfigLoader.getProjectName();
 //        StringBuilder filePath = new StringBuilder(userHome + File.separator + (project + "-config") + File.separator);
         StringBuilder filePath = new StringBuilder(resourcesHome + File.separator + (project + "-config") + File.separator);
@@ -145,7 +145,7 @@ public class PropertyLoaderComponent {
                 configFolder = project + "-config";
             }
 //            StringBuilder configDir = new StringBuilder(projectConfigLoader.getUserHome())
-            StringBuilder configDir = new StringBuilder(projectConfigLoader.getResourcesPath().toString());
+            StringBuilder configDir = new StringBuilder(projectConfigLoader.getConfigHome().toString());
             if (!configFolder.isEmpty()){
                 configDir.append(File.separator + configFolder);
             }

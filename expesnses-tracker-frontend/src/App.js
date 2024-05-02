@@ -39,6 +39,19 @@ import SubCategoryFilter from './components/subCategories/SubCategoryFilter';
 import AccountPage from './components/accounts/AccountPage/AccountPage';
 import PocketList from './components/pockets/PocketList';
 import PocketPage from './components/pockets/PocketPage';
+import CustomerDashboard from './components/CustomerDashboard/CustomerDashboard';
+import ShowExpenses from './components/CustomerDashboard/expenses-components/show_Expense/ShowExpenses';
+import SearchExpense from './components/CustomerDashboard/expenses-components/search-Expense/SearchExpense';
+import AddExpense from './components/CustomerDashboard/expenses-components/add-expense/AddExpense';
+import UpdateExpense from './components/CustomerDashboard/expenses-components/UpdateExpense/UpdateExpense';
+import ShowTransaction from "./components/CustomerDashboard/transactions-components/show_transaction/ShowTransaction";
+import SearchTransaction from './components/CustomerDashboard/transactions-components/search-transaction/SearchTransaction';
+import AddTransaction from "./components/CustomerDashboard/transactions-components/add-transaction/AddTransaction";
+import UpdateTransaction from "./components/CustomerDashboard/transactions-components/update-transaction/UpdateTransaction";
+import ShowTransfer from "./components/CustomerDashboard/transfers-components/show-transfer/ShowTransfer";
+import SearchTransfer from "./components/CustomerDashboard/transfers-components/search-transfer/SearchTransfer";
+import AddTransfer from "./components/CustomerDashboard/transfers-components/add-transfer/AddTransfer";
+import UpdateTransfer from "./components/CustomerDashboard/transfers-components/update-transfer/UpdateTransfer";
 
 function App() {
   let routers = createBrowserRouter([
@@ -164,6 +177,29 @@ function App() {
         { path: "SearchAccounts", element: <SearchAccount /> },
         { path: "addAccount", element: <AddAccount /> },
         { path: "updateAccount/:refNo", element: <UpdateAccount /> },
+      ],
+    },
+    {
+      path: "/customers",
+      element: (
+        <ProtectedRoute roles={["ROLE_CUSTOMER"]}>
+          <CustomerDashboard />
+        </ProtectedRoute>
+      ),
+      children: [
+        // { index: true, element: <component for data visualization /> },
+        { path: "showExpenses", element: <ShowExpenses /> },
+        { path: "SearchExpense", element: <SearchExpense /> },
+        { path: "addExpense", element: <AddExpense /> },
+        { path: "updateExpense/:refNo", element: <UpdateExpense /> },
+        { path: "showTransactions", element: <ShowTransaction /> },
+        { path: "SearchTransactions", element: <SearchTransaction /> },
+        { path: "addTransaction", element: <AddTransaction /> },
+        { path: "updateTransaction/:refNo", element: <UpdateTransaction /> },
+        { path: "showTransfers", element: <ShowTransfer /> },
+        { path: "SearchTransfers", element: <SearchTransfer /> },
+        { path: "addTransfer", element: <AddTransfer /> },
+        { path: "updateTransfer/:refNo", element: <UpdateTransfer /> },
       ],
     },
 

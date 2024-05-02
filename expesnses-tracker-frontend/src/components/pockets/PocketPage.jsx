@@ -14,6 +14,7 @@ export default function PocketPage() {
   const [pocket, setpocket] = useState({});
   const location = useLocation();
   const pocketData = location.state ? location.state.pocketData : null;
+  const pocketTypes = location.state ? location.state.pocketTypes : null;
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, seterrorMessage] = useState("");
   const nav = useNavigate();
@@ -36,7 +37,7 @@ export default function PocketPage() {
     setIsLoading(true);
 
     api
-      .put(`${config.api}/pockets`, values)
+      .put(`${config.api}/pockets/${refNo}`, values)
       .then((response) => {
         if (response.status === 200) {
           toast.success("Pocket updated successfully");
@@ -65,11 +66,12 @@ export default function PocketPage() {
   const formik = useFormik({
     initialValues: {
       name: pocketData.name,
+      refNo: pocketData.refNo,
       details: pocketData.details,
-      amount: pocketData.amount,
       pocketType: pocketData.pocketType,
-      customerId: userData.customerId,
-      accountRefNo: pocketData.accountRefNo,
+      amount: pocketData.amount,
+      // customerId: userData.customerId,
+      // accountRefNo: pocketData.accountRefNo,
     },
     validationSchema: validScheme,
     onSubmit: handlePocketSubmit,
@@ -97,6 +99,25 @@ export default function PocketPage() {
             />
             {formik.errors.name && formik.touched.name ? (
               <div className="alert alert-danger">{formik.errors.name}</div>
+            ) : null}
+
+            <label htmlFor="refNo">refNo:</label>
+            <input
+              type="text"
+              name="refNo"
+              id="refNo"
+              placeholder="refNo"
+              value={formik.values.refNo}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              readOnly // Make the field read-only
+              // You can set the value dynamically based on your application's logic
+              // For example: value="SERVICE"
+              // Or if you have the pocketType value in your formik values, you can use that directly
+              // value={formik.values.pocketType}
+            />
+            {formik.errors.refNo && formik.touched.refNo ? (
+              <div className="alert alert-danger">{formik.errors.refNo}</div>
             ) : null}
 
             <label htmlFor="details">Pocket Details:</label>
@@ -129,27 +150,26 @@ export default function PocketPage() {
             ) : null}
 
             <label htmlFor="pocketType">Pocket Type:</label>
-            <input
-              type="text"
+            <select
               name="pocketType"
               id="pocketType"
-              placeholder="Pocket type"
               value={formik.values.pocketType}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              readOnly // Make the field read-only
-              // You can set the value dynamically based on your application's logic
-              // For example: value="SERVICE"
-              // Or if you have the pocketType value in your formik values, you can use that directly
-              // value={formik.values.pocketType}
-            />
+            >
+              {pocketTypes.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
             {formik.errors.pocketType && formik.touched.pocketType ? (
               <div className="alert alert-danger">
                 {formik.errors.pocketType}
               </div>
             ) : null}
 
-            <label htmlFor="customerId">Customer ID:</label>
+            {/* <label htmlFor="customerId">Customer ID:</label>
             <input
               type="text"
               name="customerId"
@@ -189,7 +209,7 @@ export default function PocketPage() {
               <div className="alert alert-danger">
                 {formik.errors.accountRefNo}
               </div>
-            ) : null}
+            ) : null} */}
 
             {isLoading ? (
               <button type="button" className="register-button">

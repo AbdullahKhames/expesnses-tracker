@@ -31,6 +31,7 @@ import name.expenses.utils.PageUtil;
 import name.expenses.utils.ResponseDtoBuilder;
 import name.expenses.utils.ValidateInputUtils;
 import name.expenses.utils.collection_getter.ExpenseGetter;
+import org.hibernate.Hibernate;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -89,9 +90,11 @@ public class ExpenseServiceStatelessmpl implements ExpenseService {
             if (subCategory.getExpenses() == null) {
                 subCategory.setExpenses(new HashSet<>());
             }
+            customer = customerDAO.getCustomerWithSubCategories(customer.getId());
             subCategory.getExpenses().add(sentExpense);
             sentExpense.setSubCategory(subCategory);
             if (customer != null){
+
                 if (customer.getSubCategories() == null){
                     customer.setSubCategories(new HashSet<>());
                 }

@@ -31,19 +31,20 @@ public class AccountDAOImpl implements AccountDAO {
 
     @Override
     public Account create(Account account) {
-
-        try{
+        try {
             entityManager.getTransaction().begin();
+
             if (account.getId() != null && entityManager.find(Account.class, account.getId()) != null) {
-                Account account1 = entityManager.merge(account);
-                entityManager.getTransaction().commit();
-                return account1;
+                // Object exists in the database, so update it
+                account = entityManager.merge(account);
             } else {
+                // Object doesn't exist, so persist it
                 entityManager.persist(account);
-                entityManager.getTransaction().commit();
-                return account;
             }
-        }catch (Exception ex){
+
+            entityManager.getTransaction().commit();
+            return account;
+        } catch (Exception ex) {
             entityManager.getTransaction().rollback();
             throw new GeneralFailureException(GeneralFailureException.ERROR_PERSISTING,
                     Map.of("original error message", ex.getMessage(),
@@ -178,5 +179,10 @@ public class AccountDAOImpl implements AccountDAO {
     @Override
     public void refresh(Customer entity) {
         entityManager.refresh(entity);
+    }
+
+    @Override
+    public Account getDefaultAccount() {
+        return entityManager.find(Account.class, 1L);
     }
 }
