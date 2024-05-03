@@ -41,7 +41,8 @@ public class PocketAmountServiceImpl implements PocketAmountService {
         }else {
             handleDifferrentPocketFlow(entity, entityUpdateDto, pocket);
         }
-
+        pocketAmountDAO.update(entity);
+        log.info("updated the pocket amount {}", entity);
     }
 
     private void handleDifferrentPocketFlow(PocketAmount entity, PocketAmountUpdateDto entityUpdateDto, Pocket pocket) {
@@ -55,8 +56,7 @@ public class PocketAmountServiceImpl implements PocketAmountService {
 
         // update the new pocket amount
         updateOrResetAmount(entity, pocket, false, entity.getAmount());
-        pocketAmountDAO.update(entity);
-        log.info("updated the different pocket {}", pocket);
+
 
     }
 
@@ -81,13 +81,7 @@ public class PocketAmountServiceImpl implements PocketAmountService {
     private void handleSamePocketFlow(PocketAmount entity, PocketAmountUpdateDto entityUpdateDto) {
         Pocket pocket = entity.getPocket();
         double diff = entityUpdateDto.getAmount() - entity.getAmount();
-//        if (entity.getAmountType().equals(AmountType.CREDIT)){
-//            pocket.setAmount(pocket.getAmount() + diff);
-//        }else if (entity.getAmountType().equals(AmountType.DEBIT)){
-//            pocket.setAmount(pocket.getAmount() - diff);
-//        }
         updateOrResetAmount(entity, pocket, false, diff);
         pocketAmountMapper.update(entity, entityUpdateDto);
-        log.info("updated the same pocket {}", pocket);
     }
 }

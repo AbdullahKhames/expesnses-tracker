@@ -208,7 +208,7 @@ public class Catalog {
             pocket1.setDetails("EXTERNAL pocket1");
             pocket1.setPocketType(PocketType.EXTERNAL);
             pocket1.setCustomer(customer1);
-            pocket1.setAmount(50.0);
+            pocket1.setAmount(500.0);
 
             pocket2.setName("pocket2");
             pocket2.setDetails("DEFAULT pocket2");
@@ -325,21 +325,21 @@ public class Catalog {
             transaction1.setDetails("transaction1");
             transaction1.setExpense(expense1);
             transaction1.setAmount(50.0);
-            transaction1.setPocketAmounts(new HashSet<>(List.of(pocketAmount5, pocketAmount6)));
+            transaction1.getPocketAmounts().addAll(new HashSet<>(List.of(pocketAmount5, pocketAmount6, pocketAmount4)));
             transaction1.setCustomer(customer1);
 
             transaction2.setName("transaction2");
             transaction2.setDetails("transaction2");
             transaction2.setExpense(expense2);
             transaction2.setAmount(50.0);
-            transaction2.setPocketAmounts(new HashSet<>(List.of(pocketAmount7)));
+            transaction2.getPocketAmounts().addAll(new HashSet<>(List.of(pocketAmount7)));
             transaction2.setCustomer(customer1);
 
             transaction3.setName("transaction3");
             transaction3.setDetails("transaction3");
             transaction3.setExpense(expense3);
             transaction3.setAmount(50.0);
-            transaction3.setPocketAmounts(new HashSet<>(List.of(pocketAmount8)));
+            transaction3.getPocketAmounts().addAll(new HashSet<>(List.of(pocketAmount8)));
             transaction3.setCustomer(customer1);
 
 

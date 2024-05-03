@@ -6,6 +6,7 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.SecurityContext;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import name.expenses.error.exception.APIException;
 import name.expenses.error.exception.ErrorCode;
@@ -56,6 +57,7 @@ public class TransactionServiceImpl implements TransactionService {
     private final SubService subService;
     private final PocketAmountService pocketAmountService;
 
+    @Setter
     @Context
     private SecurityContext securityContext;
 
