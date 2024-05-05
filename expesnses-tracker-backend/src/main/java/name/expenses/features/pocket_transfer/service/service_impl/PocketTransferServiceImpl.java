@@ -26,13 +26,15 @@ import name.expenses.features.pocket_transfer.mappers.PocketTransferMapper;
 import name.expenses.features.pocket_transfer.models.AmountType;
 import name.expenses.features.pocket_transfer.models.PocketAmount;
 import name.expenses.features.pocket_transfer.models.PocketTransfer;
+import name.expenses.features.pocket_transfer.service.PocketAmountService;
 import name.expenses.features.pocket_transfer.service.PocketTransferService;
-import name.expenses.features.sub_category.service.SubService;
 import name.expenses.features.user.models.User;
 import name.expenses.globals.Page;
+import name.expenses.globals.PageReq;
 import name.expenses.globals.SortDirection;
 import name.expenses.globals.responses.ResponseDto;
 import name.expenses.utils.ResponseDtoBuilder;
+import name.expenses.utils.ValidateInputUtils;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -43,12 +45,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
 @Transactional
 public class PocketTransferServiceImpl implements PocketTransferService {
-    public static final String TRANSACTION = "PocketTransfer";
+    public static final String POCKET_TRANSFER = "PocketTransfer";
     private final PocketTransferDAO pocketTransferDAO;
     private final PocketTransferMapper pocketTransferMapper;
     private final PocketAmountMapper pocketAmountMapper;
     private final CustomerService customerService;
     private final PocketService pocketService;
+    private final PocketAmountService pocketAmountService;
 
     @Context
     private SecurityContext securityContext;
@@ -130,7 +133,7 @@ public class PocketTransferServiceImpl implements PocketTransferService {
         if (receiversPocketAmounts.isEmpty()){
             throw new APIException(ErrorCode.OBJECT_NOT_FOUND.getErrorCode());
         }
-        Double receiversAmount = receiversPocketAmounts.stream().map(PocketAmount::getAmount).reduce(0.0, (x, y) -> x + y);
+        Double receiversAmount = receiversPocketAmounts.stream().map(PocketAmount::getAmount).reduce(0.0, Double::sum);
 
         if (!Objects.equals(senderPocketAmount.getAmount(), receiversAmount)){
             throw new GeneralFailureException(GeneralFailureException.GENERAL_ERROR,
@@ -149,7 +152,7 @@ public class PocketTransferServiceImpl implements PocketTransferService {
         customerService.update(customer);
         pocketService.updateAll(pockets);
         log.info("created pocketTransfer {}", savedPocketTransfer);
-        return ResponseDtoBuilder.getCreateResponse(TRANSACTION, savedPocketTransfer.getRefNo(), pocketTransferMapper.entityToRespDto(savedPocketTransfer));
+        return ResponseDtoBuilder.getCreateResponse(POCKET_TRANSFER, savedPocketTransfer.getRefNo(), pocketTransferMapper.entityToRespDto(savedPocketTransfer));
     }
 
     public Optional<PocketTransfer> getEntity(String refNo){
@@ -169,7 +172,7 @@ public class PocketTransferServiceImpl implements PocketTransferService {
             log.info("fetched pocketTransfer {}", pocketTransferOptional);
             if (pocketTransferOptional.isPresent()){
                 PocketTransfer pocketTransfer = pocketTransferOptional.get();
-                return ResponseDtoBuilder.getFetchResponse(TRANSACTION, pocketTransfer.getRefNo(), pocketTransferMapper.entityToRespDto(pocketTransfer));
+                return ResponseDtoBuilder.getFetchResponse(POCKET_TRANSFER, pocketTransfer.getRefNo(), pocketTransferMapper.entityToRespDto(pocketTransfer));
             }else {
                 throw new GeneralFailureException(GeneralFailureException.OBJECT_NOT_FOUND,
                         Map.of("error", String.format("pocketTransfer with the ref number %s was not found", refNo)));
@@ -195,7 +198,7 @@ public class PocketTransferServiceImpl implements PocketTransferService {
             updateAssociation(pocketTransfer, pocketTransferUpdateDto);
             log.info("updated pocketTransfer {}", pocketTransfer);
             pocketTransfer.setUpdatedAt(LocalDateTime.now());
-            return ResponseDtoBuilder.getUpdateResponse(TRANSACTION, pocketTransfer.getRefNo(), pocketTransferMapper.entityToRespDto(pocketTransferDAO.update(pocketTransfer)));
+            return ResponseDtoBuilder.getUpdateResponse(POCKET_TRANSFER, pocketTransfer.getRefNo(), pocketTransferMapper.entityToRespDto(pocketTransferDAO.update(pocketTransfer)));
         }
         ResponseError responseError = new ResponseError();
         responseError.setErrorCategory(ErrorCategory.DATABASE_Error);
@@ -207,21 +210,15 @@ public class PocketTransferServiceImpl implements PocketTransferService {
 
     @Override
     public ResponseDto delete(String refNo) {
-        return ResponseDtoBuilder.getDeleteResponse(TRANSACTION,pocketTransferDAO.delete(refNo));
+        return ResponseDtoBuilder.getDeleteResponse(POCKET_TRANSFER,pocketTransferDAO.delete(refNo));
     }
 
     @Override
     public ResponseDto getAllEntities(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
-        if (pageNumber < 1){
-            pageNumber = 1L;
-        }
-        if (pageSize < 1)
-        {
-            pageSize = 1L;
-        }
-        Page<PocketTransfer> pocketTransferPage = pocketTransferDAO.findAll(pageNumber, pageSize, sortBy, sortDirection);
+        PageReq pageReq = ValidateInputUtils.validatePageData(pageNumber, pageSize);
+        Page<PocketTransfer> pocketTransferPage = pocketTransferDAO.findAll(pageReq.getPageNumber(), pageReq.getPageSize(), sortBy, sortDirection);
         Page<PocketTransferRespDto> pocketTransferDtos = pocketTransferMapper.entityToRespDto(pocketTransferPage);
-        return ResponseDtoBuilder.getFetchAllResponse(TRANSACTION, pocketTransferDtos);
+        return ResponseDtoBuilder.getFetchAllResponse(POCKET_TRANSFER, pocketTransferDtos);
     }
 
     @Override

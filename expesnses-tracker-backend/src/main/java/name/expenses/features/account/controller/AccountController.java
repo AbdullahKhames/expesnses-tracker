@@ -14,6 +14,7 @@ import name.expenses.features.account.dtos.request.AccountUpdateDto;
 import name.expenses.features.account.service.AccountService;
 import name.expenses.globals.SortDirection;
 import name.expenses.globals.responses.ResponseDto;
+import name.expenses.utils.PageUtil;
 
 @Path("/accounts")
 @Slf4j
@@ -87,27 +88,11 @@ public class AccountController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllEntities(
-            @QueryParam("page") Long pageNumber,
-            @QueryParam("per_page") Long pageSize,
-            @QueryParam("sortBy") String sortBy,
+            @DefaultValue("1") @QueryParam("page") Long pageNumber,
+            @DefaultValue("10") @QueryParam("per_page") Long pageSize,
+            @DefaultValue("id") @QueryParam("sortBy") String sortBy,
             @QueryParam("sortDirection") String direction) {
-        if (pageNumber == null) {
-            pageNumber = 1L;
-        }
-        if (pageSize == null) {
-            pageSize = 10L;
-        }
-        if (sortBy == null) {
-            sortBy = "id";
-        }
-        SortDirection sortDirection;
-        if (direction == null || direction.isBlank() || direction.equalsIgnoreCase("ASC")) {
-            sortDirection = SortDirection.ASC;
-        }else if (direction.equalsIgnoreCase("DESC")){
-            sortDirection = SortDirection.DESC;
-        }else {
-            sortDirection = SortDirection.ASC;
-        }
+SortDirection sortDirection = PageUtil.getSortDirection(direction);
         ResponseDto responseDto = accountService.getAllEntities(pageNumber, pageSize, sortBy, sortDirection);
         return Response.ok(responseDto).build();
 

@@ -15,6 +15,7 @@ import name.expenses.features.expesnse.service.ExpenseService;
 import name.expenses.features.expesnse.service.ExpenseServiceStateFull;
 import name.expenses.globals.SortDirection;
 import name.expenses.globals.responses.ResponseDto;
+import name.expenses.utils.PageUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -74,7 +75,7 @@ public class ExpensesController {
     @Path("/{refNo}")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateExpense(@PathParam("refNo") String refNo, ExpenseUpdateDto expenseUpdateDto) throws JsonProcessingException {
+    public Response updateExpense(@PathParam("refNo") String refNo, ExpenseUpdateDto expenseUpdateDto) {
         ResponseDto responseDto = expenseService.update(refNo, expenseUpdateDto);
         return Response.ok(responseDto).build();
     }
@@ -82,7 +83,7 @@ public class ExpensesController {
     @DELETE
     @Path("/{refNo}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteExpense(@PathParam("refNo") String refNo) throws JsonProcessingException {
+    public Response deleteExpense(@PathParam("refNo") String refNo) {
         ResponseDto responseDto = expenseService.delete(refNo);
         return Response.ok(responseDto).build();
     }
@@ -90,27 +91,11 @@ public class ExpensesController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllEntities(
-            @QueryParam("page") Long pageNumber,
-            @QueryParam("per_page") Long pageSize,
-            @QueryParam("sortBy") String sortBy,
+            @DefaultValue("1") @QueryParam("page") Long pageNumber,
+            @DefaultValue("10") @QueryParam("per_page") Long pageSize,
+            @DefaultValue("id") @QueryParam("sortBy") String sortBy,
             @QueryParam("sortDirection") String direction) {
-        if (pageNumber == null) {
-            pageNumber = 1L;
-        }
-        if (pageSize == null) {
-            pageSize = 10L;
-        }
-        if (sortBy == null) {
-            sortBy = "id";
-        }
-        SortDirection sortDirection;
-        if (direction == null || direction.isBlank() || direction.equalsIgnoreCase("ASC")) {
-            sortDirection = SortDirection.ASC;
-        } else if (direction.equalsIgnoreCase("DESC")) {
-            sortDirection = SortDirection.DESC;
-        } else {
-            sortDirection = SortDirection.ASC;
-        }
+        SortDirection sortDirection = PageUtil.getSortDirection(direction);
         ResponseDto responseDto = expenseService.getAllEntities(pageNumber, pageSize, sortBy, sortDirection);
         return Response.ok(responseDto).build();
 
@@ -119,27 +104,11 @@ public class ExpensesController {
     @Path("/noSubCategory")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllEntitiesWithoutSubCategory(
-            @QueryParam("page") Long pageNumber,
-            @QueryParam("per_page") Long pageSize,
-            @QueryParam("sortBy") String sortBy,
+            @DefaultValue("1") @QueryParam("page") Long pageNumber,
+            @DefaultValue("10") @QueryParam("per_page") Long pageSize,
+            @DefaultValue("id") @QueryParam("sortBy") String sortBy,
             @QueryParam("sortDirection") String direction) {
-        if (pageNumber == null) {
-            pageNumber = 1L;
-        }
-        if (pageSize == null) {
-            pageSize = 10L;
-        }
-        if (sortBy == null) {
-            sortBy = "id";
-        }
-        SortDirection sortDirection;
-        if (direction == null || direction.isBlank() || direction.equalsIgnoreCase("ASC")) {
-            sortDirection = SortDirection.ASC;
-        } else if (direction.equalsIgnoreCase("DESC")) {
-            sortDirection = SortDirection.DESC;
-        } else {
-            sortDirection = SortDirection.ASC;
-        }
+        SortDirection sortDirection = PageUtil.getSortDirection(direction);
         ResponseDto responseDto = expenseService.getAllEntitiesWithoutSubCategory(pageNumber, pageSize, sortBy, sortDirection);
         return Response.ok(responseDto).build();
 

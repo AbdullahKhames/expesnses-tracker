@@ -2,6 +2,7 @@ package name.expenses.utils;
 
 import name.expenses.error.exception.ErrorCode;
 import name.expenses.error.exception.GeneralFailureException;
+import name.expenses.globals.PageReq;
 import name.expenses.globals.responses.ResponseDto;
 
 import java.util.Map;
@@ -52,5 +53,16 @@ public class ValidateInputUtils {
         } catch (Exception exception) {
             return ResponseDtoBuilder.getErrorResponse(815, "error casting the obj to type " + clazz.getSimpleName());
         }
+    }
+
+    public static PageReq validatePageData(Long pageNumber, Long pageSize){
+        if (pageNumber < 1){
+            pageNumber = 1L;
+        }
+        if (pageSize < 1)
+        {
+            pageSize = 1L;
+        }
+        return new PageReq(pageNumber, pageSize);
     }
 }

@@ -26,6 +26,7 @@ import name.expenses.features.pocket.models.PocketType;
 import name.expenses.features.pocket.service.PocketService;
 
 import name.expenses.globals.Page;
+import name.expenses.globals.PageReq;
 import name.expenses.globals.SortDirection;
 import name.expenses.globals.responses.ResponseDto;
 import name.expenses.utils.PageUtil;
@@ -96,10 +97,12 @@ public class PocketServiceImpl implements PocketService {
             }
             account.getPockets().add(sentPocket);
             sentPocket.setAccount(account);
-            if (customer.getAccounts() == null){
-                customer.setAccounts(new HashSet<>());
+            if (customer != null) {
+                if (customer.getAccounts() == null){
+                    customer.setAccounts(new HashSet<>());
+                }
+                customer.getAccounts().add(account);
             }
-            customer.getAccounts().add(account);
 //                accountDAO.update(account);
         }
     }
@@ -172,14 +175,8 @@ public class PocketServiceImpl implements PocketService {
 
     @Override
     public ResponseDto getAllEntities(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
-        if (pageNumber < 1){
-            pageNumber = 1L;
-        }
-        if (pageSize < 1)
-        {
-            pageSize = 1L;
-        }
-        Page<Pocket> pocketPage = pocketDAO.findAll(pageNumber, pageSize, sortBy, sortDirection);
+        PageReq pageReq = ValidateInputUtils.validatePageData(pageNumber, pageSize);
+        Page<Pocket> pocketPage = pocketDAO.findAll(pageReq.getPageNumber(), pageReq.getPageSize(), sortBy, sortDirection);
         Page<PocketRespDto> pocketDtos = pocketMapper.entityToRespDto(pocketPage);
         return ResponseDtoBuilder.getFetchAllResponse(POCKET, pocketDtos);
     }
@@ -191,14 +188,8 @@ public class PocketServiceImpl implements PocketService {
 
     @Override
     public ResponseDto getAllEntitiesWithoutAccount(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
-        if (pageNumber < 1){
-            pageNumber = 1L;
-        }
-        if (pageSize < 1)
-        {
-            pageSize = 1L;
-        }
-        Page<Pocket> pocketPage = pocketDAO.findAllWithoutAccount(pageNumber, pageSize, sortBy, sortDirection);
+        PageReq pageReq = ValidateInputUtils.validatePageData(pageNumber, pageSize);
+        Page<Pocket> pocketPage = pocketDAO.findAllWithoutAccount(pageReq.getPageNumber(), pageReq.getPageSize(), sortBy, sortDirection);
         Page<PocketRespDto> pocketDtos = pocketMapper.entityToRespDto(pocketPage);
         return ResponseDtoBuilder.getFetchAllResponse(POCKET, pocketDtos);
     }

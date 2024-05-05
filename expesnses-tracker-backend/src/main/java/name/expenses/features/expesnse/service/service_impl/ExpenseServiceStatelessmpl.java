@@ -11,7 +11,6 @@ import name.expenses.error.exception_handler.models.ErrorCategory;
 import name.expenses.error.exception_handler.models.ResponseError;
 import name.expenses.features.association.AssociationResponse;
 import name.expenses.features.association.Models;
-import name.expenses.features.category.models.Category;
 import name.expenses.features.customer.dao.CustomerDAO;
 import name.expenses.features.customer.models.Customer;
 import name.expenses.features.expesnse.dao.ExpenseDAO;
@@ -25,13 +24,13 @@ import name.expenses.features.sub_category.dao.SubCategoryDAO;
 import name.expenses.features.sub_category.dtos.request.SubCategoryUpdateDto;
 import name.expenses.features.sub_category.models.SubCategory;
 import name.expenses.globals.Page;
+import name.expenses.globals.PageReq;
 import name.expenses.globals.SortDirection;
 import name.expenses.globals.responses.ResponseDto;
 import name.expenses.utils.PageUtil;
 import name.expenses.utils.ResponseDtoBuilder;
 import name.expenses.utils.ValidateInputUtils;
 import name.expenses.utils.collection_getter.ExpenseGetter;
-import org.hibernate.Hibernate;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -175,14 +174,8 @@ public class ExpenseServiceStatelessmpl implements ExpenseService {
 
     @Override
     public ResponseDto getAllEntities(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
-        if (pageNumber < 1){
-            pageNumber = 1L;
-        }
-        if (pageSize < 1)
-        {
-            pageSize = 1L;
-        }
-        Page<Expense> expensePage = expenseDAO.findAll(pageNumber, pageSize, sortBy, sortDirection);
+        PageReq pageReq = ValidateInputUtils.validatePageData(pageNumber, pageSize);
+        Page<Expense> expensePage = expenseDAO.findAll(pageReq.getPageNumber(), pageReq.getPageSize(), sortBy, sortDirection);
 
 //        List<ExpenseRespDto> expenseDtos = expensePage.getContent().stream()
 //                .map(expenseMapper::entityToRespDto)
@@ -222,14 +215,8 @@ public class ExpenseServiceStatelessmpl implements ExpenseService {
 
     @Override
     public ResponseDto getAllEntitiesWithoutSubCategory(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
-        if (pageNumber < 1){
-            pageNumber = 1L;
-        }
-        if (pageSize < 1)
-        {
-            pageSize = 1L;
-        }
-        Page<Expense> expensePage = expenseDAO.findAllWithoutSubCategory(pageNumber, pageSize, sortBy, sortDirection);
+        PageReq pageReq = ValidateInputUtils.validatePageData(pageNumber, pageSize);
+        Page<Expense> expensePage = expenseDAO.findAllWithoutSubCategory(pageReq.getPageNumber(), pageReq.getPageSize(), sortBy, sortDirection);
 
 //        List<ExpenseRespDto> expenseDtos = expensePage.getContent().stream()
 //                .map(expenseMapper::entityToRespDto)

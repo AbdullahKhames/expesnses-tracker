@@ -14,7 +14,6 @@ import name.expenses.features.association.AssociationResponse;
 import name.expenses.features.association.Models;
 import name.expenses.features.category.dtos.request.CategoryUpdateDto;
 import name.expenses.features.category.models.Category;
-import name.expenses.features.expesnse.models.Expense;
 import name.expenses.features.expesnse.service.ExpenseService;
 import name.expenses.features.sub_category.dao.SubCategoryDAO;
 import name.expenses.features.sub_category.dtos.request.SubCategoryReqDto;
@@ -24,6 +23,7 @@ import name.expenses.features.sub_category.mappers.SubCategoryMapper;
 import name.expenses.features.sub_category.models.SubCategory;
 import name.expenses.features.sub_category.service.SubService;
 import name.expenses.globals.Page;
+import name.expenses.globals.PageReq;
 import name.expenses.globals.SortDirection;
 import name.expenses.globals.responses.ResponseDto;
 import name.expenses.utils.PageUtil;
@@ -39,8 +39,6 @@ import java.util.*;
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
 @Transactional
 public class SubServiceImpl implements SubService {
-    @PersistenceContext(name = "expenses-unit")
-    private EntityManager entityManager;
     public static final String SUBCATEGORY = "SubCategory";
     private final SubCategoryDAO subCategoryDAO;
     private final name.expenses.features.category.dao.CategoryDAO categoryDAO;
@@ -129,13 +127,8 @@ public class SubServiceImpl implements SubService {
 
     @Override
     public ResponseDto getAllEntities(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
-        if (pageNumber < 1) {
-            pageNumber = 1L;
-        }
-        if (pageSize < 1) {
-            pageSize = 1L;
-        }
-        Page<SubCategory> subCategoryPage = subCategoryDAO.findAll(pageNumber, pageSize, sortBy, sortDirection);
+       PageReq pageReq = ValidateInputUtils.validatePageData(pageNumber, pageSize);
+        Page<SubCategory> subCategoryPage = subCategoryDAO.findAll(pageReq.getPageNumber(), pageReq.getPageSize(), sortBy, sortDirection);
         Page<SubCategoryRespDto> subCategoryDtos = subCategoryMapper.entityToRespDto(subCategoryPage);
         return ResponseDtoBuilder.getFetchAllResponse(SUBCATEGORY, subCategoryDtos);
     }
@@ -315,13 +308,8 @@ public class SubServiceImpl implements SubService {
 
     @Override
     public ResponseDto getAllEntitiesWithoutCategory(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
-        if (pageNumber < 1) {
-            pageNumber = 1L;
-        }
-        if (pageSize < 1) {
-            pageSize = 1L;
-        }
-        Page<SubCategory> subCategoryPage = subCategoryDAO.findAllWithoutCategory(pageNumber, pageSize, sortBy, sortDirection);
+       PageReq pageReq = ValidateInputUtils.validatePageData(pageNumber, pageSize);
+        Page<SubCategory> subCategoryPage = subCategoryDAO.findAllWithoutCategory(pageReq.getPageNumber(), pageReq.getPageSize(), sortBy, sortDirection);
         Page<SubCategoryRespDto> subCategoryDtos = subCategoryMapper.entityToRespDto(subCategoryPage);
         return ResponseDtoBuilder.getFetchAllResponse(SUBCATEGORY, subCategoryDtos);
     }

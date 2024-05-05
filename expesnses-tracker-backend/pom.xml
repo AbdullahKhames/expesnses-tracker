@@ -51,7 +51,7 @@
     <dependency>
       <groupId>commons-beanutils</groupId>
       <artifactId>commons-beanutils</artifactId>
-      <version>1.8.0</version>
+      <version>1.9.4</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -306,7 +306,7 @@
           <username>admin</username>
           <password>admin</password>
           <url>http://localhost:9595/manager/text</url>
-          <path>/expenses</path>
+          <path>/expenses-tracker</path>
         </configuration>
       </plugin>
     </plugins>

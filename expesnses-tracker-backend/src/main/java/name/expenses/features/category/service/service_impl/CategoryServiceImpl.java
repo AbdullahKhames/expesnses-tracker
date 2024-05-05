@@ -23,6 +23,7 @@ import name.expenses.features.sub_category.dtos.response.SubCategoryRespDto;
 import name.expenses.features.sub_category.mappers.SubCategoryMapper;
 import name.expenses.features.sub_category.models.SubCategory;
 import name.expenses.globals.Page;
+import name.expenses.globals.PageReq;
 import name.expenses.globals.SortDirection;
 import name.expenses.features.association.Models;
 import name.expenses.globals.responses.ResponseDto;
@@ -44,7 +45,6 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryMapper categoryMapper;
     private final SubCategoryMapper subCategoryMapper;
     private final CategoryAssociationManager categoryAssociationManager;
-    private final UpdateCategoryServiceImpl updateCategoryService;
 
 
 
@@ -151,14 +151,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public ResponseDto getSubcategories(String refNo, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
-        if (pageNumber < 1){
-            pageNumber = 1L;
-        }
-        if (pageSize < 1)
-        {
-            pageSize = 1L;
-        }
-        Page<SubCategory> subCategoryPage = categoryDAO.getSubcategories(refNo, pageNumber, pageSize, sortBy, sortDirection);
+        PageReq pageReq = ValidateInputUtils.validatePageData(pageNumber, pageSize);
+        Page<SubCategory> subCategoryPage = categoryDAO.getSubcategories(refNo, pageReq.getPageNumber(), pageReq.getPageSize(), sortBy, sortDirection);
         Page<SubCategoryRespDto> subCategoryDtos = subCategoryMapper.entityToRespDto(subCategoryPage);
         return ResponseDtoBuilder.getFetchAllResponse(CATEGORY, subCategoryDtos);
     }
@@ -180,14 +174,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public ResponseDto getAllEntities(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
-        if (pageNumber < 1){
-            pageNumber = 1L;
-        }
-        if (pageSize < 1)
-        {
-            pageSize = 1L;
-        }
-        Page<Category> categoryPage = categoryDAO.findAll(pageNumber, pageSize, sortBy, sortDirection);
+        PageReq pageReq = ValidateInputUtils.validatePageData(pageNumber, pageSize);
+        Page<Category> categoryPage = categoryDAO.findAll(pageReq.getPageNumber(), pageReq.getPageSize(), sortBy, sortDirection);
         Page<CategoryRespDto> categoryDtos = categoryMapper.entityToRespDto(categoryPage);
         return ResponseDtoBuilder.getFetchAllResponse(CATEGORY, categoryDtos);
     }

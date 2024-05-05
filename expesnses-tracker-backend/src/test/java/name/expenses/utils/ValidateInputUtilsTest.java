@@ -2,6 +2,7 @@ package name.expenses.utils;
 
 import name.expenses.features.expesnse.dtos.request.ExpenseReqDto;
 import name.expenses.features.expesnse.dtos.request.ExpenseUpdateDto;
+import name.expenses.globals.PageReq;
 import name.expenses.globals.responses.ResponseDto;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,4 +50,15 @@ class ValidateInputUtilsTest {
 
     }
 
+    @Test
+    void validatePageData() {
+        Long x = -5L;
+        Long y = -10L;
+        PageReq pageReq = ValidateInputUtils.validatePageData(x, y);
+
+        System.out.println(x);
+        System.out.println(y);
+        System.out.println(pageReq.getPageNumber());
+        System.out.println(pageReq.getPageSize());
+    }
 }

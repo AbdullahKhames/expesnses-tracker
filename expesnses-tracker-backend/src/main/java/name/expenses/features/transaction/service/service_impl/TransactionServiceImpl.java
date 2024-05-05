@@ -34,11 +34,12 @@ import name.expenses.features.transaction.models.Transaction;
 import name.expenses.features.transaction.service.TransactionService;
 import name.expenses.features.user.models.User;
 import name.expenses.globals.Page;
+import name.expenses.globals.PageReq;
 import name.expenses.globals.SortDirection;
 import name.expenses.globals.responses.ResponseDto;
 import name.expenses.utils.ResponseDtoBuilder;
+import name.expenses.utils.ValidateInputUtils;
 
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -54,7 +55,6 @@ public class TransactionServiceImpl implements TransactionService {
     private final CustomerService customerService;
     private final PocketService pocketService;
     private final ExpenseService expenseService;
-    private final SubService subService;
     private final PocketAmountService pocketAmountService;
 
     @Setter
@@ -83,13 +83,7 @@ public class TransactionServiceImpl implements TransactionService {
         expenseService.associateSubCategory(transactionReqDto.getExpense().getSubCategoryRefNo(), expense, customer);
         expense.setCustomer(customer);
 
-        Expense savedExpense = expense;
-        if (savedExpense == null){
-            throw new GeneralFailureException(ErrorCode.OBJECT_NOT_FOUND.getErrorCode(),
-                    Map.of("error", "expense not found"));
-        }
-
-//        Expense savedExpense = expenseService.save(expense);
+        //        Expense savedExpense = expenseService.save(expense);
 //        if (savedExpense == null || savedExpense.getId() == null){
 //            throw new GeneralFailureException(ErrorCode.OBJECT_NOT_FOUND.getErrorCode(),
 //                    Map.of("error", "expense not found"));
@@ -126,13 +120,13 @@ public class TransactionServiceImpl implements TransactionService {
 
         Transaction sentTransaction = transactionMapper.reqDtoToEntity(transactionReqDto);
 
-        sentTransaction.setExpense(savedExpense);
+        sentTransaction.setExpense(expense);
         sentTransaction.setCustomer(customer);
         sentTransaction.setPocketAmounts(pocketAmounts);
         sentTransaction.setAmount(pocketAmounts
                 .stream()
                 .map(PocketAmount::getAmount)
-                .reduce(0.0, (x, y) -> x + y)
+                .reduce(0.0, Double::sum)
         );
 
         if (sentTransaction.getAmount() != sentTransaction.getExpense().getAmount()){
@@ -212,14 +206,8 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public ResponseDto getAllEntities(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
-        if (pageNumber < 1){
-            pageNumber = 1L;
-        }
-        if (pageSize < 1)
-        {
-            pageSize = 1L;
-        }
-        Page<Transaction> transactionPage = transactionDAO.findAll(pageNumber, pageSize, sortBy, sortDirection);
+        PageReq pageReq = ValidateInputUtils.validatePageData(pageNumber, pageSize);
+        Page<Transaction> transactionPage = transactionDAO.findAll(pageReq.getPageNumber(), pageReq.getPageSize(), sortBy, sortDirection);
         Page<TransactionRespDto> transactionDtos = transactionMapper.entityToRespDto(transactionPage);
         return ResponseDtoBuilder.getFetchAllResponse(TRANSACTION, transactionDtos);
     }
@@ -288,15 +276,13 @@ public class TransactionServiceImpl implements TransactionService {
         entity.setAmount(newPocketAmounts
                 .stream()
                 .map(PocketAmount::getAmount)
-                .reduce(0.0, (x, y) -> x + y)
+                .reduce(0.0, Double::sum)
         );
         pocketService.updateAll(pockets);
 
         Set<PocketAmount> removedPocketAmounts = new HashSet<>(transactionPocketAmounts);
         removedPocketAmounts.removeAll(newPocketAmounts);
-        removedPocketAmounts.forEach(pocketAmount -> {
-            pocketAmountService.updateOrResetAmount(pocketAmount, pocketAmount.getPocket(), true, pocketAmount.getAmount());
-        });
+        removedPocketAmounts.forEach(pocketAmount -> pocketAmountService.updateOrResetAmount(pocketAmount, pocketAmount.getPocket(), true, pocketAmount.getAmount()));
         entity.getPocketAmounts().removeAll(removedPocketAmounts);
         entity.getPocketAmounts().addAll(newPocketAmounts);
     }

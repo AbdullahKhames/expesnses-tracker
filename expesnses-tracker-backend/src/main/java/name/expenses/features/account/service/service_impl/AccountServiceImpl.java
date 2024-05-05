@@ -20,6 +20,7 @@ import name.expenses.features.association.AssociationResponse;
 import name.expenses.features.customer.models.Customer;
 import name.expenses.features.pocket.service.PocketService;
 import name.expenses.globals.Page;
+import name.expenses.globals.PageReq;
 import name.expenses.globals.SortDirection;
 import name.expenses.features.association.Models;
 import name.expenses.globals.responses.ResponseDto;
@@ -40,7 +41,6 @@ public class AccountServiceImpl implements AccountService {
     private final AccountDAO accountDAO;
     private final AccountMapper accountMapper;
     private final AccountAssociationManager accountAssociationManager;
-    private final UpdateAccountServiceImpl updateAccountService;
     private final PocketService pocketService;
 
 
@@ -112,14 +112,8 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public ResponseDto getAllEntities(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
-        if (pageNumber < 1){
-            pageNumber = 1L;
-        }
-        if (pageSize < 1)
-        {
-            pageSize = 1L;
-        }
-        Page<Account> accountPage = accountDAO.findAll(pageNumber, pageSize, sortBy, sortDirection);
+        PageReq pageReq = ValidateInputUtils.validatePageData(pageNumber, pageSize);
+        Page<Account> accountPage = accountDAO.findAll(pageReq.getPageNumber(), pageReq.getPageSize(), sortBy, sortDirection);
         Page<AccountRespDto> accountDtos = accountMapper.entityToRespDto(accountPage);
         return ResponseDtoBuilder.getFetchAllResponse(ACCOUNT, accountDtos);
     }

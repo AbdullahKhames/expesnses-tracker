@@ -17,4 +17,5 @@ public class PocketAmountRespDto {
     private PocketRespDto pocket;
     private Double amount;
     private AmountType amountType;
+    private String refNo;
 }
