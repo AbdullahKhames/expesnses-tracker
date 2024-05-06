@@ -113,7 +113,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public ResponseDto getAllEntities(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
         PageReq pageReq = ValidateInputUtils.validatePageData(pageNumber, pageSize);
-        Page<Account> accountPage = accountDAO.findAll(pageReq.getPageNumber(), pageReq.getPageSize(), sortBy, sortDirection);
+        Page<Account> accountPage = accountDAO.findAll(pageReq.pageNumber(), pageReq.pageSize(), sortBy, sortDirection);
         Page<AccountRespDto> accountDtos = accountMapper.entityToRespDto(accountPage);
         return ResponseDtoBuilder.getFetchAllResponse(ACCOUNT, accountDtos);
     }

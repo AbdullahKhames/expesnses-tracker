@@ -176,7 +176,7 @@ public class PocketServiceImpl implements PocketService {
     @Override
     public ResponseDto getAllEntities(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
         PageReq pageReq = ValidateInputUtils.validatePageData(pageNumber, pageSize);
-        Page<Pocket> pocketPage = pocketDAO.findAll(pageReq.getPageNumber(), pageReq.getPageSize(), sortBy, sortDirection);
+        Page<Pocket> pocketPage = pocketDAO.findAll(pageReq.pageNumber(), pageReq.pageSize(), sortBy, sortDirection);
         Page<PocketRespDto> pocketDtos = pocketMapper.entityToRespDto(pocketPage);
         return ResponseDtoBuilder.getFetchAllResponse(POCKET, pocketDtos);
     }
@@ -189,7 +189,7 @@ public class PocketServiceImpl implements PocketService {
     @Override
     public ResponseDto getAllEntitiesWithoutAccount(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
         PageReq pageReq = ValidateInputUtils.validatePageData(pageNumber, pageSize);
-        Page<Pocket> pocketPage = pocketDAO.findAllWithoutAccount(pageReq.getPageNumber(), pageReq.getPageSize(), sortBy, sortDirection);
+        Page<Pocket> pocketPage = pocketDAO.findAllWithoutAccount(pageReq.pageNumber(), pageReq.pageSize(), sortBy, sortDirection);
         Page<PocketRespDto> pocketDtos = pocketMapper.entityToRespDto(pocketPage);
         return ResponseDtoBuilder.getFetchAllResponse(POCKET, pocketDtos);
     }

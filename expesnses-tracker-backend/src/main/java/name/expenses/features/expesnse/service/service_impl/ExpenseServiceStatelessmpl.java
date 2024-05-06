@@ -175,7 +175,7 @@ public class ExpenseServiceStatelessmpl implements ExpenseService {
     @Override
     public ResponseDto getAllEntities(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
         PageReq pageReq = ValidateInputUtils.validatePageData(pageNumber, pageSize);
-        Page<Expense> expensePage = expenseDAO.findAll(pageReq.getPageNumber(), pageReq.getPageSize(), sortBy, sortDirection);
+        Page<Expense> expensePage = expenseDAO.findAll(pageReq.pageNumber(), pageReq.pageSize(), sortBy, sortDirection);
 
 //        List<ExpenseRespDto> expenseDtos = expensePage.getContent().stream()
 //                .map(expenseMapper::entityToRespDto)
@@ -216,7 +216,7 @@ public class ExpenseServiceStatelessmpl implements ExpenseService {
     @Override
     public ResponseDto getAllEntitiesWithoutSubCategory(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
         PageReq pageReq = ValidateInputUtils.validatePageData(pageNumber, pageSize);
-        Page<Expense> expensePage = expenseDAO.findAllWithoutSubCategory(pageReq.getPageNumber(), pageReq.getPageSize(), sortBy, sortDirection);
+        Page<Expense> expensePage = expenseDAO.findAllWithoutSubCategory(pageReq.pageNumber(), pageReq.pageSize(), sortBy, sortDirection);
 
 //        List<ExpenseRespDto> expenseDtos = expensePage.getContent().stream()
 //                .map(expenseMapper::entityToRespDto)

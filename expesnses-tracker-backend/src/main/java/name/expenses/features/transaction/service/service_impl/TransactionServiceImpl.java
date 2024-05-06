@@ -207,7 +207,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public ResponseDto getAllEntities(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
         PageReq pageReq = ValidateInputUtils.validatePageData(pageNumber, pageSize);
-        Page<Transaction> transactionPage = transactionDAO.findAll(pageReq.getPageNumber(), pageReq.getPageSize(), sortBy, sortDirection);
+        Page<Transaction> transactionPage = transactionDAO.findAll(pageReq.pageNumber(), pageReq.pageSize(), sortBy, sortDirection);
         Page<TransactionRespDto> transactionDtos = transactionMapper.entityToRespDto(transactionPage);
         return ResponseDtoBuilder.getFetchAllResponse(TRANSACTION, transactionDtos);
     }

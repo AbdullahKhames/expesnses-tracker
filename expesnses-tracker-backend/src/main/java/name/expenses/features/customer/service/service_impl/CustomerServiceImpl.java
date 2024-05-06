@@ -165,7 +165,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ResponseDto getAllEntities(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
         PageReq pageReq = ValidateInputUtils.validatePageData(pageNumber, pageSize);
-        Page<Customer> customerPage = customerDAO.findAll(pageReq.getPageNumber(), pageReq.getPageSize(), sortBy, sortDirection);
+        Page<Customer> customerPage = customerDAO.findAll(pageReq.pageNumber(), pageReq.pageSize(), sortBy, sortDirection);
         Page<CustomerRespDto> customerDtos = customerMapper.entityToRespDto(customerPage);
         return ResponseDtoBuilder.getFetchAllResponse(CUSTOMER, customerDtos);
     }
@@ -231,7 +231,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ResponseDto getAllCustomerExpenses(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
         PageReq pageReq = ValidateInputUtils.validatePageData(pageNumber, pageSize);
-        Page<Expense> customerPage = customerDAO.getAllCustomerExpenses(getCurrentCustomerId(), pageReq.getPageNumber(), pageReq.getPageSize(), sortBy, sortDirection);
+        Page<Expense> customerPage = customerDAO.getAllCustomerExpenses(getCurrentCustomerId(), pageReq.pageNumber(), pageReq.pageSize(), sortBy, sortDirection);
         Page<ExpenseRespDto> customerDtos = expenseMapper.entityToRespDto(customerPage);
         return ResponseDtoBuilder.getFetchAllResponse(CUSTOMER, customerDtos);
     }
@@ -239,7 +239,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ResponseDto getAllCustomerSubCategories(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
         PageReq pageReq = ValidateInputUtils.validatePageData(pageNumber, pageSize);
-        Page<SubCategory> customerPage = customerDAO.getAllCustomerSubCategories(getCurrentCustomerId(), pageReq.getPageNumber(), pageReq.getPageSize(), sortBy, sortDirection);
+        Page<SubCategory> customerPage = customerDAO.getAllCustomerSubCategories(getCurrentCustomerId(), pageReq.pageNumber(), pageReq.pageSize(), sortBy, sortDirection);
         Page<SubCategoryRespDto> customerDtos = subCategoryMapper.entityToRespDto(customerPage);
         return ResponseDtoBuilder.getFetchAllResponse(CUSTOMER, customerDtos);
     }
@@ -247,7 +247,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ResponseDto getAllCustomerPockets(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
         PageReq pageReq = ValidateInputUtils.validatePageData(pageNumber, pageSize);
-        Page<Pocket> customerPage = customerDAO.getAllCustomerPockets(getCurrentCustomerId(), pageReq.getPageNumber(), pageReq.getPageSize(), sortBy, sortDirection);
+        Page<Pocket> customerPage = customerDAO.getAllCustomerPockets(getCurrentCustomerId(), pageReq.pageNumber(), pageReq.pageSize(), sortBy, sortDirection);
         Page<PocketRespDto> customerDtos = pocketMapper.entityToRespDto(customerPage);
         return ResponseDtoBuilder.getFetchAllResponse(CUSTOMER, customerDtos);
     }
@@ -255,7 +255,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ResponseDto getAllCustomerCategories(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
         PageReq pageReq = ValidateInputUtils.validatePageData(pageNumber, pageSize);
-        Page<Category> customerPage = customerDAO.getAllCustomerCategories(getCurrentCustomerId(), pageReq.getPageNumber(), pageReq.getPageSize(), sortBy, sortDirection);
+        Page<Category> customerPage = customerDAO.getAllCustomerCategories(getCurrentCustomerId(), pageReq.pageNumber(), pageReq.pageSize(), sortBy, sortDirection);
         Page<CategoryRespDto> customerDtos = categoryMapper.entityToRespDto(customerPage);
         return ResponseDtoBuilder.getFetchAllResponse(CUSTOMER, customerDtos);
     }
@@ -263,7 +263,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ResponseDto getAllCustomerAccounts(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
         PageReq pageReq = ValidateInputUtils.validatePageData(pageNumber, pageSize);
-        Page<Account> customerPage = customerDAO.getAllCustomerAccounts(getCurrentCustomerId(), pageReq.getPageNumber(), pageReq.getPageSize(), sortBy, sortDirection);
+        Page<Account> customerPage = customerDAO.getAllCustomerAccounts(getCurrentCustomerId(), pageReq.pageNumber(), pageReq.pageSize(), sortBy, sortDirection);
         Page<AccountRespDto> customerDtos = accountMapper.entityToRespDto(customerPage);
         return ResponseDtoBuilder.getFetchAllResponse(CUSTOMER, customerDtos);
     }
@@ -271,7 +271,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ResponseDto getAllCustomerPocketTransfers(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
         PageReq pageReq = ValidateInputUtils.validatePageData(pageNumber, pageSize);
-        Page<PocketTransfer> customerPage = customerDAO.getAllCustomerPocketTransfers(getCurrentCustomerId(), pageReq.getPageNumber(), pageReq.getPageSize(), sortBy, sortDirection);
+        Page<PocketTransfer> customerPage = customerDAO.getAllCustomerPocketTransfers(getCurrentCustomerId(), pageReq.pageNumber(), pageReq.pageSize(), sortBy, sortDirection);
         Page<PocketTransferRespDto> customerDtos = pocketTransferMapper.entityToRespDto(customerPage);
         return ResponseDtoBuilder.getFetchAllResponse(CUSTOMER, customerDtos);
     }
@@ -279,7 +279,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ResponseDto getAllCustomerTransactions(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
         PageReq pageReq = ValidateInputUtils.validatePageData(pageNumber, pageSize);
-        Page<Transaction> customerPage = customerDAO.getAllCustomerTransactions(getCurrentCustomerId(), pageReq.getPageNumber(), pageReq.getPageSize(), sortBy, sortDirection);
+        Page<Transaction> customerPage = customerDAO.getAllCustomerTransactions(getCurrentCustomerId(), pageReq.pageNumber(), pageReq.pageSize(), sortBy, sortDirection);
         Page<TransactionRespDto> customerDtos = transactionMapper.entityToRespDto(customerPage);
         return ResponseDtoBuilder.getFetchAllResponse(CUSTOMER, customerDtos);
     }
@@ -287,7 +287,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ResponseDto getAllCustomerSubCategoryExpenses(String subCategoryRef, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
                 PageReq pageReq = ValidateInputUtils.validatePageData(pageNumber, pageSize);
-        Page<Expense> customerPage = customerDAO.getAllCustomerSubCategoryExpenses(getCurrentCustomerId(), subCategoryRef, pageReq.getPageNumber(), pageReq.getPageSize(), sortBy, sortDirection);
+        Page<Expense> customerPage = customerDAO.getAllCustomerSubCategoryExpenses(getCurrentCustomerId(), subCategoryRef, pageReq.pageNumber(), pageReq.pageSize(), sortBy, sortDirection);
         Page<ExpenseRespDto> customerDtos = expenseMapper.entityToRespDto(customerPage);
         return ResponseDtoBuilder.getFetchAllResponse(CUSTOMER, customerDtos);
     }
@@ -295,7 +295,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ResponseDto getAllCustomerCategorySubCategories(String categoryRef, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
                 PageReq pageReq = ValidateInputUtils.validatePageData(pageNumber, pageSize);
-        Page<SubCategory> customerPage = customerDAO.getAllCustomerCategorySubCategories(getCurrentCustomerId(), categoryRef, pageReq.getPageNumber(), pageReq.getPageSize(), sortBy, sortDirection);
+        Page<SubCategory> customerPage = customerDAO.getAllCustomerCategorySubCategories(getCurrentCustomerId(), categoryRef, pageReq.pageNumber(), pageReq.pageSize(), sortBy, sortDirection);
         Page<SubCategoryRespDto> customerDtos = subCategoryMapper.entityToRespDto(customerPage);
         return ResponseDtoBuilder.getFetchAllResponse(CUSTOMER, customerDtos);
     }
@@ -303,7 +303,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ResponseDto getAllCustomerAccountPockets(String accountRef, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
                 PageReq pageReq = ValidateInputUtils.validatePageData(pageNumber, pageSize);
-        Page<Pocket> customerPage = customerDAO.getAllCustomerAccountPockets(getCurrentCustomerId(), accountRef, pageReq.getPageNumber(), pageReq.getPageSize(), sortBy, sortDirection);
+        Page<Pocket> customerPage = customerDAO.getAllCustomerAccountPockets(getCurrentCustomerId(), accountRef, pageReq.pageNumber(), pageReq.pageSize(), sortBy, sortDirection);
         Page<PocketRespDto> customerDtos = pocketMapper.entityToRespDto(customerPage);
         return ResponseDtoBuilder.getFetchAllResponse(CUSTOMER, customerDtos);
     }

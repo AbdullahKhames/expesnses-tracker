@@ -58,7 +58,7 @@ class ValidateInputUtilsTest {
 
         System.out.println(x);
         System.out.println(y);
-        System.out.println(pageReq.getPageNumber());
-        System.out.println(pageReq.getPageSize());
+        System.out.println(pageReq.pageNumber());
+        System.out.println(pageReq.pageSize());
     }
 }

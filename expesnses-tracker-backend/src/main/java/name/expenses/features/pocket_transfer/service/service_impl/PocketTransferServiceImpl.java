@@ -216,7 +216,7 @@ public class PocketTransferServiceImpl implements PocketTransferService {
     @Override
     public ResponseDto getAllEntities(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
         PageReq pageReq = ValidateInputUtils.validatePageData(pageNumber, pageSize);
-        Page<PocketTransfer> pocketTransferPage = pocketTransferDAO.findAll(pageReq.getPageNumber(), pageReq.getPageSize(), sortBy, sortDirection);
+        Page<PocketTransfer> pocketTransferPage = pocketTransferDAO.findAll(pageReq.pageNumber(), pageReq.pageSize(), sortBy, sortDirection);
         Page<PocketTransferRespDto> pocketTransferDtos = pocketTransferMapper.entityToRespDto(pocketTransferPage);
         return ResponseDtoBuilder.getFetchAllResponse(POCKET_TRANSFER, pocketTransferDtos);
     }

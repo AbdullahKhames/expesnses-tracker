@@ -152,7 +152,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public ResponseDto getSubcategories(String refNo, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
         PageReq pageReq = ValidateInputUtils.validatePageData(pageNumber, pageSize);
-        Page<SubCategory> subCategoryPage = categoryDAO.getSubcategories(refNo, pageReq.getPageNumber(), pageReq.getPageSize(), sortBy, sortDirection);
+        Page<SubCategory> subCategoryPage = categoryDAO.getSubcategories(refNo, pageReq.pageNumber(), pageReq.pageSize(), sortBy, sortDirection);
         Page<SubCategoryRespDto> subCategoryDtos = subCategoryMapper.entityToRespDto(subCategoryPage);
         return ResponseDtoBuilder.getFetchAllResponse(CATEGORY, subCategoryDtos);
     }
@@ -175,7 +175,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public ResponseDto getAllEntities(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
         PageReq pageReq = ValidateInputUtils.validatePageData(pageNumber, pageSize);
-        Page<Category> categoryPage = categoryDAO.findAll(pageReq.getPageNumber(), pageReq.getPageSize(), sortBy, sortDirection);
+        Page<Category> categoryPage = categoryDAO.findAll(pageReq.pageNumber(), pageReq.pageSize(), sortBy, sortDirection);
         Page<CategoryRespDto> categoryDtos = categoryMapper.entityToRespDto(categoryPage);
         return ResponseDtoBuilder.getFetchAllResponse(CATEGORY, categoryDtos);
     }

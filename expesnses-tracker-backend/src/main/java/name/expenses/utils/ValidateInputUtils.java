@@ -61,7 +61,7 @@ public class ValidateInputUtils {
         }
         if (pageSize < 1)
         {
-            pageSize = 1L;
+            pageSize = 10L;
         }
         return new PageReq(pageNumber, pageSize);
     }
