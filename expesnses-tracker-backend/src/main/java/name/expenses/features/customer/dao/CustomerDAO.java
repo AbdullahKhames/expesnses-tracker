@@ -2,11 +2,12 @@ package name.expenses.features.customer.dao;
 
 import jakarta.ejb.Local;
 import name.expenses.features.account.models.Account;
+import name.expenses.features.budget.models.Budget;
+import name.expenses.features.budget_transfer.models.BudgetTransfer;
 import name.expenses.features.category.models.Category;
 import name.expenses.features.customer.models.Customer;
 import name.expenses.features.expesnse.models.Expense;
-import name.expenses.features.pocket.models.Pocket;
-import name.expenses.features.pocket_transfer.models.PocketTransfer;
+
 import name.expenses.features.sub_category.models.SubCategory;
 import name.expenses.features.transaction.models.Transaction;
 import name.expenses.globals.Page;
@@ -29,11 +30,11 @@ public interface CustomerDAO {
     Customer update(Customer expense);
     String delete(String refNo);
 
-    Long checkCustomerAssociation(Customer pocket);
+    Long checkCustomerAssociation(Customer budget);
 
     Set<Customer> getEntities(Set<String> refNos);
 
-    boolean existByPocket(Pocket pocket);
+    boolean existByBudget(Budget budget);
     boolean existByExpense(Expense expense);
 
     Page<Account> getAllCustomerAccounts(Long customerId, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
@@ -44,9 +45,9 @@ public interface CustomerDAO {
 
     Page<SubCategory> getAllCustomerSubCategories(Long customerId, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
 
-    Page<Pocket> getAllCustomerPockets(Long customerId, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
+    Page<Budget> getAllCustomerBudgets(Long customerId, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
 
-    Page<PocketTransfer> getAllCustomerPocketTransfers(Long customerId, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
+    Page<BudgetTransfer> getAllCustomerBudgetTransfers(Long customerId, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
 
     Page<Transaction> getAllCustomerTransactions(Long customerId,Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
 
@@ -54,5 +55,5 @@ public interface CustomerDAO {
 
     Page<SubCategory> getAllCustomerCategorySubCategories(Long currentCustomerId, String categoryRef, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
 
-    Page<Pocket> getAllCustomerAccountPockets(Long currentCustomerId, String accountRef, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
+    Page<Budget> getAllCustomerAccountBudgets(Long currentCustomerId, String accountRef, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
 }

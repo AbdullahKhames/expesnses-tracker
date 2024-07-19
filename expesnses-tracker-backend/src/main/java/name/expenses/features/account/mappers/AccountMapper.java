@@ -9,7 +9,7 @@ import name.expenses.features.account.dtos.request.AccountUpdateDto;
 import name.expenses.features.account.dtos.response.AccountRespDto;
 import name.expenses.features.account.models.Account;
 import name.expenses.features.association.Models;
-import name.expenses.features.pocket.mappers.PocketMapper;
+import name.expenses.features.budget.mappers.BudgetMapper;
 import name.expenses.features.user.models.Role;
 import name.expenses.globals.Page;
 import name.expenses.utils.CurrentCustomerCollections;
@@ -24,7 +24,7 @@ import java.util.Set;
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
         uses = {
-                PocketMapper.class
+                BudgetMapper.class
         },
         imports = {LocalDateTime.class})
 public abstract class AccountMapper {
@@ -41,7 +41,7 @@ public abstract class AccountMapper {
                     @Mapping(target = "createdAt", ignore = true),
                     @Mapping(target = "updatedAt", ignore = true),
                     @Mapping(target = "customers", ignore = true),
-                    @Mapping(target = "pockets", ignore = true),
+                    @Mapping(target = "budgets", ignore = true),
             }
 
     )

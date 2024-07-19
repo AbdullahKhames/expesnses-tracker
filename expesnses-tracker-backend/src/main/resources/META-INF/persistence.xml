@@ -13,7 +13,6 @@
         <!-- Managed entity classes -->
         <class>name.expenses.features.expesnse.models.Expense</class>
         <class>name.expenses.features.user.models.User</class>
-        <class>name.expenses.features.user.models.Group</class>
 
         <!-- Hibernate properties -->
         <properties>

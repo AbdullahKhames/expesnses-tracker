@@ -1,14 +1,14 @@
 package name.expenses;
 
 import name.expenses.features.account.models.Account;
+import name.expenses.features.budget.models.Budget;
+import name.expenses.features.budget.models.BudgetType;
+import name.expenses.features.budget_transfer.models.BudgetAmount;
+import name.expenses.features.budget_transfer.models.BudgetTransfer;
 import name.expenses.features.category.models.Category;
 import name.expenses.features.customer.models.Customer;
 import name.expenses.features.expesnse.models.Expense;
-import name.expenses.features.pocket.models.Pocket;
-import name.expenses.features.pocket.models.PocketType;
-import name.expenses.features.pocket_transfer.models.AmountType;
-import name.expenses.features.pocket_transfer.models.PocketAmount;
-import name.expenses.features.pocket_transfer.models.PocketTransfer;
+import name.expenses.features.budget_transfer.models.AmountType;
 import name.expenses.features.sub_category.models.SubCategory;
 import name.expenses.features.transaction.models.Transaction;
 import name.expenses.features.user.models.User;
@@ -18,45 +18,45 @@ import java.util.*;
 public class Catalog {
     private boolean init = false;
 
-    private static final PocketAmount pocketAmount1 = new PocketAmount();
-    private static final PocketAmount pocketAmount2 = new PocketAmount();
-    private static final PocketAmount pocketAmount3 = new PocketAmount();
-    private static final PocketAmount pocketAmount4 = new PocketAmount();
-    private static final PocketAmount pocketAmount5 = new PocketAmount();
-    private static final PocketAmount pocketAmount6 = new PocketAmount();
-    private static final PocketAmount pocketAmount7 = new PocketAmount();
-    private static final PocketAmount pocketAmount8 = new PocketAmount();
+    private static final BudgetAmount budgetAmount1 = new BudgetAmount();
+    private static final BudgetAmount budgetAmount2 = new BudgetAmount();
+    private static final BudgetAmount budgetAmount3 = new BudgetAmount();
+    private static final BudgetAmount budgetAmount4 = new BudgetAmount();
+    private static final BudgetAmount budgetAmount5 = new BudgetAmount();
+    private static final BudgetAmount budgetAmount6 = new BudgetAmount();
+    private static final BudgetAmount budgetAmount7 = new BudgetAmount();
+    private static final BudgetAmount budgetAmount8 = new BudgetAmount();
 
-    private static final Map<Integer, PocketAmount> pocketAmounts = new HashMap<>(Map.of(
-            1, pocketAmount1,
-            2, pocketAmount2,
-            3, pocketAmount3,
-            4, pocketAmount4,
-            5, pocketAmount5,
-            6, pocketAmount6,
-            7, pocketAmount7,
-            8, pocketAmount8
+    private static final Map<Integer, BudgetAmount> budgetAmounts = new HashMap<>(Map.of(
+            1, budgetAmount1,
+            2, budgetAmount2,
+            3, budgetAmount3,
+            4, budgetAmount4,
+            5, budgetAmount5,
+            6, budgetAmount6,
+            7, budgetAmount7,
+            8, budgetAmount8
 ));
 
-    private static final Pocket pocket1 = new Pocket();
-    private static final Pocket pocket2 = new Pocket();
-    private static final Pocket pocket3 = new Pocket();
-    private static final Pocket pocket4 = new Pocket();
-    private static final Pocket pocket5 = new Pocket();
-    private static final Pocket pocket6 = new Pocket();
-    private static final Pocket pocket7 = new Pocket();
-    private static final Pocket pocket8 = new Pocket();
+    private static final Budget budget1 = new Budget();
+    private static final Budget budget2 = new Budget();
+    private static final Budget budget3 = new Budget();
+    private static final Budget budget4 = new Budget();
+    private static final Budget budget5 = new Budget();
+    private static final Budget budget6 = new Budget();
+    private static final Budget budget7 = new Budget();
+    private static final Budget budget8 = new Budget();
 
 
-    private static final Map<Integer, Pocket> pockets = new HashMap<>(Map.of(
-            1, pocket1,
-            2, pocket2,
-            3, pocket3,
-            4, pocket4,
-            5, pocket5,
-            6, pocket6,
-            7, pocket7,
-            8, pocket8));
+    private static final Map<Integer, Budget> budgets = new HashMap<>(Map.of(
+            1, budget1,
+            2, budget2,
+            3, budget3,
+            4, budget4,
+            5, budget5,
+            6, budget6,
+            7, budget7,
+            8, budget8));
 
     private static final Expense expense1 = new Expense();
     private static final Expense expense2 = new Expense();
@@ -110,13 +110,13 @@ public class Catalog {
             3, transaction3));
 
 
-    private static final PocketTransfer pocketTransfer1 = new PocketTransfer();
-    private static final PocketTransfer pocketTransfer2 = new PocketTransfer();
-    private static final PocketTransfer pocketTransfer3 = new PocketTransfer();
-    private static final Map<Integer, PocketTransfer> pocketTransfers = new HashMap<>(Map.of(
-            1, pocketTransfer1,
-            2, pocketTransfer2,
-            3, pocketTransfer3));
+    private static final BudgetTransfer budgetTransfer1 = new BudgetTransfer();
+    private static final BudgetTransfer budgetTransfer2 = new BudgetTransfer();
+    private static final BudgetTransfer budgetTransfer3 = new BudgetTransfer();
+    private static final Map<Integer, BudgetTransfer> budgetTransfers = new HashMap<>(Map.of(
+            1, budgetTransfer1,
+            2, budgetTransfer2,
+            3, budgetTransfer3));
 
 
     private static final User user1 = new User();
@@ -204,161 +204,161 @@ public class Catalog {
             category3.getSubCategories().addAll(new HashSet<>(List.of(subCategory3)));
             category3.getCustomers().add(customer1);
 
-            pocket1.setName("pocket1");
-            pocket1.setDetails("EXTERNAL pocket1");
-            pocket1.setPocketType(PocketType.EXTERNAL);
-            pocket1.setCustomer(customer1);
-            pocket1.setAmount(500.0);
+            budget1.setName("budget1");
+            budget1.setDetails("EXTERNAL budget1");
+            budget1.setBudgetType(BudgetType.EXTERNAL);
+            budget1.setCustomer(customer1);
+            budget1.setAmount(500.0);
 
-            pocket2.setName("pocket2");
-            pocket2.setDetails("DEFAULT pocket2");
-            pocket2.setPocketType(PocketType.DEFAULT);
-            pocket2.setAmount(150.0);
-            pocket2.setCustomer(customer1);
+            budget2.setName("budget2");
+            budget2.setDetails("DEFAULT budget2");
+            budget2.setBudgetType(BudgetType.DEFAULT);
+            budget2.setAmount(150.0);
+            budget2.setCustomer(customer1);
 
-            pocket3.setName("pocket3");
-            pocket3.setDetails("BILLS pocket3");
-            pocket3.setPocketType(PocketType.BILLS);
-            pocket3.setAmount(250.0);
-            pocket3.setCustomer(customer1);
+            budget3.setName("budget3");
+            budget3.setDetails("BILLS budget3");
+            budget3.setBudgetType(BudgetType.BILLS);
+            budget3.setAmount(250.0);
+            budget3.setCustomer(customer1);
 
-            pocket4.setName("pocket4");
-            pocket4.setDetails("MOM pocket4");
-            pocket4.setPocketType(PocketType.MOM);
-            pocket4.setAmount(350.0);
-            pocket4.setCustomer(customer1);
+            budget4.setName("budget4");
+            budget4.setDetails("MOM budget4");
+            budget4.setBudgetType(BudgetType.MOM);
+            budget4.setAmount(350.0);
+            budget4.setCustomer(customer1);
 
-            pocket5.setName("pocket5");
-            pocket5.setDetails("ALLOWANCE pocket5");
-            pocket5.setPocketType(PocketType.ALLOWANCE);
-            pocket5.setAmount(450.0);
-            pocket5.setCustomer(customer1);
+            budget5.setName("budget5");
+            budget5.setDetails("ALLOWANCE budget5");
+            budget5.setBudgetType(BudgetType.ALLOWANCE);
+            budget5.setAmount(450.0);
+            budget5.setCustomer(customer1);
 
-            pocket6.setName("pocket6");
-            pocket6.setDetails("DONATION pocket6");
-            pocket6.setPocketType(PocketType.DONATION);
-            pocket6.setAmount(550.0);
-            pocket6.setCustomer(customer1);
+            budget6.setName("budget6");
+            budget6.setDetails("DONATION budget6");
+            budget6.setBudgetType(BudgetType.DONATION);
+            budget6.setAmount(550.0);
+            budget6.setCustomer(customer1);
 
-            pocket7.setName("pocket7");
-            pocket7.setDetails("ENTERTAINMENT pocket7");
-            pocket7.setPocketType(PocketType.ENTERTAINMENT);
-            pocket7.setAmount(650.0);
-            pocket7.setCustomer(customer1);
+            budget7.setName("budget7");
+            budget7.setDetails("ENTERTAINMENT budget7");
+            budget7.setBudgetType(BudgetType.ENTERTAINMENT);
+            budget7.setAmount(650.0);
+            budget7.setCustomer(customer1);
 
-            pocket8.setName("pocket8");
-            pocket8.setDetails("SAVINGS pocket8");
-            pocket8.setPocketType(PocketType.SAVINGS);
-            pocket8.setAmount(750.0);
-            pocket8.setCustomer(customer1);
+            budget8.setName("budget8");
+            budget8.setDetails("SAVINGS budget8");
+            budget8.setBudgetType(BudgetType.SAVINGS);
+            budget8.setAmount(750.0);
+            budget8.setCustomer(customer1);
 
 
 
             account1.setName("account1");
             account1.setDetails("account1");
             account1.getCustomers().add(customer1);
-            account1.getPockets().addAll(new HashSet<>(Arrays.asList(pocket1, pocket2, pocket3)));
+            account1.getBudgets().addAll(new HashSet<>(Arrays.asList(budget1, budget2, budget3)));
 
             account2.setName("account2");
             account2.setDetails("account2");
             account2.getCustomers().add(customer1);
-            account2.getPockets().addAll(new HashSet<>(Arrays.asList(pocket4, pocket5, pocket6)));
+            account2.getBudgets().addAll(new HashSet<>(Arrays.asList(budget4, budget5, budget6)));
 
             account3.setName("account3");
             account3.setDetails("account3");
             account3.getCustomers().add(customer1);
-            account3.getPockets().addAll(new HashSet<>(Arrays.asList(pocket7, pocket8)));
+            account3.getBudgets().addAll(new HashSet<>(Arrays.asList(budget7, budget8)));
 
-            pocketAmount1.setAmountType(AmountType.DEBIT);
-            pocketAmount1.setPocket(pocket1);
-            pocketAmount1.setAmount(50.0);
-            pocketAmount1.setTrans(true);
+            budgetAmount1.setAmountType(AmountType.DEBIT);
+            budgetAmount1.setBudget(budget1);
+            budgetAmount1.setAmount(50.0);
+            budgetAmount1.setTrans(true);
 
-            pocketAmount2.setAmountType(AmountType.CREDIT);
-            pocketAmount2.setPocket(pocket2);
-            pocketAmount2.setAmount(25.0);
-            pocketAmount2.setTrans(true);
+            budgetAmount2.setAmountType(AmountType.CREDIT);
+            budgetAmount2.setBudget(budget2);
+            budgetAmount2.setAmount(25.0);
+            budgetAmount2.setTrans(true);
 
-            pocketAmount3.setAmountType(AmountType.CREDIT);
-            pocketAmount3.setPocket(pocket3);
-            pocketAmount3.setAmount(20.0);
-            pocketAmount3.setTrans(true);
+            budgetAmount3.setAmountType(AmountType.CREDIT);
+            budgetAmount3.setBudget(budget3);
+            budgetAmount3.setAmount(20.0);
+            budgetAmount3.setTrans(true);
 
-            pocketAmount4.setAmountType(AmountType.CREDIT);
-            pocketAmount4.setPocket(pocket4);
-            pocketAmount4.setAmount(5.0);
+            budgetAmount4.setAmountType(AmountType.CREDIT);
+            budgetAmount4.setBudget(budget4);
+            budgetAmount4.setAmount(5.0);
 
-            pocketAmount5.setAmountType(AmountType.DEBIT);
-            pocketAmount5.setPocket(pocket5);
-            pocketAmount5.setAmount(50.0);
+            budgetAmount5.setAmountType(AmountType.DEBIT);
+            budgetAmount5.setBudget(budget5);
+            budgetAmount5.setAmount(50.0);
 
-            pocketAmount6.setAmountType(AmountType.DEBIT);
-            pocketAmount6.setPocket(pocket6);
-            pocketAmount6.setAmount(50.0);
+            budgetAmount6.setAmountType(AmountType.DEBIT);
+            budgetAmount6.setBudget(budget6);
+            budgetAmount6.setAmount(50.0);
 
-            pocketAmount7.setAmountType(AmountType.DEBIT);
-            pocketAmount7.setPocket(pocket7);
-            pocketAmount7.setAmount(50.0);
+            budgetAmount7.setAmountType(AmountType.DEBIT);
+            budgetAmount7.setBudget(budget7);
+            budgetAmount7.setAmount(50.0);
 
-            pocketAmount8.setAmountType(AmountType.DEBIT);
-            pocketAmount8.setPocket(pocket8);
-            pocketAmount8.setAmount(50.0);
+            budgetAmount8.setAmountType(AmountType.DEBIT);
+            budgetAmount8.setBudget(budget8);
+            budgetAmount8.setAmount(50.0);
 
 
-            pocketTransfer1.setName("pocketTransfer1");
-            pocketTransfer1.setDetails("pocketTransfer1");
-            pocketTransfer1.setLending(true);
-            pocketTransfer1.setSenderPocketAmount(pocketAmount1);
-            pocketTransfer1.getReceiverPocketAmounts().addAll(new HashSet<>(Arrays.asList(pocketAmount2, pocketAmount3, pocketAmount4)));
-            pocketTransfer1.setAmount(50.0);
-            pocketTransfer1.setCustomer(customer1);
+            budgetTransfer1.setName("budgetTransfer1");
+            budgetTransfer1.setDetails("budgetTransfer1");
+            budgetTransfer1.setLending(true);
+            budgetTransfer1.setSenderBudgetAmount(budgetAmount1);
+            budgetTransfer1.getReceiverBudgetAmounts().addAll(new HashSet<>(Arrays.asList(budgetAmount2, budgetAmount3, budgetAmount4)));
+            budgetTransfer1.setAmount(50.0);
+            budgetTransfer1.setCustomer(customer1);
 
-            pocketTransfer2.setName("pocketTransfer2");
-            pocketTransfer2.setDetails("pocketTransfer2");
-            pocketTransfer2.setCustomer(customer1);
+            budgetTransfer2.setName("budgetTransfer2");
+            budgetTransfer2.setDetails("budgetTransfer2");
+            budgetTransfer2.setCustomer(customer1);
 
-            pocketTransfer3.setName("pocketTransfer3");
-            pocketTransfer3.setDetails("pocketTransfer3");
-            pocketTransfer3.setCustomer(customer1);
+            budgetTransfer3.setName("budgetTransfer3");
+            budgetTransfer3.setDetails("budgetTransfer3");
+            budgetTransfer3.setCustomer(customer1);
 
             transaction1.setName("transaction1");
             transaction1.setDetails("transaction1");
             transaction1.setExpense(expense1);
             transaction1.setAmount(50.0);
-            transaction1.getPocketAmounts().addAll(new HashSet<>(List.of(pocketAmount5, pocketAmount6, pocketAmount4)));
+            transaction1.getBudgetAmounts().addAll(new HashSet<>(List.of(budgetAmount5, budgetAmount6, budgetAmount4)));
             transaction1.setCustomer(customer1);
 
             transaction2.setName("transaction2");
             transaction2.setDetails("transaction2");
             transaction2.setExpense(expense2);
             transaction2.setAmount(50.0);
-            transaction2.getPocketAmounts().addAll(new HashSet<>(List.of(pocketAmount7)));
+            transaction2.getBudgetAmounts().addAll(new HashSet<>(List.of(budgetAmount7)));
             transaction2.setCustomer(customer1);
 
             transaction3.setName("transaction3");
             transaction3.setDetails("transaction3");
             transaction3.setExpense(expense3);
             transaction3.setAmount(50.0);
-            transaction3.getPocketAmounts().addAll(new HashSet<>(List.of(pocketAmount8)));
+            transaction3.getBudgetAmounts().addAll(new HashSet<>(List.of(budgetAmount8)));
             transaction3.setCustomer(customer1);
 
 
 
             customer1.setUser(user1);
-            customer1.getPockets().addAll(new HashSet<>(Arrays.asList(
-                    pocket1,
-                    pocket2,
-                    pocket3,
-                    pocket4,
-                    pocket5,
-                    pocket6,
-                    pocket7,
-                    pocket8
+            customer1.getBudgets().addAll(new HashSet<>(Arrays.asList(
+                    budget1,
+                    budget2,
+                    budget3,
+                    budget4,
+                    budget5,
+                    budget6,
+                    budget7,
+                    budget8
             )));
-            customer1.getPocketTransfers().addAll(new HashSet<>(Arrays.asList(
-                    pocketTransfer1,
-                    pocketTransfer2,
-                    pocketTransfer3
+            customer1.getBudgetTransfers().addAll(new HashSet<>(Arrays.asList(
+                    budgetTransfer1,
+                    budgetTransfer2,
+                    budgetTransfer3
             )));
 
             customer1.getTransactions().addAll(new HashSet<>(Arrays.asList(
@@ -385,13 +385,13 @@ public class Catalog {
         init();
         return switch (entityClass.getSimpleName()){
             case "Transaction" -> (T) transactions.get(index);
-            case "PocketTransfer" -> (T) pocketTransfers.get(index);
+            case "budgetTransfer" -> (T) budgetTransfers.get(index);
             case "Expense" -> (T) expenses.get(index);
             case "Account" -> (T) accounts.get(index);
-            case "Pocket" -> (T) pockets.get(index);
+            case "Budget" -> (T) budgets.get(index);
             case "Category" -> (T) categories.get(index);
             case "SubCategory" -> (T) subCategories.get(index);
-            case "PocketAmount" -> (T) pocketAmounts.get(index);
+            case "budgetAmount" -> (T) budgetAmounts.get(index);
             case "Customer" -> (T) customers.get(index);
             case "User" -> (T) users.get(index);
             case null -> throw new IllegalStateException("Unexpected value: cannot be null");

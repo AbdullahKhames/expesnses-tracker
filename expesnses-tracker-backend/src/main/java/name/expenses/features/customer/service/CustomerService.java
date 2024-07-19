@@ -28,13 +28,13 @@ public interface CustomerService extends
 
     ResponseDto getAllCustomerSubCategories(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
 
-    ResponseDto getAllCustomerPockets(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
+    ResponseDto getAllCustomerBudgets(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
 
     ResponseDto getAllCustomerCategories(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
 
     ResponseDto getAllCustomerAccounts(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
 
-    ResponseDto getAllCustomerPocketTransfers(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
+    ResponseDto getAllCustomerBudgetTransfers(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
 
     ResponseDto getAllCustomerTransactions(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
 
@@ -42,5 +42,5 @@ public interface CustomerService extends
 
     ResponseDto getAllCustomerCategorySubCategories(String categoryRef, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
 
-    ResponseDto getAllCustomerAccountPockets(String accountRef, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
+    ResponseDto getAllCustomerAccountBudgets(String accountRef, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection);
 }

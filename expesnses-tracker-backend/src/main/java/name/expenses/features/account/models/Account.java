@@ -4,9 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import name.expenses.features.base.models.BaseModel;
+import name.expenses.features.budget.models.Budget;
 import name.expenses.features.customer.models.Customer;
-import name.expenses.features.pocket.models.Pocket;
-import name.expenses.utils.collection_getter.PocketGetter;
+
+import name.expenses.utils.collection_getter.BudgetGetter;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.time.LocalDateTime;
@@ -20,7 +21,7 @@ import java.util.Set;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class Account extends BaseModel implements PocketGetter {
+public class Account extends BaseModel implements BudgetGetter {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,7 +29,7 @@ public class Account extends BaseModel implements PocketGetter {
     private String details;
     @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(referencedColumnName = "id", name = "account_id")
-    private Set<Pocket> pockets = new HashSet<>();
+    private Set<Budget> budgets = new HashSet<>();
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "accounts")
     @ToString.Exclude
     @JsonIgnore

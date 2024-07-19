@@ -5,13 +5,13 @@ package name.expenses.features.customer.mappers;
 
 
 import name.expenses.features.account.mappers.AccountMapper;
+import name.expenses.features.budget.mappers.BudgetMapper;
 import name.expenses.features.category.mappers.CategoryMapper;
 import name.expenses.features.customer.dtos.request.CustomerReqDto;
 import name.expenses.features.customer.dtos.request.CustomerUpdateDto;
 import name.expenses.features.customer.dtos.response.CustomerRespDto;
 import name.expenses.features.customer.models.Customer;
 import name.expenses.features.expesnse.mappers.ExpenseMapper;
-import name.expenses.features.pocket.mappers.PocketMapper;
 import name.expenses.features.sub_category.mappers.SubCategoryMapper;
 import name.expenses.features.transaction.mappers.TransactionMapper;
 import name.expenses.features.user.mappers.UserMapper;
@@ -29,7 +29,7 @@ import java.util.Set;
         uses = {
                 UserMapper.class,
                 AccountMapper.class,
-                PocketMapper.class,
+                BudgetMapper.class,
                 CategoryMapper.class,
                 SubCategoryMapper.class,
                 ExpenseMapper.class,
@@ -47,5 +47,5 @@ public interface CustomerMapper {
 
     void update(@MappingTarget Customer entity, CustomerUpdateDto entityUpdateDto);
 
-    Customer reqEntityToEntity(CustomerUpdateDto newPocket);
+    Customer reqEntityToEntity(CustomerUpdateDto newbudget);
 }

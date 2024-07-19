@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import name.expenses.features.pocket.dtos.response.PocketRespDto;
+import name.expenses.features.budget.dtos.response.BudgetRespDto;
 import name.expenses.globals.CurrentUserReg;
 
 import java.time.LocalDateTime;
@@ -19,7 +19,7 @@ public class AccountRespDto implements CurrentUserReg {
     private String name;
     private String details;
     @Builder.Default
-    private Set<PocketRespDto> pockets = new HashSet<>();
+    private Set<BudgetRespDto> budgets = new HashSet<>();
     private String refNo;
     private boolean currentCustomerRegistered;
     private LocalDateTime createdAt;

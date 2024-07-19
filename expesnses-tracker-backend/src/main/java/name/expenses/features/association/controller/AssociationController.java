@@ -12,8 +12,8 @@ import name.expenses.features.association.AssociationManager;
 import name.expenses.features.association.Models;
 import name.expenses.features.association.dto.AssociationGenericReqDto;
 import name.expenses.features.association.dto.AssociationReqDto;
+import name.expenses.features.budget.dtos.request.BudgetReqDto;
 import name.expenses.features.expesnse.dtos.request.ExpenseReqDto;
-import name.expenses.features.pocket.dtos.request.PocketReqDto;
 
 @Path("/association")
 @Slf4j
@@ -98,41 +98,41 @@ public class AssociationController {
     public Response removeCustomerExpenses(@PathParam("customerRef") String customerRef, AssociationReqDto associationReqDto){
         return Response.ok(associationManager.removeAssociation(customerRef, Models.CUSTOMER, associationReqDto.getAssociationRefNos(), Models.EXPENSE)).build();
     }
-    @Path("/customers/{customerRef}/add-pockets")
+    @Path("/customers/{customerRef}/add-budgets")
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response addCustomerPockets(@PathParam("customerRef") String customerRef, AssociationReqDto associationReqDto){
-        return Response.ok(associationManager.addAssociation(customerRef, Models.CUSTOMER, associationReqDto.getAssociationRefNos(), Models.POCKET)).build();
+    public Response addCustomerBudgets(@PathParam("customerRef") String customerRef, AssociationReqDto associationReqDto){
+        return Response.ok(associationManager.addAssociation(customerRef, Models.CUSTOMER, associationReqDto.getAssociationRefNos(), Models.Budget)).build();
     }
-    @Path("/customers/{customerRef}/add-pockets-dtos")
+    @Path("/customers/{customerRef}/add-budgets-dtos")
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response addCustomerPOCKETSDTOS(@PathParam("customerRef") String customerRef, AssociationGenericReqDto<PocketReqDto> associationGenericReqDto){
-        return Response.ok(associationManager.addAssociationDtos(customerRef, Models.CUSTOMER, associationGenericReqDto.getAssociationReqDtos(), Models.POCKET)).build();
+    public Response addCustomerbudgetSDTOS(@PathParam("customerRef") String customerRef, AssociationGenericReqDto<BudgetReqDto> associationGenericReqDto){
+        return Response.ok(associationManager.addAssociationDtos(customerRef, Models.CUSTOMER, associationGenericReqDto.getAssociationReqDtos(), Models.Budget)).build();
     }
-    @Path("/customers/{customerRef}/remove-pockets")
+    @Path("/customers/{customerRef}/remove-budgets")
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response removeCustomerPockets(@PathParam("customerRef") String customerRef, AssociationReqDto associationReqDto) {
-        return Response.ok(associationManager.removeAssociation(customerRef, Models.CUSTOMER, associationReqDto.getAssociationRefNos(), Models.POCKET)).build();
+    public Response removeCustomerBudgets(@PathParam("customerRef") String customerRef, AssociationReqDto associationReqDto) {
+        return Response.ok(associationManager.removeAssociation(customerRef, Models.CUSTOMER, associationReqDto.getAssociationRefNos(), Models.Budget)).build();
     }
 
-    @Path("/accounts/{accountRef}/add-pockets")
+    @Path("/accounts/{accountRef}/add-budgets")
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response addAccountPockets(@PathParam("accountRef") String accountRef, AssociationReqDto associationReqDto){
-        return Response.ok(associationManager.addAssociation(accountRef, Models.ACCOUNT, associationReqDto.getAssociationRefNos(), Models.POCKET)).build();
+    public Response addAccountBudgets(@PathParam("accountRef") String accountRef, AssociationReqDto associationReqDto){
+        return Response.ok(associationManager.addAssociation(accountRef, Models.ACCOUNT, associationReqDto.getAssociationRefNos(), Models.Budget)).build();
     }
-    @Path("/accounts/{accountRef}/remove-pockets")
+    @Path("/accounts/{accountRef}/remove-budgets")
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response removeAccountPockets(@PathParam("accountRef") String accountRef, AssociationReqDto associationReqDto){
-        return Response.ok(associationManager.removeAssociation(accountRef, Models.ACCOUNT, associationReqDto.getAssociationRefNos(), Models.POCKET)).build();
+    public Response removeAccountBudgets(@PathParam("accountRef") String accountRef, AssociationReqDto associationReqDto){
+        return Response.ok(associationManager.removeAssociation(accountRef, Models.ACCOUNT, associationReqDto.getAssociationRefNos(), Models.Budget)).build();
     }
     @Path("/categories/{categoryRef}/add-sub-categories")
     @PUT

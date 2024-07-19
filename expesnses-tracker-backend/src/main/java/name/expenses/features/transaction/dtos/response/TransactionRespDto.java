@@ -4,9 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import name.expenses.features.budget_transfer.dtos.response.BudgetAmountRespDto;
 import name.expenses.features.expesnse.dtos.response.ExpenseRespDto;
-import name.expenses.features.pocket.dtos.response.PocketRespDto;
-import name.expenses.features.pocket_transfer.dtos.response.PocketAmountRespDto;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -22,7 +21,7 @@ public class TransactionRespDto {
     private Double amount;
     private ExpenseRespDto expense;
     @Builder.Default
-    private Set<PocketAmountRespDto> pocketAmounts = new HashSet<>();
+    private Set<BudgetAmountRespDto> budgetAmounts = new HashSet<>();
     private String refNo;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

@@ -1,13 +1,13 @@
 package name.expenses.features.customer.models;
 
-import jakarta.ejb.Local;
 import jakarta.persistence.*;
 import lombok.*;
 import name.expenses.features.account.models.Account;
+import name.expenses.features.budget.models.Budget;
+import name.expenses.features.budget_transfer.models.BudgetTransfer;
 import name.expenses.features.category.models.Category;
 import name.expenses.features.expesnse.models.Expense;
-import name.expenses.features.pocket.models.Pocket;
-import name.expenses.features.pocket_transfer.models.PocketTransfer;
+
 import name.expenses.features.sub_category.models.SubCategory;
 import name.expenses.features.transaction.models.Transaction;
 import name.expenses.features.user.models.User;
@@ -27,7 +27,7 @@ import java.util.Set;
 public class Customer implements
         UserGetter,
         AccountGetter,
-        PocketGetter,
+        BudgetGetter,
         CategoryGetter,
         SubCategoryGetter,
         ExpenseGetter {
@@ -48,7 +48,7 @@ public class Customer implements
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     @JoinColumn(name = "customer_id")
     @ToString.Exclude
-    private Set<Pocket> pockets = new HashSet<>();
+    private Set<Budget> budgets = new HashSet<>();
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "Customer_categories",
             joinColumns = @JoinColumn(name = "customer_id", nullable = false),
@@ -73,7 +73,7 @@ public class Customer implements
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     @JoinColumn(name = "customer_id")
     @ToString.Exclude
-    private Set<PocketTransfer> pocketTransfers = new HashSet<>();
+    private Set<BudgetTransfer> budgetTransfers = new HashSet<>();
 
     @Override
     public final boolean equals(Object o) {

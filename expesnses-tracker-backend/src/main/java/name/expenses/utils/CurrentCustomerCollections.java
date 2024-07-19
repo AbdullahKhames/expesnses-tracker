@@ -9,10 +9,10 @@ import jakarta.ws.rs.core.SecurityContext;
 import lombok.extern.slf4j.Slf4j;
 import name.expenses.features.account.models.Account;
 import name.expenses.features.association.Models;
+import name.expenses.features.budget.models.Budget;
 import name.expenses.features.category.models.Category;
 import name.expenses.features.customer.models.Customer;
 import name.expenses.features.expesnse.models.Expense;
-import name.expenses.features.pocket.models.Pocket;
 import name.expenses.features.sub_category.models.SubCategory;
 import name.expenses.features.user.models.User;
 import org.hibernate.Session;
@@ -33,10 +33,10 @@ public class CurrentCustomerCollections {
             Customer customer = user.getCustomer();
             Session session = (Session) entityManager.getDelegate();
             return switch (models) {
-                case POCKET ->
-                        !session.createQuery("select p from Pocket p join fetch p.customer c where c = :customer and p = :pocket", Pocket.class)
+                case Budget ->
+                        !session.createQuery("select p from Budget p join fetch p.customer c where c = :customer and p = :budget", Budget.class)
                                 .setParameter("customer", customer)
-                                .setParameter("pocket", (Pocket) currentUserReg)
+                                .setParameter("Budget", (Budget) currentUserReg)
                                 .getResultList().isEmpty();
                 case EXPENSE ->
                         !session.createQuery("select e from Expense e join fetch e.customer c where c = :customer and e = :expense", Expense.class)

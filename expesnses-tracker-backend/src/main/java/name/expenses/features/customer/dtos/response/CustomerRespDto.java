@@ -7,9 +7,8 @@ import lombok.NoArgsConstructor;
 import name.expenses.features.account.dtos.response.AccountRespDto;
 import name.expenses.features.category.dtos.response.CategoryRespDto;
 import name.expenses.features.expesnse.dtos.response.ExpenseRespDto;
-import name.expenses.features.pocket.dtos.response.PocketRespDto;
+import name.expenses.features.budget.dtos.response.BudgetRespDto;
 import name.expenses.features.sub_category.dtos.response.SubCategoryRespDto;
-import name.expenses.features.transaction.dtos.request.TransactionUpdateDto;
 import name.expenses.features.transaction.dtos.response.TransactionRespDto;
 import name.expenses.features.user.dtos.response.UserRespDto;
 
@@ -27,7 +26,7 @@ public class CustomerRespDto {
     @Builder.Default
     private Set<AccountRespDto> account = new HashSet<>();
     @Builder.Default
-    private Set<PocketRespDto> pockets = new HashSet<>();
+    private Set<BudgetRespDto> budgets = new HashSet<>();
     @Builder.Default
     private Set<CategoryRespDto> categories = new HashSet<>();
     @Builder.Default

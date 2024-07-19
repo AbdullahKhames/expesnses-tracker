@@ -6,10 +6,7 @@ import lombok.*;
 import name.expenses.features.base.models.BaseModel;
 import name.expenses.features.customer.models.Customer;
 import name.expenses.features.expesnse.models.Expense;
-import name.expenses.features.pocket.models.Pocket;
-import name.expenses.features.pocket_transfer.models.PocketAmount;
-import name.expenses.utils.collection_getter.ExpenseGetter;
-import name.expenses.utils.collection_getter.PocketGetter;
+import name.expenses.features.budget_transfer.models.BudgetAmount;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.time.LocalDateTime;
@@ -32,7 +29,7 @@ public class Transaction extends BaseModel {
     private Double amount;
     @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     @JoinColumn(name = "transaction_id")
-    private Set<PocketAmount> pocketAmounts = new HashSet<>();
+    private Set<BudgetAmount> budgetAmounts = new HashSet<>();
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @ToString.Exclude
     @JsonIgnore

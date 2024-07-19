@@ -8,12 +8,12 @@ import jakarta.transaction.Transactional;
 import name.expenses.config.advice.RepoAdvice;
 import name.expenses.error.exception.GeneralFailureException;
 import name.expenses.features.account.models.Account;
+import name.expenses.features.budget.models.Budget;
+import name.expenses.features.budget_transfer.models.BudgetTransfer;
 import name.expenses.features.category.models.Category;
 import name.expenses.features.customer.dao.CustomerDAO;
 import name.expenses.features.customer.models.Customer;
 import name.expenses.features.expesnse.models.Expense;
-import name.expenses.features.pocket.models.Pocket;
-import name.expenses.features.pocket_transfer.models.PocketTransfer;
 import name.expenses.features.sub_category.models.SubCategory;
 import name.expenses.features.transaction.models.Transaction;
 import name.expenses.globals.Page;
@@ -191,13 +191,13 @@ public class CustomerDAOImpl implements CustomerDAO {
     }
 
     @Override
-    public boolean existByPocket(Pocket pocket) {
-        if (pocket == null || pocket.getId() == null) {
+    public boolean existByBudget(Budget budget) {
+        if (budget == null || budget.getId() == null) {
             return false;
         }
         TypedQuery<Long> query = entityManager.createQuery(
-                "SELECT count(a) FROM Customer a WHERE :pocket in  a.pockets ", Long.class);
-        query.setParameter("pocket", pocket);
+                "SELECT count(a) FROM Customer a WHERE :budget in  a.budgets ", Long.class);
+        query.setParameter("budget", budget);
         try {
             return query.getSingleResult() > 0;
         } catch (NoResultException e) {
@@ -304,7 +304,7 @@ public class CustomerDAOImpl implements CustomerDAO {
         return s.replace(s.charAt(0), Character.toLowerCase(s.charAt(0)));
     }
     private <T> boolean hasManyToOneRelationship(Class<T> entityClass) {
-        List<Class<?>> classes = new ArrayList<>(Arrays.asList(Expense.class, Pocket.class, PocketTransfer.class, Transaction.class));
+        List<Class<?>> classes = new ArrayList<>(Arrays.asList(Expense.class, Budget.class, BudgetTransfer.class, Transaction.class));
         return classes.contains(entityClass);
     }
 
@@ -330,13 +330,15 @@ public class CustomerDAOImpl implements CustomerDAO {
     public Page<SubCategory> getAllCustomerSubCategories(Long customerId, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
         return getAllEntitiesForCustomer(SubCategory.class, null, Optional.empty(), customerId, pageNumber, pageSize, sortBy, sortDirection);    }
 
-    @Override
-    public Page<Pocket> getAllCustomerPockets(Long customerId, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
-        return getAllEntitiesForCustomer(Pocket.class, null, Optional.empty(), customerId, pageNumber, pageSize, sortBy, sortDirection);    }
+
 
     @Override
-    public Page<PocketTransfer> getAllCustomerPocketTransfers(Long customerId, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
-        return getAllEntitiesForCustomer(PocketTransfer.class, null, Optional.empty(), customerId, pageNumber, pageSize, sortBy, sortDirection);    }
+    public Page<Budget> getAllCustomerBudgets(Long customerId, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
+        return getAllEntitiesForCustomer(Budget.class, null, Optional.empty(), customerId, pageNumber, pageSize, sortBy, sortDirection);    }
+
+    @Override
+    public Page<BudgetTransfer> getAllCustomerBudgetTransfers(Long customerId, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
+        return getAllEntitiesForCustomer(BudgetTransfer.class, null, Optional.empty(), customerId, pageNumber, pageSize, sortBy, sortDirection);    }
 
     @Override
     public Page<Transaction> getAllCustomerTransactions(Long customerId, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
@@ -353,7 +355,7 @@ public class CustomerDAOImpl implements CustomerDAO {
     }
 
     @Override
-    public Page<Pocket> getAllCustomerAccountPockets(Long currentCustomerId, String accountRef, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
-        return getAllEntitiesForCustomer(Pocket.class, Account.class, Optional.of(accountRef), currentCustomerId, pageNumber, pageSize, sortBy, sortDirection);
+    public Page<Budget> getAllCustomerAccountBudgets(Long currentCustomerId, String accountRef, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
+        return getAllEntitiesForCustomer(Budget.class, Account.class, Optional.of(accountRef), currentCustomerId, pageNumber, pageSize, sortBy, sortDirection);
     }
 }

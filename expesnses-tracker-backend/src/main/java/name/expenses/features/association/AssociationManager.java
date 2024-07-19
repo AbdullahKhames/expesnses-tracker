@@ -15,10 +15,9 @@ import name.expenses.error.exception_handler.ResponseExceptionBuilder;
 import name.expenses.features.account.service.AccountService;
 import name.expenses.features.category.service.CategoryService;
 import name.expenses.features.customer.service.CustomerService;
-import name.expenses.features.expesnse.dtos.request.ExpenseReqDto;
 import name.expenses.features.expesnse.service.ExpenseService;
-import name.expenses.features.pocket.service.PocketService;
-import name.expenses.features.pocket_transfer.service.PocketTransferService;
+import name.expenses.features.budget.service.BudgetService;
+import name.expenses.features.budget_transfer.service.BudgetTransferService;
 import name.expenses.features.sub_category.service.SubService;
 import name.expenses.features.transaction.service.TransactionService;
 import name.expenses.features.user.models.User;
@@ -34,13 +33,13 @@ import java.util.Set;
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
 @Transactional
 public class AssociationManager {
-    private final PocketService pocketService;
+    private final BudgetService budgetService;
     private final AccountService accountService;
     private final CategoryService categoryService;
     private final SubService subService;
     private final ExpenseService expenseService;
     private final CustomerService customerService;
-    private final PocketTransferService pocketTransferService;
+    private final BudgetTransferService budgetTransferService;
     private final TransactionService transactionService;
     private final ResponseExceptionBuilder responseExceptionBuilder;
     @Context
@@ -50,7 +49,7 @@ public class AssociationManager {
 
 //    private final Map<Models, CollectionAdder<?, ?>> adderHandler = new HashMap<>(
 //            Map.of(
-//                    Models.POCKET, pocketService,
+//                    Models.Budget, budgetService,
 ////                    Models.ACCOUNT, accountService,
 //                    Models.SUB_CATEGORY, subService,
 ////                    Models.CATEGORY, categoryService,
@@ -60,7 +59,7 @@ public class AssociationManager {
 //
 //    private final Map<Models, CollectionRemover<?, ?>> removerHandler = new HashMap<>(
 //            Map.of(
-//                    Models.POCKET, pocketService,
+//                    Models.Budget, budgetService,
 ////                    Models.ACCOUNT, accountService,
 //                    Models.SUB_CATEGORY, subService,
 ////                    Models.CATEGORY, categoryService,
@@ -74,24 +73,24 @@ public class AssociationManager {
 
     @PostConstruct
     public void init(){
-        adderHandler.put(Models.POCKET, pocketService);
+        adderHandler.put(Models.Budget, budgetService);
         adderHandler.put(Models.SUB_CATEGORY, subService);
         adderHandler.put(Models.ACCOUNT, accountService);
         adderHandler.put(Models.CATEGORY, categoryService);
         adderHandler.put(Models.EXPENSE, expenseService);
 
 
-        removerHandler.put(Models.POCKET, pocketService);
+        removerHandler.put(Models.Budget, budgetService);
         removerHandler.put(Models.SUB_CATEGORY, subService);
         removerHandler.put(Models.ACCOUNT, accountService);
         removerHandler.put(Models.CATEGORY, categoryService);
         removerHandler.put(Models.EXPENSE, expenseService);
 
         updaterHandler.put(Models.CUSTOMER, customerService);
-        updaterHandler.put(Models.POCKET, pocketService);
+        updaterHandler.put(Models.Budget, budgetService);
         updaterHandler.put(Models.SUB_CATEGORY, subService);
         updaterHandler.put(Models.TRANSACTION, transactionService);
-        updaterHandler.put(Models.POCKET_TRANSFER, pocketTransferService);
+        updaterHandler.put(Models.Budget_TRANSFER, budgetTransferService);
     }
 
     public  CollectionAdder<?> getCollectionAdder(Models models){
@@ -104,7 +103,7 @@ public class AssociationManager {
 
     public CrudService getService(Models models){
         return switch (models) {
-            case POCKET -> pocketService;
+            case Budget -> budgetService;
             case ACCOUNT -> accountService;
             case EXPENSE -> expenseService;
             case CATEGORY -> categoryService;

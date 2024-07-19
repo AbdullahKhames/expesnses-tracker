@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import name.expenses.features.account.dtos.request.AccountUpdateDto;
 import name.expenses.features.account.models.Account;
-import name.expenses.features.pocket.service.PocketService;
+import name.expenses.features.budget.service.BudgetService;
 import name.expenses.features.association.UpdateAssociation;
 
 import java.util.ArrayList;
@@ -19,13 +19,13 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
 @Transactional
 public class UpdateAccountServiceImpl {
-    private final PocketService pocketService;
+    private final BudgetService budgetService;
 
 
     private final List<UpdateAssociation<Account, AccountUpdateDto>> updateProductAssociations = new ArrayList<>(4);
     @PostConstruct
     private void init(){
-        updateProductAssociations.add(pocketService);
+        updateProductAssociations.add(budgetService);
 
     }
     public void updateCategoryAssociations(Account account, AccountUpdateDto accountUpdateDto){

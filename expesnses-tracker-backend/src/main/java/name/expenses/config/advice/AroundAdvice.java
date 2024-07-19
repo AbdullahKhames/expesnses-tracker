@@ -14,15 +14,16 @@ import name.expenses.error.exception_handler.ResponseExceptionBuilder;
 import name.expenses.features.account.dtos.request.*;
 import name.expenses.features.association.dto.AssociationGenericReqDto;
 import name.expenses.features.association.dto.AssociationReqDto;
+import name.expenses.features.budget.dtos.request.BudgetReqDto;
+import name.expenses.features.budget.dtos.request.BudgetUpdateDto;
+import name.expenses.features.budget_transfer.dtos.request.BudgetAmountReqDto;
+import name.expenses.features.budget_transfer.dtos.request.BudgetAmountUpdateDto;
+import name.expenses.features.budget_transfer.dtos.request.BudgetTransferReqDto;
+import name.expenses.features.budget_transfer.dtos.request.BudgetTransferUpdateDto;
 import name.expenses.features.category.dtos.request.*;
 import name.expenses.features.customer.dtos.request.CustomerReqDto;
 import name.expenses.features.customer.dtos.request.CustomerUpdateDto;
 import name.expenses.features.expesnse.dtos.request.*;
-import name.expenses.features.pocket.dtos.request.*;
-import name.expenses.features.pocket_transfer.dtos.request.PocketAmountReqDto;
-import name.expenses.features.pocket_transfer.dtos.request.PocketAmountUpdateDto;
-import name.expenses.features.pocket_transfer.dtos.request.PocketTransferReqDto;
-import name.expenses.features.pocket_transfer.dtos.request.PocketTransferUpdateDto;
 import name.expenses.features.sub_category.dtos.request.*;
 import name.expenses.features.transaction.dtos.request.TransactionReqDto;
 import name.expenses.features.transaction.dtos.request.TransactionUpdateDto;
@@ -58,17 +59,17 @@ public class AroundAdvice {
         classesToValidate.add(ExpenseReqDto.class);
         classesToValidate.add(ExpenseUpdateDto.class);
 
-        classesToValidate.add(PocketReqDto.class);
-        classesToValidate.add(PocketUpdateDto.class);
+        classesToValidate.add(BudgetReqDto.class);
+        classesToValidate.add(BudgetUpdateDto.class);
 
         classesToValidate.add(SubCategoryReqDto.class);
         classesToValidate.add(SubCategoryUpdateDto.class);
 
-        classesToValidate.add(PocketAmountReqDto.class);
-        classesToValidate.add(PocketAmountUpdateDto.class);
+        classesToValidate.add(BudgetAmountReqDto.class);
+        classesToValidate.add(BudgetAmountUpdateDto.class);
 
-        classesToValidate.add(PocketTransferReqDto.class);
-        classesToValidate.add(PocketTransferUpdateDto.class);
+        classesToValidate.add(BudgetTransferReqDto.class);
+        classesToValidate.add(BudgetTransferUpdateDto.class);
 
         classesToValidate.add(TransactionReqDto.class);
         classesToValidate.add(TransactionUpdateDto.class);

@@ -17,6 +17,13 @@ import name.expenses.features.account.mappers.AccountMapper;
 import name.expenses.features.account.models.Account;
 import name.expenses.features.account.service.AccountService;
 import name.expenses.features.association.Models;
+import name.expenses.features.budget.dtos.response.BudgetRespDto;
+import name.expenses.features.budget.mappers.BudgetMapper;
+import name.expenses.features.budget.models.Budget;
+import name.expenses.features.budget.service.BudgetService;
+import name.expenses.features.budget_transfer.dtos.response.BudgetTransferRespDto;
+import name.expenses.features.budget_transfer.mappers.BudgetTransferMapper;
+import name.expenses.features.budget_transfer.models.BudgetTransfer;
 import name.expenses.features.category.dtos.response.CategoryRespDto;
 import name.expenses.features.category.mappers.CategoryMapper;
 import name.expenses.features.category.models.Category;
@@ -31,14 +38,6 @@ import name.expenses.features.customer.service.CustomerService;
 import name.expenses.features.expesnse.dtos.response.ExpenseRespDto;
 import name.expenses.features.expesnse.mappers.ExpenseMapper;
 import name.expenses.features.expesnse.models.Expense;
-import name.expenses.features.expesnse.service.ExpenseService;
-import name.expenses.features.pocket.dtos.response.PocketRespDto;
-import name.expenses.features.pocket.mappers.PocketMapper;
-import name.expenses.features.pocket.models.Pocket;
-import name.expenses.features.pocket.service.PocketService;
-import name.expenses.features.pocket_transfer.dtos.response.PocketTransferRespDto;
-import name.expenses.features.pocket_transfer.mappers.PocketTransferMapper;
-import name.expenses.features.pocket_transfer.models.PocketTransfer;
 import name.expenses.features.sub_category.dtos.response.SubCategoryRespDto;
 import name.expenses.features.sub_category.mappers.SubCategoryMapper;
 import name.expenses.features.sub_category.models.SubCategory;
@@ -67,14 +66,14 @@ public class CustomerServiceImpl implements CustomerService {
     private final CustomerDAO customerDAO;
     private final CustomerMapper customerMapper;
     private final AccountMapper accountMapper;
-    private final PocketMapper pocketMapper;
+    private final BudgetMapper budgetMapper;
     private final CategoryMapper categoryMapper;
     private final SubCategoryMapper subCategoryMapper;
     private final TransactionMapper transactionMapper;
-    private final PocketTransferMapper pocketTransferMapper;
+    private final BudgetTransferMapper budgetTransferMapper;
     private final ExpenseMapper expenseMapper;
     private final AccountService accountService;
-    private final PocketService pocketService;
+    private final BudgetService budgetService;
     private final CategoryService categoryService;
     private final SubService subService;
     private final AuthService authService;
@@ -95,11 +94,11 @@ public class CustomerServiceImpl implements CustomerService {
             return response;
         sentCustomer.setUser((User) response.getData());
         Account account = accountService.getDefaultAccount();
-        Pocket pocket = pocketService.createDefaultPocket();
-        pocket.setAccount(account);
-        pocket.setCustomer(sentCustomer);
+        Budget budget = budgetService.createDefaultBudget();
+        budget.setAccount(account);
+        budget.setCustomer(sentCustomer);
         sentCustomer.getAccounts().add(account);
-        sentCustomer.getPockets().add(pocket);
+        sentCustomer.getBudgets().add(budget);
         Customer savedCustomer = customerDAO.create(sentCustomer);
         log.info("created customer {}", savedCustomer);
         return ResponseDtoBuilder.getCreateResponse(CUSTOMER, savedCustomer.getUser().getRefNo(), customerMapper.entityToRespDto(savedCustomer));
@@ -209,7 +208,7 @@ public class CustomerServiceImpl implements CustomerService {
             case ACCOUNT -> accountMapper.entityToRespDto(customer.getAccounts());
             case SUB_CATEGORY -> subCategoryMapper.entityToRespDto(customer.getSubCategories());
             case EXPENSE -> expenseMapper.entityToRespDto(customer.getExpenses());
-            case POCKET -> pocketMapper.entityToRespDto(customer.getPockets());
+            case Budget -> budgetMapper.entityToRespDto(customer.getBudgets());
             case CATEGORY -> categoryMapper.entityToRespDto(customer.getCategories());
             case TRANSACTION -> transactionMapper.entityToRespDto(customer.getTransactions());
             default -> null;
@@ -220,11 +219,11 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerRespDto create(Customer customer) {
         Account account = accountService.getDefaultAccount();
-        Pocket pocket = pocketService.createDefaultPocket();
-        pocket.setAccount(account);
-        pocket.setCustomer(customer);
+        Budget budget = budgetService.createDefaultBudget();
+        budget.setAccount(account);
+        budget.setCustomer(customer);
         customer.getAccounts().add(account);
-        customer.getPockets().add(pocket);
+        customer.getBudgets().add(budget);
         return customerMapper.entityToRespDto(customerDAO.create(customer));
     }
 
@@ -245,10 +244,10 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public ResponseDto getAllCustomerPockets(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
+    public ResponseDto getAllCustomerBudgets(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
         PageReq pageReq = ValidateInputUtils.validatePageData(pageNumber, pageSize);
-        Page<Pocket> customerPage = customerDAO.getAllCustomerPockets(getCurrentCustomerId(), pageReq.pageNumber(), pageReq.pageSize(), sortBy, sortDirection);
-        Page<PocketRespDto> customerDtos = pocketMapper.entityToRespDto(customerPage);
+        Page<Budget> customerPage = customerDAO.getAllCustomerBudgets(getCurrentCustomerId(), pageReq.pageNumber(), pageReq.pageSize(), sortBy, sortDirection);
+        Page<BudgetRespDto> customerDtos = budgetMapper.entityToRespDto(customerPage);
         return ResponseDtoBuilder.getFetchAllResponse(CUSTOMER, customerDtos);
     }
 
@@ -269,10 +268,10 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public ResponseDto getAllCustomerPocketTransfers(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
+    public ResponseDto getAllCustomerBudgetTransfers(Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
         PageReq pageReq = ValidateInputUtils.validatePageData(pageNumber, pageSize);
-        Page<PocketTransfer> customerPage = customerDAO.getAllCustomerPocketTransfers(getCurrentCustomerId(), pageReq.pageNumber(), pageReq.pageSize(), sortBy, sortDirection);
-        Page<PocketTransferRespDto> customerDtos = pocketTransferMapper.entityToRespDto(customerPage);
+        Page<BudgetTransfer> customerPage = customerDAO.getAllCustomerBudgetTransfers(getCurrentCustomerId(), pageReq.pageNumber(), pageReq.pageSize(), sortBy, sortDirection);
+        Page<BudgetTransferRespDto> customerDtos = budgetTransferMapper.entityToRespDto(customerPage);
         return ResponseDtoBuilder.getFetchAllResponse(CUSTOMER, customerDtos);
     }
 
@@ -301,10 +300,10 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public ResponseDto getAllCustomerAccountPockets(String accountRef, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
+    public ResponseDto getAllCustomerAccountBudgets(String accountRef, Long pageNumber, Long pageSize, String sortBy, SortDirection sortDirection) {
                 PageReq pageReq = ValidateInputUtils.validatePageData(pageNumber, pageSize);
-        Page<Pocket> customerPage = customerDAO.getAllCustomerAccountPockets(getCurrentCustomerId(), accountRef, pageReq.pageNumber(), pageReq.pageSize(), sortBy, sortDirection);
-        Page<PocketRespDto> customerDtos = pocketMapper.entityToRespDto(customerPage);
+        Page<Budget> customerPage = customerDAO.getAllCustomerAccountBudgets(getCurrentCustomerId(), accountRef, pageReq.pageNumber(), pageReq.pageSize(), sortBy, sortDirection);
+        Page<BudgetRespDto> customerDtos = budgetMapper.entityToRespDto(customerPage);
         return ResponseDtoBuilder.getFetchAllResponse(CUSTOMER, customerDtos);
     }
 }

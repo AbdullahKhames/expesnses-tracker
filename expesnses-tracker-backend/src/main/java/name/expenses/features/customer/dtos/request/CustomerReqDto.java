@@ -7,8 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import name.expenses.features.budget.dtos.request.BudgetReqDto;
 import name.expenses.features.expesnse.dtos.request.ExpenseReqDto;
-import name.expenses.features.pocket.dtos.request.PocketReqDto;
 import name.expenses.features.user.dtos.request.UserReqDto;
 
 import java.util.HashSet;
@@ -27,7 +27,7 @@ public class CustomerReqDto {
     private Set<String> accountRefs = new HashSet<>();
     @Valid
     @Builder.Default
-    private Set<PocketReqDto> pockets = new HashSet<>();
+    private Set<BudgetReqDto> budgets = new HashSet<>();
     @Builder.Default
     private Set<String> categoriesRefs = new HashSet<>();
     @Builder.Default

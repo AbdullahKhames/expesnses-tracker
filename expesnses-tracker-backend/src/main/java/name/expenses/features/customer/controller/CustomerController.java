@@ -16,7 +16,7 @@ import name.expenses.features.customer.dtos.request.CustomerReqDto;
 import name.expenses.features.customer.dtos.request.CustomerUpdateDto;
 import name.expenses.features.customer.service.CustomerService;
 import name.expenses.features.expesnse.dtos.request.ExpenseReqDto;
-import name.expenses.features.pocket.dtos.request.PocketReqDto;
+import name.expenses.features.budget.dtos.request.BudgetReqDto;
 import name.expenses.globals.SortDirection;
 import name.expenses.globals.responses.ResponseDto;
 import name.expenses.utils.PageUtil;
@@ -96,16 +96,16 @@ public class CustomerController {
 
     }
     @GET
-    @Path("/accounts/{accountRef}/pockets")
+    @Path("/accounts/{accountRef}/budgets")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllCustomerAccountPockets(
+    public Response getAllCustomerAccountbudgets(
             @PathParam("accountRef") String accountRef,
             @DefaultValue("1") @QueryParam("page") Long pageNumber,
             @DefaultValue("10") @QueryParam("per_page") Long pageSize,
             @DefaultValue("id") @QueryParam("sortBy") String sortBy,
             @QueryParam("sortDirection") String direction) {
         SortDirection sortDirection = PageUtil.getSortDirection(direction);
-        ResponseDto responseDto = customerService.getAllCustomerAccountPockets(accountRef, pageNumber, pageSize, sortBy, sortDirection);
+        ResponseDto responseDto = customerService.getAllCustomerAccountBudgets(accountRef, pageNumber, pageSize, sortBy, sortDirection);
         return Response.ok(responseDto).build();
 
     }
@@ -165,15 +165,15 @@ public class CustomerController {
     }
 
     @GET
-    @Path("/pockets")
+    @Path("/budgets")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllCustomerPockets(
+    public Response getAllCustomerBudgets(
             @DefaultValue("1") @QueryParam("page") Long pageNumber,
             @DefaultValue("10") @QueryParam("per_page") Long pageSize,
             @DefaultValue("id") @QueryParam("sortBy") String sortBy,
             @QueryParam("sortDirection") String direction) {
         SortDirection sortDirection = PageUtil.getSortDirection(direction);
-        ResponseDto responseDto = customerService.getAllCustomerPockets(pageNumber, pageSize, sortBy, sortDirection);
+        ResponseDto responseDto = customerService.getAllCustomerBudgets(pageNumber, pageSize, sortBy, sortDirection);
         return Response.ok(responseDto).build();
 
     }
@@ -204,15 +204,15 @@ public class CustomerController {
 
     }
     @GET
-    @Path("/pocket-transfers")
+    @Path("/budget-transfers")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllCustomerPocketTransfers(
+    public Response getAllCustomerBudgetTransfers(
             @DefaultValue("1") @QueryParam("page") Long pageNumber,
             @DefaultValue("10") @QueryParam("per_page") Long pageSize,
             @DefaultValue("id") @QueryParam("sortBy") String sortBy,
             @QueryParam("sortDirection") String direction) {
         SortDirection sortDirection = PageUtil.getSortDirection(direction);
-        ResponseDto responseDto = customerService.getAllCustomerPocketTransfers(pageNumber, pageSize, sortBy, sortDirection);
+        ResponseDto responseDto = customerService.getAllCustomerBudgetTransfers(pageNumber, pageSize, sortBy, sortDirection);
         return Response.ok(responseDto).build();
 
     }
@@ -280,26 +280,26 @@ public class CustomerController {
     public Response removeCustomerExpenses(AssociationReqDto associationReqDto){
         return Response.ok(associationManager.removeAssociation(null, Models.CUSTOMER, associationReqDto.getAssociationRefNos(), Models.EXPENSE)).build();
     }
-    @Path("/add-pockets")
+    @Path("/add-budgets")
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response addCustomerPockets(AssociationReqDto associationReqDto){
-        return Response.ok(associationManager.addAssociation(null, Models.CUSTOMER, associationReqDto.getAssociationRefNos(), Models.POCKET)).build();
+    public Response addCustomerBudgets(AssociationReqDto associationReqDto){
+        return Response.ok(associationManager.addAssociation(null, Models.CUSTOMER, associationReqDto.getAssociationRefNos(), Models.Budget)).build();
     }
-    @Path("/add-pockets-dtos")
+    @Path("/add-budgets-dtos")
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response addCustomerPOCKETSDTOS(AssociationGenericReqDto<PocketReqDto> associationGenericReqDto){
-        return Response.ok(associationManager.addAssociationDtos(null, Models.CUSTOMER, associationGenericReqDto.getAssociationReqDtos(), Models.POCKET)).build();
+    public Response addCustomerBudgetSDTOS(AssociationGenericReqDto<BudgetReqDto> associationGenericReqDto){
+        return Response.ok(associationManager.addAssociationDtos(null, Models.CUSTOMER, associationGenericReqDto.getAssociationReqDtos(), Models.Budget)).build();
     }
-    @Path("/remove-pockets")
+    @Path("/remove-budgets")
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response removeCustomerPockets(AssociationReqDto associationReqDto) {
-        return Response.ok(associationManager.removeAssociation(null, Models.CUSTOMER, associationReqDto.getAssociationRefNos(), Models.POCKET)).build();
+    public Response removeCustomerBudgets(AssociationReqDto associationReqDto) {
+        return Response.ok(associationManager.removeAssociation(null, Models.CUSTOMER, associationReqDto.getAssociationRefNos(), Models.Budget)).build();
     }
 
     @GET
@@ -321,10 +321,10 @@ public class CustomerController {
         return Response.ok(customerService.getCustomerAssociation(Models.SUB_CATEGORY)).build();
     }
     @GET
-    @Path("/get-pockets")
+    @Path("/get-budgets")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getCustomerPockets() {
-        return Response.ok(customerService.getCustomerAssociation(Models.POCKET)).build();
+    public Response getCustomerBudgets() {
+        return Response.ok(customerService.getCustomerAssociation(Models.Budget)).build();
     }
     @GET
     @Path("/get-expenses")

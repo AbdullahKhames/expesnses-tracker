@@ -49,13 +49,13 @@ class BasicSecurityFilterTest {
     @Test
     void testSharedAPIS() {
 
-        assertTrue(basicSecurityFilter.isPathInWhitelist(new ArrayList<>(Arrays.asList("/expenses-tracker/api/expenses/** *", "/expenses-tracker/api/pockets/** *")),
+        assertTrue(basicSecurityFilter.isPathInWhitelist(new ArrayList<>(Arrays.asList("/expenses-tracker/api/expenses/** *", "/expenses-tracker/api/budgets/** *")),
                 "/expenses-tracker/api/expenses", "POST"));
     }
     @Test
     void testSharedAPIS2() {
 
-        assertTrue(basicSecurityFilter.isPathInWhitelist(new ArrayList<>(Arrays.asList("/expenses-tracker/api/expenses/** *", "/expenses-tracker/api/pockets/** *")),
+        assertTrue(basicSecurityFilter.isPathInWhitelist(new ArrayList<>(Arrays.asList("/expenses-tracker/api/expenses/** *", "/expenses-tracker/api/budgets/** *")),
                 "/expenses-tracker/api/expenses/logs", "POST"));
     }
 

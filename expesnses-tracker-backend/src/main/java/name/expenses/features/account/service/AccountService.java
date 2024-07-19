@@ -18,11 +18,11 @@ public interface AccountService extends CrudService<AccountReqDto, AccountUpdate
 //        CollectionAdder<Customer, AccountUpdateDto>,
         CollectionRemover<Customer>,
         CollectionAdder<Customer> {
-    ResponseDto addAssociation(String accountRefNo, String pocketRefNo);
+    ResponseDto addAssociation(String accountRefNo, String budgetRefNo);
 
-    ResponseDto removeAssociation(String accountRefNo, String pocketRefNo);
+    ResponseDto removeAssociation(String accountRefNo, String budgetRefNo);
 
-    ResponseDto getAccountPOckets(String refNo);
+    ResponseDto getAccountBudgets(String refNo);
 
     ResponseDto getAccountByName(String name);
 

@@ -6,7 +6,7 @@ import jakarta.inject.Singleton;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import name.expenses.features.account.models.Account;
-import name.expenses.features.pocket.service.PocketService;
+import name.expenses.features.budget.service.BudgetService;
 import name.expenses.features.association.CollectionAdder;
 import name.expenses.features.association.Models;
 import name.expenses.features.association.CollectionRemover;
@@ -19,20 +19,20 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor(onConstructor_ = {@Inject})
 public class AccountAssociationManager {
-    private final PocketService pocketService;
+    private final BudgetService budgetService;
 
 
     private final Map<Models, CollectionAdder<Account>> adderHandler = new HashMap<>(5);
     private final Map<Models, CollectionRemover<Account>> removerHandler = new HashMap<>(5);
-//    private final Map<Models, CollectionAdder<Account, PocketUpdateDto>> adderHandler = new HashMap<>(5);
-//    private final Map<Models, CollectionRemover<Account, PocketUpdateDto>> removerHandler = new HashMap<>(5);
+//    private final Map<Models, CollectionAdder<Account, budgetUpdateDto>> adderHandler = new HashMap<>(5);
+//    private final Map<Models, CollectionRemover<Account, budgetUpdateDto>> removerHandler = new HashMap<>(5);
 
     @PostConstruct
     private void init(){
-        adderHandler.put(Models.POCKET, pocketService);
+        adderHandler.put(Models.Budget, budgetService);
 
 
-        removerHandler.put(Models.POCKET, pocketService);
+        removerHandler.put(Models.Budget, budgetService);
 
 
     }
@@ -41,7 +41,7 @@ public class AccountAssociationManager {
                                       T refNo) {
 
         CollectionAdder<Account> AccountCollectionAdder = adderHandler.get(accountModels);
-//        CollectionAdder<Account, PocketUpdateDto> AccountCollectionAdder = adderHandler.get(accountModels);
+//        CollectionAdder<Account, budgetUpdateDto> AccountCollectionAdder = adderHandler.get(accountModels);
         if (AccountCollectionAdder == null) {
             return false;
         }
@@ -56,7 +56,7 @@ public class AccountAssociationManager {
                                      Models accountModels,
                                      Object refNo) {
 
-//        CollectionRemover<Account, PocketUpdateDto> AccountCollectionRemover = removerHandler.get(accountModels);
+//        CollectionRemover<Account, budgetUpdateDto> AccountCollectionRemover = removerHandler.get(accountModels);
         CollectionRemover<Account> AccountCollectionRemover = removerHandler.get(accountModels);
         if (AccountCollectionRemover == null) {
             return false;

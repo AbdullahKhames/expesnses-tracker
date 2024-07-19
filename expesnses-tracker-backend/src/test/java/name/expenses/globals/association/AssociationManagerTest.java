@@ -4,11 +4,11 @@ import name.expenses.features.account.models.Account;
 import name.expenses.features.account.service.AccountService;
 import name.expenses.features.association.AssociationManager;
 import name.expenses.features.association.Models;
+import name.expenses.features.budget.service.BudgetService;
 import name.expenses.features.category.service.CategoryService;
 import name.expenses.features.customer.service.CustomerService;
 import name.expenses.features.expesnse.service.ExpenseService;
-import name.expenses.features.pocket.dtos.request.PocketUpdateDto;
-import name.expenses.features.pocket.service.PocketService;
+import name.expenses.features.budget.service.BudgetService;
 import name.expenses.features.sub_category.service.SubService;
 import name.expenses.globals.responses.ResponseDto;
 import name.expenses.utils.ResponseDtoBuilder;
@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 class AssociationManagerTest {
 
     @Mock
-    private PocketService pocketService;
+    private BudgetService budgetService;
 
     @Mock
     private AccountService accountService;
@@ -42,18 +42,18 @@ class AssociationManagerTest {
     @Mock
     private ExpenseService expenseService;
 //    @Mock
-//    private PocketDAO pocketDAO;
+//    private budgetDAO budgetDAO;
 //
 //    @Mock
-//    private PocketMapper pocketMapper;
+//    private budgetMapper budgetMapper;
 
 //    @Mock
-//    private PocketServiceImpl pocketServiceImpl;
+//    private budgetServiceImpl budgetServiceImpl;
     @Mock
     private CustomerService customerService;
 
     @InjectMocks
-//    private AssociationManager<PocketUpdateDto, String, Account> associationManager;
+//    private AssociationManager<budgetUpdateDto, String, Account> associationManager;
     private AssociationManager associationManager;
 
     @BeforeEach
@@ -66,7 +66,7 @@ class AssociationManagerTest {
     void addAssociation_Success() {
         String entityRefNo = "entityRefNo";
         Models entityModels = Models.ACCOUNT;
-        Models associationModels = Models.POCKET;
+        Models associationModels = Models.Budget;
 
         Account account = new Account();
         Optional<Account> entityOptional = Optional.of(account);
@@ -75,16 +75,16 @@ class AssociationManagerTest {
 
         ResponseDto mockResponse = ResponseDtoBuilder.getCreateResponse("Accoont", null, null);
 
-        Set<String> pocketRefs = new HashSet<>(Arrays.asList("assoc1", "assoc2"));
+        Set<String> budgetRefs = new HashSet<>(Arrays.asList("assoc1", "assoc2"));
 
-        when(pocketService.addAssociation(account, entityModels, pocketRefs)).thenReturn(mockResponse);
+        when(budgetService.addAssociation(account, entityModels, budgetRefs)).thenReturn(mockResponse);
 
-        ResponseDto responseDto = associationManager.addAssociation(entityRefNo, entityModels, pocketRefs, associationModels);
+        ResponseDto responseDto = associationManager.addAssociation(entityRefNo, entityModels, budgetRefs, associationModels);
 
         System.out.println(responseDto);
         assertNotNull(responseDto);
         verify(accountService, times(1)).getEntity(entityRefNo);
-        verify(pocketService, times(1)).addAssociation(account,entityModels, pocketRefs);
+        verify(budgetService, times(1)).addAssociation(account,entityModels, budgetRefs);
     }
 
 }

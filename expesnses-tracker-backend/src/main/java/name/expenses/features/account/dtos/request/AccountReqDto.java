@@ -7,11 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import name.expenses.features.pocket.dtos.request.PocketReqDto;
-import name.expenses.features.pocket.models.Pocket;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor

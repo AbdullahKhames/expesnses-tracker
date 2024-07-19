@@ -2,7 +2,7 @@ package name.expenses.features.transaction.mappers;
 
 
 import name.expenses.features.expesnse.mappers.ExpenseMapper;
-import name.expenses.features.pocket_transfer.mappers.PocketAmountMapper;
+import name.expenses.features.budget_transfer.mappers.BudgetAmountMapper;
 import name.expenses.features.transaction.dtos.request.TransactionReqDto;
 import name.expenses.features.transaction.dtos.request.TransactionUpdateDto;
 import name.expenses.features.transaction.dtos.response.TransactionRespDto;
@@ -19,7 +19,7 @@ import java.util.Set;
         nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         uses = {
-                PocketAmountMapper.class,
+                BudgetAmountMapper.class,
                 ExpenseMapper.class
         },
         imports = {LocalDateTime.class})

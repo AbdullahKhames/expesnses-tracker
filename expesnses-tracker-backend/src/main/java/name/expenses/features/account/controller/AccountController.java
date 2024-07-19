@@ -57,10 +57,10 @@ public class AccountController {
     }
 
     @GET
-    @Path("/{refNo}/pockets")
+    @Path("/{refNo}/budgets")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAccountPockets(@PathParam("refNo") String refNo) {
-        ResponseDto responseDto = accountService.getAccountPOckets(refNo);
+    public Response getAccountBudgets(@PathParam("refNo") String refNo) {
+        ResponseDto responseDto = accountService.getAccountBudgets(refNo);
         if (responseDto != null) {
             return Response.ok(responseDto).build();
         } else {
@@ -99,19 +99,19 @@ SortDirection sortDirection = PageUtil.getSortDirection(direction);
     }
 
     @PUT
-    @Path("/addAssociation/{accountRefNo}/{pocketRefNo}")
+    @Path("/addAssociation/{accountRefNo}/{budgetRefNo}")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addAssociation(@PathParam("accountRefNo") String accountRefNo, @PathParam("pocketRefNo") String pocketRefNo) {
-        ResponseDto responseDto = accountService.addAssociation(accountRefNo, pocketRefNo);
+    public Response addAssociation(@PathParam("accountRefNo") String accountRefNo, @PathParam("budgetRefNo") String budgetRefNo) {
+        ResponseDto responseDto = accountService.addAssociation(accountRefNo, budgetRefNo);
         return Response.ok(responseDto).build();
     }
     @PUT
-    @Path("/removeAssociation/{accountRefNo}/{pocketRefNo}")
+    @Path("/removeAssociation/{accountRefNo}/{budgetRefNo}")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces(MediaType.APPLICATION_JSON)
-    public Response removeAssociation(@PathParam("accountRefNo") String accountRefNo, @PathParam("pocketRefNo") String pocketRefNo) {
-        ResponseDto responseDto = accountService.removeAssociation(accountRefNo, pocketRefNo);
+    public Response removeAssociation(@PathParam("accountRefNo") String accountRefNo, @PathParam("budgetRefNo") String budgetRefNo) {
+        ResponseDto responseDto = accountService.removeAssociation(accountRefNo, budgetRefNo);
         return Response.ok(responseDto).build();
     }
 

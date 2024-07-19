@@ -18,7 +18,7 @@ import name.expenses.features.account.models.Account;
 import name.expenses.features.account.service.AccountService;
 import name.expenses.features.association.AssociationResponse;
 import name.expenses.features.customer.models.Customer;
-import name.expenses.features.pocket.service.PocketService;
+import name.expenses.features.budget.service.BudgetService;
 import name.expenses.globals.Page;
 import name.expenses.globals.PageReq;
 import name.expenses.globals.SortDirection;
@@ -41,7 +41,7 @@ public class AccountServiceImpl implements AccountService {
     private final AccountDAO accountDAO;
     private final AccountMapper accountMapper;
     private final AccountAssociationManager accountAssociationManager;
-    private final PocketService pocketService;
+    private final BudgetService budgetService;
 
 
     @Override
@@ -127,11 +127,11 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public ResponseDto addAssociation(String accountRefNo, String pocketRefNo) {
+    public ResponseDto addAssociation(String accountRefNo, String budgetRefNo) {
         Optional<Account> accountOptional = getEntity(accountRefNo);
         if (accountOptional.isPresent()){
             Account account = accountOptional.get();
-            if (accountAssociationManager.addAssociation(account, Models.POCKET, pocketRefNo)){
+            if (accountAssociationManager.addAssociation(account, Models.Budget, budgetRefNo)){
                 return ResponseDtoBuilder.getUpdateResponse(ACCOUNT, accountRefNo, accountMapper.entityToRespDto(account));
             }
             return ResponseDtoBuilder.getErrorResponse(804, "something went wrong couldn't add");
@@ -145,11 +145,11 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public ResponseDto removeAssociation(String accountRefNo, String pocketRefNo) {
+    public ResponseDto removeAssociation(String accountRefNo, String budgetRefNo) {
         Optional<Account> accountOptional = getEntity(accountRefNo);
         if (accountOptional.isPresent()){
             Account account = accountOptional.get();
-            if (accountAssociationManager.removeAssociation(account, Models.POCKET, pocketRefNo)){
+            if (accountAssociationManager.removeAssociation(account, Models.Budget, budgetRefNo)){
                 return ResponseDtoBuilder.getUpdateResponse(ACCOUNT, accountRefNo, accountMapper.entityToRespDto(account));
             }
             return ResponseDtoBuilder.getErrorResponse(804, "something went wrong couldn't remove");
@@ -162,11 +162,11 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public ResponseDto getAccountPOckets(String refNo) {
+    public ResponseDto getAccountBudgets(String refNo) {
         Optional<Account> accountOptional = getEntity(refNo);
         if (accountOptional.isPresent()){
             Account account = accountOptional.get();
-            return ResponseDtoBuilder.getFetchResponse(ACCOUNT, account.getRefNo(), pocketService.entityToRespDto(account.getPockets()));
+            return ResponseDtoBuilder.getFetchResponse(ACCOUNT, account.getRefNo(), budgetService.entityToRespDto(account.getBudgets()));
 
         }else {
             return ResponseDtoBuilder.getErrorResponse(804, "no account found with given ref");
