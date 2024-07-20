@@ -391,7 +391,7 @@ public class Catalog {
             case "Budget" -> (T) budgets.get(index);
             case "Category" -> (T) categories.get(index);
             case "SubCategory" -> (T) subCategories.get(index);
-            case "budgetAmount" -> (T) budgetAmounts.get(index);
+            case "BudgetAmount" -> (T) budgetAmounts.get(index);
             case "Customer" -> (T) customers.get(index);
             case "User" -> (T) users.get(index);
             case null -> throw new IllegalStateException("Unexpected value: cannot be null");

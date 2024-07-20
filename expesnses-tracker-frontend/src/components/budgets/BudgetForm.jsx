@@ -7,7 +7,7 @@ import config from "../config";
 import api from "../api";
 import { UserDataContext } from "../basics/UserContextProvider/UserContextProvider";
 
-export default function PocketForm( { type, accountRefNo, pockets, setPockets } ) {
+export default function BudgetForm( { type, accountRefNo, budgets, setBudgets } ) {
   const userContext = useContext(UserDataContext);
   const userData = userContext.userData;
   const [isLoading, setIsLoading] = useState(false);
@@ -18,15 +18,15 @@ export default function PocketForm( { type, accountRefNo, pockets, setPockets } 
       nav("/login");
     }
   }, [userData]);
-  function handlePocketSubmit(values) {
+  function handleBudgetSubmit(values) {
     setIsLoading(true);
 
     api
-      .post(`${config.api}/pockets`, values)
+      .post(`${config.api}/budgets`, values)
       .then((response) => {
         if (response.status === 200) {
-          toast.success("Pocket added successfully");
-          setPockets([...pockets, response.data.data]);
+          toast.success("Budget added successfully");
+          setBudgets([...budgets, response.data.data]);
         }
         setIsLoading(false);
       })
@@ -39,7 +39,7 @@ export default function PocketForm( { type, accountRefNo, pockets, setPockets } 
           window.location.reload();
         }
         setIsLoading(false);
-        toast.error("error saving Pocket");
+        toast.error("error saving Budget");
         console.error(err);
         seterrorMessage(`${JSON.stringify(err.response.data)}`);
       });
@@ -47,35 +47,35 @@ export default function PocketForm( { type, accountRefNo, pockets, setPockets } 
   const validScheme = Yup.object({
     name: Yup.string().required("Required"),
     amount: Yup.number().required("Required"),
-    pocketType: Yup.string().required("Required"),
+    budgetType: Yup.string().required("Required"),
   });
   const formik = useFormik({
     initialValues: {
       name: "",
       details: "",
       amount: "",
-      pocketType: type,
+      budgetType: type,
       customerId: userData.customerId, 
       accountRefNo: accountRefNo,
     },
     validationSchema: validScheme,
-    onSubmit: handlePocketSubmit,
+    onSubmit: handleBudgetSubmit,
   });
   return (
     <>
       <div>
-        <h1>Add a New {type} Pocket</h1>
+        <h1>Add a New {type} Budget</h1>
         {errorMessage.length > 0 ? (
           <div className="alert alert-danger">{errorMessage}</div>
         ) : null}
 
         <form onSubmit={formik.handleSubmit}>
-          <label htmlFor="name">Pocket Name:</label>
+          <label htmlFor="name">Budget Name:</label>
           <input
             type="text"
             name="name"
             id="name"
-            placeholder="Pocket name"
+            placeholder="Budget name"
             value={formik.values.name}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -85,12 +85,12 @@ export default function PocketForm( { type, accountRefNo, pockets, setPockets } 
             <div className="alert alert-danger">{formik.errors.name}</div>
           ) : null}
 
-          <label htmlFor="details">Pocket Details:</label>
+          <label htmlFor="details">Budget Details:</label>
           <input
             type="text"
             name="details"
             id="details"
-            placeholder="Pocket details"
+            placeholder="Budget details"
             value={formik.values.details}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -104,7 +104,7 @@ export default function PocketForm( { type, accountRefNo, pockets, setPockets } 
             type="number"
             name="amount"
             id="amount"
-            placeholder="Pocket amount"
+            placeholder="Budget amount"
             value={formik.values.amount}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -114,23 +114,23 @@ export default function PocketForm( { type, accountRefNo, pockets, setPockets } 
             <div className="alert alert-danger">{formik.errors.amount}</div>
           ) : null}
 
-          <label htmlFor="pocketType">Pocket Type:</label>
+          <label htmlFor="budgetType">Budget Type:</label>
           <input
             type="text"
-            name="pocketType"
-            id="pocketType"
-            placeholder="Pocket type"
-            value={formik.values.pocketType}
+            name="budgetType"
+            id="budgetType"
+            placeholder="Budget type"
+            value={formik.values.budgetType}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             readOnly // Make the field read-only
             // You can set the value dynamically based on your application's logic
             // For example: value="SERVICE"
-            // Or if you have the pocketType value in your formik values, you can use that directly
-            // value={formik.values.pocketType}
+            // Or if you have the budgetType value in your formik values, you can use that directly
+            // value={formik.values.budgetType}
           />
-          {formik.errors.pocketType && formik.touched.pocketType ? (
-            <div className="alert alert-danger">{formik.errors.pocketType}</div>
+          {formik.errors.budgetType && formik.touched.budgetType ? (
+            <div className="alert alert-danger">{formik.errors.budgetType}</div>
           ) : null}
 
           <label htmlFor="customerId">Customer ID:</label>
@@ -182,9 +182,9 @@ export default function PocketForm( { type, accountRefNo, pockets, setPockets } 
               className="btn btn-primary btn-lg btn-block"
               disabled={!formik.dirty && formik.isValid}
               type="submit"
-              onSubmit={handlePocketSubmit}
+              onSubmit={handleBudgetSubmit}
             >
-              Create Pocket
+              Create Budget
             </button>
           )}
           <Toaster />

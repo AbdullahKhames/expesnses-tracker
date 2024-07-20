@@ -37,8 +37,8 @@ import SubCategories from './components/subCategories/SubCategories';
 import SubCategoryPage from './components/subCategories/subCategory-page/SubCategoryPage';
 import SubCategoryFilter from './components/subCategories/SubCategoryFilter';
 import AccountPage from './components/accounts/AccountPage/AccountPage';
-import PocketList from './components/pockets/PocketList';
-import PocketPage from './components/pockets/PocketPage';
+import BudgetList from './components/budgets/BudgetList';
+import BudgetPage from './components/budgets/BudgetPage';
 import CustomerDashboard from './components/CustomerDashboard/CustomerDashboard';
 import ShowExpenses from './components/CustomerDashboard/expenses-components/show_Expense/ShowExpenses';
 import SearchExpense from './components/CustomerDashboard/expenses-components/search-Expense/SearchExpense';
@@ -139,19 +139,19 @@ function App() {
           ],
         },
         {
-          path: "pockets",
+          path: "budgets",
           children: [
             {
               index: true,
               element: (
                 <ProtectedRoute>
-                  <PocketList />
+                  <BudgetList />
                 </ProtectedRoute>
               ),
             },
 
-            { path: ":refNo", element: <PocketPage /> },
-            // { path: "filter", element: <PocketFilter /> },
+            { path: ":refNo", element: <BudgetPage /> },
+            // { path: "filter", element: <BudgetFilter /> },
           ],
         },
       ],

@@ -5,15 +5,15 @@ import { UserDataContext } from "../basics/UserContextProvider/UserContextProvid
 import config from "../config";
 import api from "../api";
 import Loading from "../basics/Loading/loading";
-import PocketsCard from "./pocketsCard";
-import PocketForm from "./PocketForm";
+import BudgetsCard from "./budgetsCard";
+import BudgetForm from "./BudgetForm";
 
-function PocketList({ filter = null, query = null }) {
+function BudgetList({ filter = null, query = null }) {
   const userContext = useContext(UserDataContext);
   const userData = userContext.userData;
-  const [pockets, setPockets] = useState([]);
+  const [budgets, setBudgets] = useState([]);
   const [loading, setLoading] = useState(true);
-  const pocketTypes = [
+  const budgetTypes = [
     "ENTERTAINMENT",
     "SAVINGS",
     "BILLS",
@@ -26,12 +26,12 @@ function PocketList({ filter = null, query = null }) {
 
   let url_api = config.api + "/";
   if (query) {
-    url_api += "pockets/name/" + query + "?page=1&per_page=20";
+    url_api += "budgets/name/" + query + "?page=1&per_page=20";
   } else if (filter === null) {
-    url_api += "customers/pockets?page=1&per_page=20";
+    url_api += "customers/budgets?page=1&per_page=20";
   } else {
     url_api +=
-      "customers/accounts/" + filter.refNo + "/pockets?page=1&per_page=20";
+      "customers/accounts/" + filter.refNo + "/budgets?page=1&per_page=20";
   }
 
   useEffect(() => {
@@ -40,10 +40,10 @@ function PocketList({ filter = null, query = null }) {
       .then((response) => {
         console.log(response);
         if (response.status === 200) {
-          setPockets(response.data.data.content);
+          setBudgets(response.data.data.content);
           if (query) {
             if (response.data.data.length === 0) {
-              toast.error("No pockets found");
+              toast.error("No budgets found");
             } else if (response.data.message) {
               toast.success(response.data.message);
             }
@@ -64,7 +64,7 @@ function PocketList({ filter = null, query = null }) {
         {filter && (
           <div>
             customer account balance :{" "}
-            {pockets.reduce((prev, curr) => {
+            {budgets.reduce((prev, curr) => {
               if (curr.amount < 0) {
                 return prev;
               }
@@ -74,16 +74,16 @@ function PocketList({ filter = null, query = null }) {
         )}
         <MDBContainer className="py-4">
           <MDBRow>
-            {pockets.map((pocket, index) => {
-              if (pocket) {
+            {budgets.map((budget, index) => {
+              if (budget) {
                 return (
                   <MDBCol key={index}>
-                    <PocketsCard
-                      pockets={pockets}
-                      setPockets={setPockets}
-                      key={pocket.refNo}
-                      pocketData={pocket}
-                      pocketTypes={pocketTypes}
+                    <BudgetsCard
+                      budgets={budgets}
+                      setBudgets={setBudgets}
+                      key={budget.refNo}
+                      budgetData={budget}
+                      budgetTypes={budgetTypes}
                       admin={userData && userData.roles.includes("ROLE_ADMIN")}
                     />
                   </MDBCol>
@@ -96,19 +96,19 @@ function PocketList({ filter = null, query = null }) {
         {filter && (
           <MDBContainer className="py-4">
             <MDBRow style={{ paddingLeft: "60px", paddingRight: "40px" }}>
-              {pocketTypes.map((type) => {
-                // const pocketOfType = pockets.find((pocket) => {
-                //   return pocket.pocketType === type;
+              {budgetTypes.map((type) => {
+                // const budgetOfType = budgets.find((budget) => {
+                //   return budget.budgetType === type;
                 // });
-                // if (!pocketOfType) {
+                // if (!budgetOfType) {
                 return (
                   <MDBCol col="6" sm="4" key={type}>
                     <div style={{ border: "1px solid #ccc", padding: "20px" }}>
-                      <PocketForm
+                      <BudgetForm
                         type={type}
                         accountRefNo={filter.refNo}
-                        pockets={pockets}
-                        setPockets={setPockets}
+                        budgets={budgets}
+                        setBudgets={setBudgets}
                       />
                     </div>
                   </MDBCol>
@@ -124,4 +124,4 @@ function PocketList({ filter = null, query = null }) {
   }
 }
 
-export default PocketList;
+export default BudgetList;

@@ -21,8 +21,8 @@ const AccountCard = ({ account }) => {
     }
   , [account])
 
-  const totalBalance = account.pockets.reduce(
-    (total, pocket) => total + pocket.amount,
+  const totalBalance = account.budgets.reduce(
+    (total, budget) => total + budget.amount,
     0
   );
   function handleAddAccount(value) {

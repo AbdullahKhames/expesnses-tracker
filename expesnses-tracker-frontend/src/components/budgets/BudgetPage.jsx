@@ -7,40 +7,40 @@ import config from "../config";
 import api from "../api";
 import { UserDataContext } from "../basics/UserContextProvider/UserContextProvider";
 
-export default function PocketPage() {
+export default function BudgetPage() {
   const { refNo } = useParams();
   const userContext = useContext(UserDataContext);
   const userData = userContext.userData;
-  const [pocket, setpocket] = useState({});
+  const [budget, setbudget] = useState({});
   const location = useLocation();
-  const pocketData = location.state ? location.state.pocketData : null;
-  const pocketTypes = location.state ? location.state.pocketTypes : null;
+  const budgetData = location.state ? location.state.budgetData : null;
+  const budgetTypes = location.state ? location.state.budgetTypes : null;
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, seterrorMessage] = useState("");
   const nav = useNavigate();
   useEffect(() => {
-    console.log(pocketData);
-    if (pocketData) {
-      setpocket(pocketData);
+    console.log(budgetData);
+    if (budgetData) {
+      setbudget(budgetData);
       setIsLoading(false);
     } else {
-      const response = api.get(`${config.api}/pockets/refNo/${refNo}`);
+      const response = api.get(`${config.api}/budgets/refNo/${refNo}`);
       if (response.status === 200) {
-        setpocket(response.data.data);
+        setbudget(response.data.data);
         setIsLoading(false);
       } else {
         nav("/not-found");
       }
     }
-  }, [pocketData, refNo]);
-  function handlePocketSubmit(values) {
+  }, [budgetData, refNo]);
+  function handleBudgetSubmit(values) {
     setIsLoading(true);
 
     api
-      .put(`${config.api}/pockets/${refNo}`, values)
+      .put(`${config.api}/budgets/${refNo}`, values)
       .then((response) => {
         if (response.status === 200) {
-          toast.success("Pocket updated successfully");
+          toast.success("Budget updated successfully");
         }
         setIsLoading(false);
       })
@@ -53,7 +53,7 @@ export default function PocketPage() {
           window.location.reload();
         }
         setIsLoading(false);
-        toast.error("error saving Pocket");
+        toast.error("error saving Budget");
         console.error(err);
         seterrorMessage(`${JSON.stringify(err.response.data)}`);
       });
@@ -61,37 +61,37 @@ export default function PocketPage() {
   const validScheme = Yup.object({
     name: Yup.string().required("Required"),
     amount: Yup.number().required("Required"),
-    pocketType: Yup.string().required("Required"),
+    budgetType: Yup.string().required("Required"),
   });
   const formik = useFormik({
     initialValues: {
-      name: pocketData.name,
-      refNo: pocketData.refNo,
-      details: pocketData.details,
-      pocketType: pocketData.pocketType,
-      amount: pocketData.amount,
+      name: budgetData.name,
+      refNo: budgetData.refNo,
+      details: budgetData.details,
+      budgetType: budgetData.budgetType,
+      amount: budgetData.amount,
       // customerId: userData.customerId,
-      // accountRefNo: pocketData.accountRefNo,
+      // accountRefNo: budgetData.accountRefNo,
     },
     validationSchema: validScheme,
-    onSubmit: handlePocketSubmit,
+    onSubmit: handleBudgetSubmit,
   });
   return (
     <>
       <div className="container">
         <div>
-          <h1>update {pocket.name} Pocket</h1>
+          <h1>update {budget.name} Budget</h1>
           {errorMessage.length > 0 ? (
             <div className="alert alert-danger">{errorMessage}</div>
           ) : null}
 
           <form onSubmit={formik.handleSubmit}>
-            <label htmlFor="name">Pocket Name:</label>
+            <label htmlFor="name">Budget Name:</label>
             <input
               type="text"
               name="name"
               id="name"
-              placeholder="Pocket name"
+              placeholder="Budget name"
               value={formik.values.name}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -113,19 +113,19 @@ export default function PocketPage() {
               readOnly // Make the field read-only
               // You can set the value dynamically based on your application's logic
               // For example: value="SERVICE"
-              // Or if you have the pocketType value in your formik values, you can use that directly
-              // value={formik.values.pocketType}
+              // Or if you have the budgetType value in your formik values, you can use that directly
+              // value={formik.values.budgetType}
             />
             {formik.errors.refNo && formik.touched.refNo ? (
               <div className="alert alert-danger">{formik.errors.refNo}</div>
             ) : null}
 
-            <label htmlFor="details">Pocket Details:</label>
+            <label htmlFor="details">Budget Details:</label>
             <input
               type="text"
               name="details"
               id="details"
-              placeholder="Pocket details"
+              placeholder="Budget details"
               value={formik.values.details}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -139,7 +139,7 @@ export default function PocketPage() {
               type="number"
               name="amount"
               id="amount"
-              placeholder="Pocket amount"
+              placeholder="Budget amount"
               value={formik.values.amount}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -149,23 +149,23 @@ export default function PocketPage() {
               <div className="alert alert-danger">{formik.errors.amount}</div>
             ) : null}
 
-            <label htmlFor="pocketType">Pocket Type:</label>
+            <label htmlFor="budgetType">Budget Type:</label>
             <select
-              name="pocketType"
-              id="pocketType"
-              value={formik.values.pocketType}
+              name="budgetType"
+              id="budgetType"
+              value={formik.values.budgetType}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             >
-              {pocketTypes.map((type) => (
+              {budgetTypes.map((type) => (
                 <option key={type} value={type}>
                   {type}
                 </option>
               ))}
             </select>
-            {formik.errors.pocketType && formik.touched.pocketType ? (
+            {formik.errors.budgetType && formik.touched.budgetType ? (
               <div className="alert alert-danger">
-                {formik.errors.pocketType}
+                {formik.errors.budgetType}
               </div>
             ) : null}
 
@@ -220,9 +220,9 @@ export default function PocketPage() {
                 className="btn btn-primary btn-lg btn-block"
                 disabled={!formik.dirty && formik.isValid}
                 type="submit"
-                onSubmit={handlePocketSubmit}
+                onSubmit={handleBudgetSubmit}
               >
-                update Pocket
+                update Budget
               </button>
             )}
             <Toaster />

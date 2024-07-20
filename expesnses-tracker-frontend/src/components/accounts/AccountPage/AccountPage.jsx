@@ -3,7 +3,7 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 import api from "./../../api";
 import config from "./../../config";
 import Loading from "./../../basics/Loading/loading";
-import PocketList from "./../../pockets/PocketList";
+import BudgetList from "./../../budgets/BudgetList";
 
 export default function AccountPage() {
   const nav = useNavigate();
@@ -43,7 +43,7 @@ export default function AccountPage() {
     return (
       <>
         <div>Account Name : {account.name}</div>
-        <PocketList filter={account} />
+        <BudgetList filter={account} />
       </>
     );
   }

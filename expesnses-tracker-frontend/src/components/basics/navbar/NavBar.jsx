@@ -165,8 +165,8 @@ export default function NavBar(props) {
                 </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/pockets">
-                  Pockets
+                <Link className="nav-link" to="/budgets">
+                budgets
                 </Link>
               </li>
               {userData && userData.roles.includes('ROLE_CUSTOMER') ? (

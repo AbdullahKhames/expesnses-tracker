@@ -5,30 +5,30 @@ import toast from "react-hot-toast";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 // import deaultimage from "../../../assets/defaultImages/sybCategory.webp";
-import { UserDataContext } from "./../basics/UserContextProvider/UserContextProvider";
-import Loading from "./../basics/Loading/loading";
+import { UserDataContext } from "../basics/UserContextProvider/UserContextProvider";
+import Loading from "../basics/Loading/loading";
 import config from "../config";
-import api from "./../api";
+import api from "../api";
 
-function PocketsCard({ pocketData, admin, pockets, setPockets, pocketTypes }) {
+function BudgetsCard({ budgetData, admin, budgets, setBudgets, budgetTypes }) {
   const { refNo } = useParams();
   const userContext = useContext(UserDataContext);
   const userData = userContext.userData;
   const navigate = useNavigate();
-  const [pocket, setPocket] = useState(null);
+  const [budget, setBudget] = useState(null);
   const [loading, setLoading] = useState(true);
-  const url_api = config.api + "/pockets/refNo/" + refNo;
+  const url_api = config.api + "/budgets/refNo/" + refNo;
   const [registered, setRegistered] = useState(
-    pocketData.currentCustomerRegistered
+    budgetData.currentCustomerRegistered
   );
 
-  function handleAddpocket(value) {
+  function handleAddbudget(value) {
     console.log(value);
     const data = {
       associationRefNos: [value],
     };
     api
-      .put(`${config.api}/customers/add-pockets`, data)
+      .put(`${config.api}/customers/add-budgets`, data)
       .then((response) => {
         console.log(response);
         toast.success(response.data.message);
@@ -38,31 +38,31 @@ function PocketsCard({ pocketData, admin, pockets, setPockets, pocketTypes }) {
         toast.error(err);
       });
   }
-  function handleRemovepocket(value) {
+  function handleRemovebudget(value) {
     console.log(value);
     const data = {
       associationRefNos: [value],
     };
     api
-      .put(`${config.api}/customers/remove-pockets`, data)
+      .put(`${config.api}/customers/remove-budgets`, data)
       .then((response) => {
         console.log(response);
         toast.success(response.data.message);
         setRegistered(false);
-        setPockets(pockets.filter((pocket) => pocket.refNo !== value));
+        setBudgets(budgets.filter((budget) => budget.refNo !== value));
       })
       .catch((err) => {
         toast.error(err);
       });
   }
-  const getpocket = (url_api) => {
-    if (pocketData === null || pocketData === undefined) {
+  const getbudget = (url_api) => {
+    if (budgetData === null || budgetData === undefined) {
       api
         .get(url_api)
         .then((res) => {
           console.log(res);
           if (res.status === 200) {
-            setPocket(res.data.data);
+            setBudget(res.data.data);
             setLoading(false);
           }
         })
@@ -71,23 +71,23 @@ function PocketsCard({ pocketData, admin, pockets, setPockets, pocketTypes }) {
           navigate("/not-found");
         });
     } else {
-      setPocket(pocketData);
+      setBudget(budgetData);
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (pocketData) {
-      setPocket(pocketData);
+    if (budgetData) {
+      setBudget(budgetData);
       setLoading(false);
     } else {
-      getpocket(url_api);
+      getbudget(url_api);
     }
   }, [url_api]);
 
-  function handlepocketDataPage(pocketData) {
-    navigate(`/pockets/${pocketData.refNo}`, {
-      state: { pocketData: pocket, pocketTypes:pocketTypes },
+  function handlebudgetDataPage(budgetData) {
+    navigate(`/budgets/${budgetData.refNo}`, {
+      state: { budgetData: budget, budgetTypes:budgetTypes },
     });
   }
 
@@ -100,24 +100,24 @@ function PocketsCard({ pocketData, admin, pockets, setPockets, pocketTypes }) {
       <Card className="my-3 p-3 rounded">
         <Card.Body>
           <Card.Title as="div" className="card-head">
-            <strong style={{ fontSize: "30px" }}>{pocket.name}</strong>
+            <strong style={{ fontSize: "30px" }}>{budget.name}</strong>
           </Card.Title>
           {/* <Card.Text as="div" className="d-flex justify-content-between"> */}
-          <h6>pocket details: {pocket.details}</h6>
-          <h6>pocket customer name: {pocket.customerName}</h6>
-          <h6>pocket type: {pocket.pocketType}</h6>
-          <h6>Ref No: {pocket.refNo}</h6>
+          <h6>budget details: {budget.details}</h6>
+          <h6>budget customer name: {budget.customerName}</h6>
+          <h6>budget type: {budget.budgetType}</h6>
+          <h6>Ref No: {budget.refNo}</h6>
           <p style={{ color: "#0C356A", paddingTop: "8px" }}>
-            Current balance: {pocket.amount}
+            Current balance: {budget.amount}
           </p>
-          <h6>account name: {pocket.accountName}</h6>
-          <h6>account Ref No: {pocket.accountRefNo}</h6>
+          <h6>account name: {budget.accountName}</h6>
+          <h6>account Ref No: {budget.accountRefNo}</h6>
 
           <div>
             <button
               className="btn btn-outline-success mb basic"
               type="submit"
-              onClick={() => handlepocketDataPage(pocket)}
+              onClick={() => handlebudgetDataPage(budget)}
             >
               More Details
             </button>
@@ -125,7 +125,7 @@ function PocketsCard({ pocketData, admin, pockets, setPockets, pocketTypes }) {
           <div>
             <button
               className="btn btn-primary"
-              value={pocket.refNo}
+              value={budget.refNo}
               onClick={(e) => handleCreateATransaction(e.target.value)}
             >
               create a transaction
@@ -134,7 +134,7 @@ function PocketsCard({ pocketData, admin, pockets, setPockets, pocketTypes }) {
           <div>
             <button
               className="btn btn-primary"
-              value={pocket.refNo}
+              value={budget.refNo}
               onClick={(e) => handleMoneyTransfer(e.target.value)}
             >
               make a transfer
@@ -144,19 +144,19 @@ function PocketsCard({ pocketData, admin, pockets, setPockets, pocketTypes }) {
             <>
               <button
                 className="btn btn-primary"
-                value={pocket.refNo}
-                onClick={(e) => handleAddpocket(e.target.value)}
+                value={budget.refNo}
+                onClick={(e) => handleAddbudget(e.target.value)}
               >
-                Register To This pocket
+                Register To This budget
               </button>
             </>
           ) : (
             <button
               className="btn btn-danger"
-              value={pocket.refNo}
-              onClick={(e) => handleRemovepocket(e.target.value)}
+              value={budget.refNo}
+              onClick={(e) => handleRemovebudget(e.target.value)}
             >
-              Delete This pocket
+              Delete This budget
             </button>
           )}
           {/* </Card.Text> */}
@@ -166,4 +166,4 @@ function PocketsCard({ pocketData, admin, pockets, setPockets, pocketTypes }) {
   }
 }
 
-export default PocketsCard;
+export default BudgetsCard;
