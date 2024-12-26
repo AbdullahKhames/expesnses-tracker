@@ -29,6 +29,7 @@ public class ExpenseReqDto {
     @NotNull
     @Min(value = 1, message = "amount cannot be less than 1")
     private Double amount;
+    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
     private String receiptBase64;
     @NotNull

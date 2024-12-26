@@ -27,6 +27,7 @@ public class BudgetTransferUpdateDto {
     private String name;
     private String details;
     private String refNo;
+    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
     @Min(value = 0)
     private Double amount;

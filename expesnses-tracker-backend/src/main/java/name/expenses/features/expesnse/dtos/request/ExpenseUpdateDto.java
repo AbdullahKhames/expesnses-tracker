@@ -26,6 +26,7 @@ public class ExpenseUpdateDto {
     private String refNo;
     private String details;
     private String receiptBase64;
+    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
     @Min(value = 1, message = "amount cannot be less than 1")
     @NotNull

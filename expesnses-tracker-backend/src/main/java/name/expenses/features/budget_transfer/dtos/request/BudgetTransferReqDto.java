@@ -25,6 +25,7 @@ import java.util.Set;
 public class BudgetTransferReqDto {
     private String name;
     private String details;
+    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
     @Valid
     @Builder.Default

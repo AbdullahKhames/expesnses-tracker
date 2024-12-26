@@ -5,7 +5,7 @@ import { UserDataContext } from "../basics/UserContextProvider/UserContextProvid
 import config from "../config";
 import api from "../api";
 import Loading from "../basics/Loading/loading";
-import BudgetsCard from "./budgetsCard";
+import BudgetsCard from "./BudgetsCard";
 import BudgetForm from "./BudgetForm";
 
 function BudgetList({ filter = null, query = null }) {
